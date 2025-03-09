@@ -33,13 +33,15 @@ class AdminUserController extends Controller
             'role' => $request->role
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Пользователь успешно создан!');
+        return redirect()->route('admin.dashboard')
+            ->with('successType', 'user_created')
+            ->with('success', 'Пользователь создан!');
     }
 
     public function index()
     {
         $users = User::all();
-        return view('admin.users.index', compact('users'));
+        return view('admin.dashboard', compact('users'));
     }
 
 }

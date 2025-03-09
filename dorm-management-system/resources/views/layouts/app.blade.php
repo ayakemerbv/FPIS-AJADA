@@ -54,7 +54,12 @@
                 </div>
 
                 <!-- Профиль -->
-                <a href="{{ route('student.personal') }}">Мой профиль</a>
+                @if(Auth::user()->role === 'student'
+                    && Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
+                    <a href="{{ route('student.personal') }}">Мой профиль</a>
+                @endif
+
+
                 <!-- Выход (иконка + текст) -->
                 <form action="{{ route('logout') }}" method="POST" class="logout-form">
                     @csrf

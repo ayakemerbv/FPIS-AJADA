@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\Student;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 
@@ -21,6 +23,36 @@ class StudentController extends Controller
         // и передаём туда список новостей.
         return view('student.dashboard', compact('newsList'));
     }
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'phone' => 'nullable|string|max:20',
+            'photo' => 'nullable|image|max:2048', // 2MB max
+        ]);
+
+        $user = Auth::user();
+
+        // Обновляем телефон
+        if ($request->phone) {
+            $user->phone = $request->phone;
+        }
+
+        // Если загружаем новое фото
+        if ($request->hasFile('photo')) {
+            // (Опционально) удалить старый файл
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            // Сохранить новый
+            $path = $request->file('photo')->store('avatars', 'public');
+            $user->photo = $path;
+        }
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Профиль обновлён!');
+    }
+
     public function profile()
     {
         // Если нужно, можешь передавать данные пользователя
@@ -41,5 +73,6 @@ class StudentController extends Controller
 
 //        return view('student.personal');
     }
+
 
 }

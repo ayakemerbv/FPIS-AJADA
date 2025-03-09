@@ -519,20 +519,20 @@
     <script>
         // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-        showNews();
+            showNews();
 
-        @if($errors->any())
-        openModal();
-        @endif
+            @if($errors->any())
+            openModal();
+            @endif
 
-        @if(session('successType') === 'user_created')
-        closeModal();
-        showUsers();
-        @elseif(session('successType') === 'news_created')
-        // Если надо, можно вызвать showNews() или
-        // просто оставить всё, как есть.
-        showNews();
-        @endif
+            @if(session('successType') === 'user_created')
+            closeModal();
+            showUsers();
+            @elseif(session('successType') === 'news_created')
+            // Если надо, можно вызвать showNews() или
+            // просто оставить всё, как есть.
+            showNews();
+            @endif
         });
 
 

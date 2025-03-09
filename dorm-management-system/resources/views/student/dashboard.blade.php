@@ -281,20 +281,28 @@
             <h3>Выбор комнаты</h3>
             <button class="close-btn" onclick="toggleSection('news')">&times;</button>
         </div>
-        <form class="housing-form">
+        <form class="housing-form" action="{{ route('booking.store') }}" method="POST">
+            @csrf
             <label for="building">Корпус:</label>
             <select id="building" name="building">
                 <option value="">Выберите корпус</option>
+                <option value="1">Корпус 1</option>
+                <option value="2">Корпус 2</option>
             </select>
 
             <label for="floor">Этаж:</label>
             <select id="floor" name="floor">
                 <option value="">Выберите этаж</option>
+                @for($i=1; $i<=10; $i++)
+                    <option value="{{ $i }}">{{ $i }}</option>
+                @endfor
             </select>
 
             <label for="room">Комната:</label>
             <select id="room" name="room">
                 <option value="">Выберите комнату</option>
+                <option value="101">101</option>
+                <option value="102">102</option>
             </select>
 
             <button type="submit">Заселиться</button>
@@ -308,11 +316,15 @@
 
             if (section === 'news') {
                 newsSection.classList.remove('hidden');
-                housingSidebar.classList.remove('active');
+                // Убираем .open, чтобы закрыть панель
+                housingSidebar.classList.remove('open');
             } else if (section === 'housing') {
+                // Скрываем новости
                 newsSection.classList.add('hidden');
-                housingSidebar.classList.add('active');
+                // Открываем панель
+                housingSidebar.classList.add('open');
             }
         }
+
     </script>
 @endsection

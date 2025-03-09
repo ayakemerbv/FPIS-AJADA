@@ -370,38 +370,56 @@
     {{-- Блок с личной информацией --}}
     <div class="main-content" id="personal-section">
         <h2>Личные данные</h2>
+        @if(session('success'))
+            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="personal-card">
             <div class="personal-content">
                 <div class="personal-photo">
-                    <img src="https://via.placeholder.com/180x180?text=Photo" alt="User Photo">
+                    @if(Auth::user()->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="User Photo">
+                    @else
+                        <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">
+                    @endif
                 </div>
                 <div class="personal-info">
-                    <div class="personal-name">{{Auth::user()->name}}</div>
+                    <div class="personal-name">{{ Auth::user()->name }}</div>
                     <div class="personal-status">Статус: Проживающий</div>
                     <div class="personal-location">Корпус 1, блок 2, комната 145</div>
 
-                    <form class="personal-form">
+                    <form class="personal-form"
+                          action="{{ route('student.profile.update') }}"
+                          method="POST"
+                          enctype="multipart/form-data">
+                        @csrf
                         <div>
                             <label>ID</label>
-                            <input type="text" value="28093031">
+                            <input type="text" value="{{ Auth::user()->user_id }}" disabled>
                         </div>
                         <div>
                             <label>Номер телефона</label>
-                            <input type="text" value="87007701014">
+                            <input type="text" name="phone"
+                                   value="{{ old('phone', Auth::user()->phone ?? '') }}">
                         </div>
                         <div>
                             <label>E-Mail</label>
-                            <input type="email" value={{Auth::user()->email}}>
+                            <input type="email" value="{{ Auth::user()->email }}" disabled>
                         </div>
                         <div>
                             <label>Пароль</label>
-                            <input type="password" value={{Auth::user()->password}}>
+                            <input type="password" value="{{ Auth::user()->password }}" disabled>
+                        </div>
+                        <div>
+                            <label>Фото</label>
+                            <input type="file" name="photo">
+                        </div>
+                        <div class="personal-actions" style="grid-column: 1 / span 2; text-align: right;">
+                            <button type="submit" class="btn-change">Изменить</button>
                         </div>
                     </form>
-
-                    <div class="personal-actions">
-                        <button class="btn-change">Изменить</button>
-                    </div>
                 </div>
             </div>
         </div>

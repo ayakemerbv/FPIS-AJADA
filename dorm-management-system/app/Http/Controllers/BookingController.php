@@ -1,42 +1,56 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Building;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use App\Models\Room; // Если вы используете модель Room
-// use App\Models\Booking; // Если у вас модель Booking
 
 class BookingController extends Controller
 {
+    // Сохранение заявки (студент отправляет форму)
     public function store(Request $request)
     {
-        // Валидация
         $request->validate([
-            'building_id' => 'required|exists:buildings,id', // Лучше использовать exists для проверки в БД
-            'floor'       => 'required|integer',
-            'room_id'     => 'required|exists:rooms,id',
-            'comments'    => 'nullable|string|max:255',
+            'building' => 'required|integer',
+            'floor'    => 'required|integer',
+            'room'     => 'required|integer',
         ]);
 
-        // Сохранение заявки
         Booking::create([
             'user_id'     => Auth::id(),
-            'building_id' => $request->building_id,
+            'building_id' => $request->building,
             'floor'       => $request->floor,
-            'room_id'     => $request->room_id,
-            'comments'    => $request->comments,
-            'status'      => 'pending', // Например, заявка в ожидании
+            'room_id'     => $request->room,
+            'status'      => 'pending', // по умолчанию
         ]);
 
-        return redirect()->back()->with('success', 'Заявка на заселение успешно отправлена!');
+        return redirect()->back()->with('success', 'Заявка на заселение отправлена!');
     }
-    public function create()
+
+    // Менеджер видит все заявки со статусом "pending"
+    public function indexForManager()
     {
-        $buildings = Building::all();
-        return view('booking.create', compact('buildings'));
+        $requests = Booking::where('status', 'pending')->get();
+        return view('manager.requests', compact('requests'));
     }
 
+    // Принять заявку
+    public function accept($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->status = 'accepted';
+        $booking->save();
 
+        return redirect()->back()->with('success', 'Заявка принята!');
+    }
+
+    // Отклонить заявку
+    public function reject($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->status = 'rejected';
+        $booking->save();
+
+        return redirect()->back()->with('success', 'Заявка отклонена!');
+    }
 }

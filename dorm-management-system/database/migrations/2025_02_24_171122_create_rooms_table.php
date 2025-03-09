@@ -9,11 +9,14 @@ return new class extends Migration {
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->integer('room_id')->unique();
-            $table->integer('capacity');
-            $table->integer('occupied_beds')->default(0);
+            $table->unsignedBigInteger('building_id');
+            $table->integer('floor');
+            $table->string('room_number');
+            $table->integer('capacity');       // 2, 3, 4 и т.п.
+            $table->integer('occupied_beds');  // изначально 0
             $table->timestamps();
         });
+
     }
 
     public function down()

@@ -25,35 +25,41 @@ class NewsAdminController extends Controller
     // Сохранение новости
     public function store(Request $request)
     {
+        // 1. Валидация
         $data = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
-            'image'   => 'nullable|image', // если нужно загружать картинку
+            'image'   => 'nullable|image',
         ]);
 
-        // Если загружаем картинку
+        // 2. Если есть файл
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('news_images', 'public');
             $data['image'] = $path;
         }
 
+        // 3. Создаём новость
         News::create($data);
 
-        return redirect()->route('admin.news.index')->with('success', 'Новость создана!');
+        // 4. ВАЖНО: редиректим на admin.dashboard вместо admin.news.index
+        return redirect()->route('admin.dashboard')
+            ->with('successType', 'news_created')
+            ->with('success', 'Новость создана!');
     }
+
 
     // Страница одной новости (необязательно)
     public function show($id)
     {
         $news = News::findOrFail($id);
-        return view('admin.news.show', compact('news'));
+        return view('admin.dashboard', compact('news'));
     }
 
     // Форма редактирования
     public function edit($id)
     {
         $news = News::findOrFail($id);
-        return view('admin.news.edit', compact('news'));
+        return view('admin.dashboard', compact('news'));
     }
 
     // Обновление новости
@@ -78,7 +84,7 @@ class NewsAdminController extends Controller
 
         $news->update($data);
 
-        return redirect()->route('admin.news.index')->with('success', 'Новость обновлена!');
+        return redirect()->route('admin.dashboard')->with('success', 'Новость обновлена!');
     }
 
     // Удаление
@@ -93,6 +99,6 @@ class NewsAdminController extends Controller
 
         $news->delete();
 
-        return redirect()->route('admin.news.index')->with('success', 'Новость удалена!');
+        return redirect()->route('admin.dashboard')->with('success', 'Новость удалена!');
     }
 }

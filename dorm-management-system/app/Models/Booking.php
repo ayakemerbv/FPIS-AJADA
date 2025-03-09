@@ -11,22 +11,17 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id',
-        'room_id',
         'building_id',
         'floor',
-        'comments',
+        'room_id',
         'status',
     ];
 
-    // Связь с пользователем
+    // Если нужно, связь с пользователем
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Связь с комнатой
-    public function room()
-    {
-        return $this->belongsTo(Room::class);
-    }
 }
+

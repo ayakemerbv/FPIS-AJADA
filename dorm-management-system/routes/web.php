@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PaymentController;
@@ -46,16 +47,15 @@ Route::post('/logout', [AuthController::class, 'logout'])
 //    Route::patch('/gym-bookings/{gymBooking}/cancel', [GymBookingController::class, 'cancel'])->name('gymBookings.cancel');
 //});
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('admin/dashboard', [AdminController::class, 'dashboard'])
-        ->name('admin.dashboard');
-    Route::get('/admin/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
-    Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::prefix('admin')->middleware(['auth','admin'])->group(function() {
-        Route::resource('news', NewsAdminController::class)->names('admin.news');
-    });
+Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
+    Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+
+    Route::resource('news', NewsAdminController::class)->names('admin.news');
 });
+
 
 // Менеджерская панель
 Route::middleware(['auth'])->group(function () {
@@ -67,6 +67,14 @@ Route::middleware(['auth'])->group(function () {
         }
         return view('manager.dashboard');
     })->name('manager.dashboard');
+    Route::get('/manager/requests', [BookingController::class, 'indexForManager'])
+        ->name('manager.requests');
+
+    Route::get('/manager/requests/{id}/accept', [BookingController::class, 'accept'])
+        ->name('booking.accept');
+
+    Route::get('/manager/requests/{id}/reject', [BookingController::class, 'reject'])
+        ->name('booking.reject');
 });
 
 // Студенческая панель
@@ -75,5 +83,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('student.dashboard');
     Route::get('/student/personal', [StudentController::class, 'personal'])
         ->name('student.personal');
+    Route::post('/student/profile/update', [StudentController::class, 'updateProfile'])
+        ->name('student.profile.update');
+    Route::post('/booking/store', [BookingController::class, 'store'])
+        ->middleware('auth') // студент должен быть авторизован
+        ->name('booking.store');
+
 
 });
