@@ -12,7 +12,6 @@ class AdminController extends Controller
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $users = User::all();
-
         return view('admin.dashboard', compact('users', 'newsList'));
     }
 }

@@ -12,8 +12,17 @@
             font-family: Arial, sans-serif;
             background-color: #F5F5F5;
         }
-
-        /* ОБЩИЕ СТИЛИ ДЛЯ КРУГЛЫХ ИКОНОК */
+        .icon-circle, .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
         .icon-circle i {
             font-size: 16px;
@@ -110,6 +119,7 @@
             padding: 12px 20px;
             color: #333;
             text-decoration: none;
+            cursor: pointer;
         }
         .sidebar-item:hover {
             background-color: #EFEFEF;
@@ -130,7 +140,62 @@
             margin-bottom: 20px;
             color: #4A4A4A;
         }
-
+        /* Секция вывода новостей (таблица) */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 12px;
+            border: 1px solid #DDD;
+            text-align: left;
+        }
+        .table th {
+            background-color: #F9F9F9;
+        }
+        /* Форма создания/редактирования новости */
+        .create-news-section {
+            background-color: #FFF;
+            border: 1px solid #DDD;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: bold;
+            margin-top: 8px;
+            display: block;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+            padding: 8px 16px;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 8px 16px;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
         /* СТИЛИ ДЛЯ НОВОСТЕЙ */
         .news-item {
             background-color: #B0A5D7; /* Фиолетовый */
@@ -219,9 +284,6 @@
             background-color: #F9F9F9;
             text-align: left;
         }
-
-
-
         /* Увеличенный кружок с буквой внутри меню (опционально) */
         .avatar-circle-big {
             width: 50px;
@@ -326,25 +388,100 @@
             <i class="fas fa-home"></i>
             <span>Новости</span>
         </div>
+{{--        <div class="sidebar-item" onclick="CreateNews()">--}}
+{{--            <i class="fas fa-home"></i>--}}
+{{--            <span>Создать Новости</span>--}}
+{{--        </div>--}}
+
     </div>
 
-    {{-- БЛОК НОВОСТЕЙ (по умолчанию виден) --}}
+    <!-- Секция вывода новостей (по умолчанию видна) -->
     <div class="main-content" id="news-section" style="display: block;">
-        <h2>Новости</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>Нет новостей</p>
-            @endforelse
-        @endisset
+        <div class="container">
+            <h1>Новости</h1>
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            <!-- Кнопка для показа формы создания новости -->
+            <a href="javascript:void(0)" onclick="CreateNews()" class="btn btn-primary mb-3">Создать новость</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Заголовок</th>
+                    <th>Дата</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse($newsList as $news)
+                    <tr>
+                        <td>{{ $news->title }}</td>
+                        <td>{{ $news->created_at->format('d.m.Y H:i') }}</td>
+                        <td>
+                            <!-- Изменяем кнопку редактирования на вызов функции EditNews с передачей данных новости -->
+                            <button class="btn btn-warning btn-sm" onclick='EditNews({{ $news->id }}, {!! json_encode($news->title) !!}, {!! json_encode(strip_tags($news->content)) !!})'>Редактировать</button>
+                            <form action="{{ route('admin.news.destroy', $news->id) }}" method="POST" style="display:inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3">Новостей нет</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Секция создания новости (скрыта по умолчанию) -->
+    <div class="main-content" id="create-news-section" style="display: none;">
+        <div class="container">
+            <h1>Создать новость</h1>
+            <div class="create-news-section">
+                <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <label class="form-label">Заголовок</label>
+                    <input type="text" name="title" class="form-control" required>
+
+                    <label class="form-label">Содержание</label>
+                    <textarea name="content" class="form-control" rows="5" required></textarea>
+
+                    <label class="form-label">Картинка (опционально)</label>
+                    <input type="file" name="image" class="form-control">
+
+                    <button type="submit" class="btn-success" onclick="showNews()">Создать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секция редактирования новости (скрыта по умолчанию) -->
+    <div class="main-content" id="edit-news-section" style="display: none;">
+        <div class="container">
+            <h1>Редактировать новость</h1>
+            <div class="create-news-section">
+                <form id="editNewsForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="_method" value="PUT">
+
+                    <label class="form-label">Заголовок</label>
+                    <input type="text" id="edit-title" name="title" class="form-control" required>
+
+                    <label class="form-label">Содержание</label>
+                    <textarea id="edit-content" name="content" class="form-control" rows="5" required></textarea>
+
+                    <label class="form-label">Картинка (опционально)</label>
+                    <input type="file" name="image" class="form-control">
+
+                    <button type="submit" class="btn-success" onclick="showNews()">Сохранить</button>
+                    <button type="button" class="plus-button" onclick="cancelEdit()">Отмена</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     {{-- БЛОК "ПОЛЬЗОВАТЕЛИ" (скрыт по умолчанию) --}}
@@ -353,7 +490,6 @@
             <h2>Список пользователей</h2>
             <button class="plus-button" onclick="openModal()">+</button>
         </div>
-
         <!-- Фильтр / поиск -->
         <div class="user-filter">
             <input type="text" placeholder="ID">
@@ -411,53 +547,20 @@
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
                 <label class="form-label">ФИО</label>
-                <input
-                    type="text"
-                    name="name"
-                    class="form-control"
-                    value="{{ old('name') }}"
-                    required
-                >
-
+                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
                 <label class="form-label">ID</label>
-                <input
-                    type="text"
-                    name="user_id"
-                    class="form-control"
-                    value="{{ old('user_id') }}"
-                    required
-                >
-
+                <input type="text" name="user_id" class="form-control" value="{{ old('user_id') }}" required>
                 <label class="form-label">E-mail</label>
-                <input
-                    type="email"
-                    name="email"
-                    class="form-control"
-                    value="{{ old('email') }}"
-                    required
-                >
-
+                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
                 <label class="form-label">Пароль</label>
-                <input
-                    type="password"
-                    name="password"
-                    class="form-control"
-                    required
-                >
-
+                <input type="password" name="password" class="form-control" required>
                 <label class="form-label">Роль</label>
-                <select
-                    name="role"
-                    class="form-control"
-                >
+                <select name="role" class="form -control">
                     <option value="student" @if(old('role') === 'student') selected @endif>Студент</option>
                     <option value="manager" @if(old('role') === 'manager') selected @endif>Менеджер</option>
-                    <option value="admin"   @if(old('role') === 'admin')   selected @endif>Админ</option>
+                    <option value="admin" @if(old('role') === 'admin') selected @endif>Админ</option>
                 </select>
-
-                <button type="submit" class="btn-success" style="margin-top: 10px;">
-                    Создать
-                </button>
+                <button type="submit" class="btn-success" style="margin-top: 10px;">Создать</button>
             </form>
         </div>
     </div>
@@ -481,20 +584,45 @@
 
         function showUsers() {
             document.getElementById('news-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
             document.getElementById('users-section').style.display = 'block';
         }
 
         function showNews() {
-            document.getElementById('news-section').style.display = 'block';
             document.getElementById('users-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('news-section').style.display = 'block';
         }
 
-        // Открыть модалку
+        function CreateNews() {
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'block';
+        }
+
+        function EditNews(id, title, content) {
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'block';
+            document.getElementById('edit-title').value = title;
+            document.getElementById('edit-content').value = content;
+            // Обновляем action формы редактирования для нужного id новости
+            document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
+        }
+
+        function cancelEdit() {
+            document.getElementById('edit-news-section').style.display = 'none';
+            showNews();
+        }
+
         function openModal() {
             document.getElementById('modalOverlay').style.display = 'flex';
         }
 
-        // Закрыть модалку
         function closeModal() {
             document.getElementById('modalOverlay').style.display = 'none';
         }

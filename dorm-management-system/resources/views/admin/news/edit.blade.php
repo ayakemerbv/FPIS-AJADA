@@ -12,7 +12,7 @@
 
         <form action="{{ route('admin.news.update', $news->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')  {{-- Обязательно указываем метод PUT для обновления --}}
+            @method('PUT')   Обязательно указываем метод PUT для обновления
 
             <div class="mb-3">
                 <label class="form-label">Заголовок</label>

@@ -194,6 +194,47 @@
         .logout-form button:hover {
             text-decoration: underline;
         }
+        /* Стили боковой панели */
+        .housing-sidebar {
+            position: fixed;
+            right: -320px;
+            top: 60px;
+            width: 300px;
+            height: calc(100vh - 60px);
+            background-color: #FFF;
+            border-left: 1px solid #DDD;
+            padding: 20px;
+            transition: right 0.3s ease-in-out;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .housing-sidebar.open {
+            right: 0;
+        }
+        .housing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .close-btn {
+            cursor: pointer;
+            font-size: 20px;
+            border: none;
+            background: none;
+        }
+        .housing-form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .housing-form select, .housing-form button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none !important;
+        }
     </style>
 
     {{-- ВЕРХНЯЯ ПАНЕЛЬ --}}
@@ -201,9 +242,13 @@
 
     {{-- ЛЕВАЯ ПАНЕЛЬ --}}
     <div class="sidebar">
-        <div class="sidebar-item">
+        <div class="sidebar-item" onclick="toggleSection('news')">
             <i class="fas fa-home"></i>
             <span>Лента</span>
+        </div>
+        <div class="sidebar-item" onclick="toggleSection('housing')">
+            <i class="fas fa-bed"></i>
+            <span>Проживание</span>
         </div>
         <div class="sidebar-item">
             <i class="fas fa-store"></i>
@@ -211,18 +256,14 @@
         </div>
     </div>
 
-    {{-- ОСНОВНОЙ КОНТЕНТ --}}
-    <div class="main-content">
+    {{-- Раздел новостей --}}
+    <div class="main-content" id="news-section">
         <h2>Новости</h2>
-
-        {{-- Если есть переменная $newsList, выводим новости --}}
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
                     @if($news->image)
-{{--                        <img src="{{ asset('storage/app/public/' . $news->image) }}" alt="News Image">--}}
                         <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-
                     @endif
                     <h3>{{ $news->title }}</h3>
                     <p>{{ $news->content }}</p>
@@ -233,4 +274,45 @@
             @endforelse
         @endisset
     </div>
+
+    {{-- Боковая панель заявки на проживание --}}
+    <div class="housing-sidebar" id="housing-sidebar">
+        <div class="housing-header">
+            <h3>Выбор комнаты</h3>
+            <button class="close-btn" onclick="toggleSection('news')">&times;</button>
+        </div>
+        <form class="housing-form">
+            <label for="building">Корпус:</label>
+            <select id="building" name="building">
+                <option value="">Выберите корпус</option>
+            </select>
+
+            <label for="floor">Этаж:</label>
+            <select id="floor" name="floor">
+                <option value="">Выберите этаж</option>
+            </select>
+
+            <label for="room">Комната:</label>
+            <select id="room" name="room">
+                <option value="">Выберите комнату</option>
+            </select>
+
+            <button type="submit">Заселиться</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleSection(section) {
+            const newsSection = document.getElementById('news-section');
+            const housingSidebar = document.getElementById('housing-sidebar');
+
+            if (section === 'news') {
+                newsSection.classList.remove('hidden');
+                housingSidebar.classList.remove('active');
+            } else if (section === 'housing') {
+                newsSection.classList.add('hidden');
+                housingSidebar.classList.add('active');
+            }
+        }
+    </script>
 @endsection

@@ -9,47 +9,24 @@ class Booking extends Model
 {
     use HasFactory;
 
-    // Константы для статусов бронирования
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_CONFIRMED = 'confirmed';
-    public const STATUS_CANCELLED = 'cancelled';
-
     protected $fillable = [
-        'student_id',
+        'user_id',
         'room_id',
-        'booking_date',
+        'building_id',
+        'floor',
+        'comments',
         'status',
     ];
 
-    /**
-     * Связь с моделью Student (бронирование принадлежит студенту)
-     */
-    public function student()
+    // Связь с пользователем
+    public function user()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(User::class);
     }
 
-    /**
-     * Связь с моделью Room (бронирование относится к комнате)
-     */
+    // Связь с комнатой
     public function room()
     {
-        return $this->belongsTo(Room::class, 'room_id');
-    }
-
-    /**
-     * Подтвердить бронирование
-     */
-    public function confirm()
-    {
-        $this->update(['status' => self::STATUS_CONFIRMED]);
-    }
-
-    /**
-     * Отменить бронирование
-     */
-    public function cancel()
-    {
-        $this->update(['status' => self::STATUS_CANCELLED]);
+        return $this->belongsTo(Room::class);
     }
 }

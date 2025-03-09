@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Student;
 
-use App\Models\News; // Если ты хочешь выводить новости
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\News;
+
+// Если ты хочешь выводить новости
 
 class StudentController extends Controller
 {

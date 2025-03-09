@@ -2,16 +2,13 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\NewsAdminController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
-use App\Http\Controllers\GymBookingController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Student\StudentController;
+use Illuminate\Support\Facades\Route;
 
 
 //Route::get('/', [HomeController::class, 'index'])->name('home');
