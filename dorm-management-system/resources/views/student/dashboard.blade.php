@@ -283,26 +283,19 @@
         </div>
         <form class="housing-form" action="{{ route('booking.store') }}" method="POST">
             @csrf
-            <label for="building">Корпус:</label>
-            <select id="building" name="building">
+            <select name="building_id" id="building">
                 <option value="">Выберите корпус</option>
-                <option value="1">Корпус 1</option>
-                <option value="2">Корпус 2</option>
+                @foreach($buildings as $building)
+                    <option value="{{ $building->id }}">{{ $building->name }}</option>
+                @endforeach
             </select>
 
-            <label for="floor">Этаж:</label>
-            <select id="floor" name="floor">
-                <option value="">Выберите этаж</option>
-                @for($i=1; $i<=10; $i++)
-                    <option value="{{ $i }}">{{ $i }}</option>
-                @endfor
+            <select name="floor" id="floor" disabled>
+                <option value="">Сначала выберите корпус</option>
             </select>
 
-            <label for="room">Комната:</label>
-            <select id="room" name="room">
-                <option value="">Выберите комнату</option>
-                <option value="101">101</option>
-                <option value="102">102</option>
+            <select name="room_id" id="room" disabled>
+                <option value="">Сначала выберите этаж</option>
             </select>
 
             <button type="submit">Заселиться</button>
@@ -311,20 +304,105 @@
 
     <script>
         function toggleSection(section) {
+            console.log("Функция toggleSection вызвана:", section);
             const newsSection = document.getElementById('news-section');
             const housingSidebar = document.getElementById('housing-sidebar');
 
-            if (section === 'news') {
-                newsSection.classList.remove('hidden');
-                // Убираем .open, чтобы закрыть панель
-                housingSidebar.classList.remove('open');
-            } else if (section === 'housing') {
-                // Скрываем новости
-                newsSection.classList.add('hidden');
-                // Открываем панель
+            if (!newsSection || !housingSidebar) {
+                console.error("ID не найден.");
+                return;
+            }
+
+            if (section === 'housing') {
+                console.log("Открываем sidebar 'housing'");
                 housingSidebar.classList.add('open');
+                newsSection.classList.add('hidden');
+            } else {
+                console.log("Закрываем sidebar 'housing'");
+                housingSidebar.classList.remove('open');
+                newsSection.classList.remove('hidden');
             }
         }
 
+        document.addEventListener("DOMContentLoaded", function () {
+            const buildingSelect = document.getElementById("building");
+            const floorSelect = document.getElementById("floor");
+            const roomSelect = document.getElementById("room");
+
+            async function loadFloors(buildingId) {
+                if (!buildingId) {
+                    floorSelect.innerHTML = '<option value="">Сначала выберите корпус</option>';
+                    floorSelect.disabled = true;
+                    return;
+                }
+
+                try {
+                    console.log(`Загружаем этажи для корпуса ID: ${buildingId}`);
+                    const response = await fetch(`/floors/${buildingId}`);
+                    const data = await response.json();
+                    console.log("Этажи:", data);
+
+                    if (!data || data.length === 0) {
+                        floorSelect.innerHTML = '<option value="">Нет доступных этажей</option>';
+                        floorSelect.disabled = true;
+                        return;
+                    }
+
+                    floorSelect.innerHTML = '<option value="">Выберите этаж</option>';
+                    data.forEach(floor => {
+                        floorSelect.innerHTML += `<option value="${floor}">${floor}</option>`;
+                    });
+                    floorSelect.disabled = false;
+                } catch (error) {
+                    console.error("Ошибка загрузки этажей:", error);
+                }
+            }
+
+            async function loadRooms(buildingId, floor) {
+                if (!floor) {
+                    roomSelect.innerHTML = '<option value="">Сначала выберите этаж</option>';
+                    roomSelect.disabled = true;
+                    return;
+                }
+
+                try {
+                    console.log(`Загружаем комнаты для корпуса ID: ${buildingId}, этаж: ${floor}`);
+                    const response = await fetch(`/rooms/${buildingId}/${floor}`);
+                    const data = await response.json();
+                    console.log("Комнаты:", data);
+
+                    if (!data || data.length === 0) {
+                        roomSelect.innerHTML = '<option value="">Нет доступных комнат</option>';
+                        roomSelect.disabled = true;
+                        return;
+                    }
+
+                    roomSelect.innerHTML = '<option value="">Выберите комнату</option>';
+                    data.forEach(room => {
+                        roomSelect.innerHTML += `<option value="${room.id}">${room.room_number}</option>`;
+                    });
+
+                    roomSelect.disabled = false;
+                } catch (error) {
+                    console.error("Ошибка загрузки комнат:", error);
+                }
+            }
+
+            // Добавляем обработчики событий
+            buildingSelect.addEventListener("change", function () {
+                const buildingId = this.value;
+                loadFloors(buildingId);
+                roomSelect.innerHTML = '<option value="">Сначала выберите этаж</option>';
+                roomSelect.disabled = true;
+            });
+
+            floorSelect.addEventListener("change", function () {
+                const buildingId = buildingSelect.value;
+                const floor = this.value;
+                loadRooms(buildingId, floor);
+            });
+        });
+
     </script>
+
 @endsection

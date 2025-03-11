@@ -12,8 +12,8 @@ class RoomController extends Controller
     {
         $rooms = Room::where('building_id', $request->building_id)
             ->where('floor', $request->floor)
-            ->where('available_beds', '>', 0)
-            ->get(['id', 'room_number', 'available_beds']);
+            ->whereRaw('capacity > occupied_places') // Проверяем свободные места
+            ->get(['id', 'room_number', \DB::raw('(capacity - occupied_places) as available_beds')]);
 
         return response()->json($rooms);
     }

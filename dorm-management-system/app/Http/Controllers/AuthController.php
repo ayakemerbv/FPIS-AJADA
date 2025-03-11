@@ -23,6 +23,8 @@ class AuthController extends Controller
 //        if (Auth::attempt($credentials)) {
 //            return redirect()->route('admin.users.create'); // После входа перенаправляем на регистрацию юзера
 //        }
+        \Log::info('Попытка входа', ['email' => $request->email, 'password' => $request->password]);
+
         if (\Auth::attempt($credentials)) {
             // Пользователь авторизован
             $user = \Auth::user();
@@ -50,3 +52,4 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 }
+

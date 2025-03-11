@@ -85,6 +85,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('student.personal');
     Route::post('/student/profile/update', [StudentController::class, 'updateProfile'])
         ->name('student.profile.update');
+    // Загрузка этажей и доступных комнат для бронирования
+    Route::get('/floors/{building_id}', [BookingController::class, 'getFloors'])
+        ->middleware('auth')
+        ->name('booking.getFloors');
+
+    Route::get('/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])
+        ->middleware('auth')
+        ->name('booking.getRooms');
     Route::post('/booking/store', [BookingController::class, 'store'])
         ->middleware('auth') // студент должен быть авторизован
         ->name('booking.store');

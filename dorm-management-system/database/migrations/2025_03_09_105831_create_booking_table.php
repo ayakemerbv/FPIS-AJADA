@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('building_id');
-            $table->integer('floor');
             $table->unsignedBigInteger('room_id');
-            $table->string('status')->default('pending'); // pending, accepted, rejected
+            $table->integer('floor');
+            $table->enum('status', ['pending', 'accepted', 'rejected', 'checked_in', 'checked_out'])->default('pending');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // Если есть таблица buildings/rooms, добавьте внешние ключи
+            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
         });
 
         // Пример связей (если хотите настроить внешние ключи)
