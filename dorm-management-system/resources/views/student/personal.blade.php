@@ -321,28 +321,28 @@
             <span>Главная</span>
         </div>
         <a class="sidebar-item" onclick="showPersonal()">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-user-circle"></i>
             <span>Личная информация</span>
         </a>
 
         <div class="sidebar-item">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-building"></i>
             <span>Проживание</span>
         </div>
         <div class="sidebar-item">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-folder-open"></i>
             <span>Документы</span>
         </div>
         <div class="sidebar-item">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-credit-card"></i>
             <span>Финансовый кабинет</span>
         </div>
         <div class="sidebar-item">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-wrench"></i>
             <span>Запросы на ремонт</span>
         </div>
         <div class="sidebar-item">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-trophy"></i>
             <span>Запись на занятия физкультурой</span>
         </div>
 

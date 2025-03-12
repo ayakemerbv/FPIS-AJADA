@@ -9,9 +9,16 @@ class Building extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'address', 'floors'];
+    // Если у вас в миграции столбцы называются "name", "address", "floors_count"
+    protected $fillable = [
+        'name',
+        'address',
+        'floors_count',
+    ];
 
-    // Связь с комнатами (Один корпус содержит много комнат)
+    /**
+     * Один корпус (Building) содержит много комнат (Room).
+     */
     public function rooms()
     {
         return $this->hasMany(Room::class);

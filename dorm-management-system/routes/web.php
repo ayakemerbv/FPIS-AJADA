@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -56,23 +57,14 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::resource('news', NewsAdminController::class)->names('admin.news');
 });
 
-
 // Менеджерская панель
 Route::middleware(['auth'])->group(function () {
-    // Можно сделать своё middleware 'manager', но пока проверим внутри
-    Route::get('/manager/dashboard', function() {
-        // Проверка, что role == 'manager'
-        if (Auth::user()->role !== 'manager') {
-            return redirect('/')->with('error','Нет доступа!');
-        }
-        return view('manager.dashboard');
-    })->name('manager.dashboard');
+    Route::get('/manager/dashboard', [ManagerController::class, 'dashboard'])
+        ->name('manager.dashboard');
     Route::get('/manager/requests', [BookingController::class, 'indexForManager'])
         ->name('manager.requests');
-
     Route::get('/manager/requests/{id}/accept', [BookingController::class, 'accept'])
         ->name('booking.accept');
-
     Route::get('/manager/requests/{id}/reject', [BookingController::class, 'reject'])
         ->name('booking.reject');
 });

@@ -9,20 +9,18 @@ use Illuminate\Support\Facades\Storage;
 
 class NewsAdminController extends Controller
 {
-    // Список новостей
+
     public function index()
     {
         $newsList = News::orderBy('created_at', 'desc')->get();
         return view('admin.news.index', compact('newsList'));
     }
 
-    // Форма создания новости
     public function create()
     {
         return view('admin.news.create');
     }
 
-    // Сохранение новости
     public function store(Request $request)
     {
         // 1. Валидация
@@ -32,37 +30,32 @@ class NewsAdminController extends Controller
             'image'   => 'nullable|image',
         ]);
 
-        // 2. Если есть файл
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('news_images', 'public');
             $data['image'] = $path;
         }
 
-        // 3. Создаём новость
         News::create($data);
 
-        // 4. ВАЖНО: редиректим на admin.dashboard вместо admin.news.index
         return redirect()->route('admin.dashboard')
             ->with('successType', 'news_created')
             ->with('success', 'Новость создана!');
     }
 
-
-    // Страница одной новости (необязательно)
     public function show($id)
     {
         $news = News::findOrFail($id);
         return view('admin.dashboard', compact('news'));
     }
 
-    // Форма редактирования
+
     public function edit($id)
     {
         $news = News::findOrFail($id);
         return view('admin.dashboard', compact('news'));
     }
 
-    // Обновление новости
+
     public function update(Request $request, $id)
     {
         $news = News::findOrFail($id);
@@ -87,7 +80,7 @@ class NewsAdminController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Новость обновлена!');
     }
 
-    // Удаление
+
     public function destroy($id)
     {
         $news = News::findOrFail($id);

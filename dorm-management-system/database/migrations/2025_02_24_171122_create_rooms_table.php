@@ -9,14 +9,12 @@ return new class extends Migration {
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('building_id');
-            $table->integer('floor');
-            $table->string('room_number');
-            $table->integer('capacity'); // Всего мест в комнате
-            $table->integer('occupied_places')->default(0); // Занятые места
+            $table->foreignId('building_id')->constrained('buildings'); // связь с buildings
+            $table->integer('floor');         // номер этажа
+            $table->integer('room_number');   // номер комнаты
+            $table->integer('capacity');      // вместимость
+            $table->integer('occupied_places')->default(0); // занятые места
             $table->timestamps();
-
-            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
         });
 
 

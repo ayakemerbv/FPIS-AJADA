@@ -82,11 +82,6 @@
             display: block;
         }
 
-        .avatar-name {
-            font-weight: bold;
-            color: #4A4A4A;
-            margin-bottom: 8px;
-        }
         .avatar-dropdown a {
             display: block;
             text-decoration: none;
@@ -176,7 +171,7 @@
             background-color: #218838;
         }
         .btn-primary {
-            background-color: #007bff;
+            background-color: #7e57c2;
             border: none;
             padding: 8px 16px;
             color: #fff;
@@ -185,13 +180,13 @@
             text-decoration: none;
         }
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #6f42c1;
         }
 
         /* ========== СТИЛИ ДЛЯ НОВОСТЕЙ ========== */
         .news-item {
             background-color: #B0A5D7; /* Фиолетовый */
-            padding: 35px;
+            padding: 27px;
             color: #fff;
             max-width: 1200px;
             height: 250px;
@@ -214,7 +209,7 @@
             opacity: 0.9;
         }
 
-        /* Заголовок + кнопка \"+\" */
+        /* Заголовок + кнопка "+" */
         .heading-row {
             display: flex;
             align-items: center;
@@ -222,7 +217,7 @@
             margin-bottom: 1rem;
         }
         .heading-row h2 {
-            font-size: 1.2rem;
+            font-size: 2rem;
             color: #4A4A4A;
         }
         .plus-button {
@@ -328,24 +323,50 @@
 
     <!-- САЙДБАР -->
     <div class="sidebar">
+        <!-- Кнопка "Главная" -> показывает #see-news-section -->
+        <div class="sidebar-item" onclick="seeNews()">
+            <i class="fas fa-home"></i>
+            <span>Лента</span>
+        </div>
+        <!-- Кнопка "Новости" -> показывает #news-section (CRUD новостей) -->
+        <div class="sidebar-item" onclick="showNews()">
+            <i class="fas fa-newspaper"></i>
+            <span>Новости</span>
+        </div>
+        <!-- Кнопка "Пользователи" -->
         <div class="sidebar-item" onclick="showUsers()">
             <i class="fas fa-user"></i>
             <span>Пользователи</span>
         </div>
-        <div class="sidebar-item" onclick="showNews()">
-            <i class="fas fa-home"></i>
-            <span>Новости</span>
-        </div>
-        <div class="sidebar-item">
-            <i class="fas fa-store"></i>
-            <span>Купи-Продай</span>
+        <div class="sidebar-item" onclick="showRequests()">
+            <i class="fas fa-bars"></i>
+            <span>Заявки</span>
         </div>
     </div>
 
-    <!-- СЕКЦИЯ НОВОСТЕЙ (по умолчанию видна) -->
-    <div class="main-content" id="news-section" style="display: block;">
+    <!-- Блок с новостями (ЛЕНТА) -->
+    <div class="main-content" id="see-news-section" style="display: none;">
+        <h2>Новости</h2>
+        @isset($newsList)
+            @forelse($newsList as $news)
+                <div class="news-item">
+                    @if($news->image)
+                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
+                    @endif
+                    <h3>{{ $news->title }}</h3>
+                    <p>{{ $news->content }}</p>
+                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
+                </div>
+            @empty
+                <p>Нет новостей</p>
+            @endforelse
+        @endisset
+    </div>
+
+    <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
+    <div class="main-content" id="news-section" style="display: none;">
         <div class="container">
-            <h1>Новости</h1>
+            <h2>Управление новостями</h2>
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -375,7 +396,7 @@
                                   method="POST" style="display:inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')" >Удалить</button>
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')">Удалить</button>
                             </form>
                         </td>
                     </tr>
@@ -390,7 +411,7 @@
     <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
     <div class="main-content" id="create-news-section" style="display: none;">
         <div class="container">
-            <h1>Создать новость</h1>
+            <h2>Создать новость</h2>
             <div class="create-news-section">
                 <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -403,7 +424,7 @@
                     <label class="form-label">Картинка (опционально)</label>
                     <input type="file" name="image" class="form-control">
 
-                    <button type="submit" class="btn-success" >Создать</button>
+                    <button type="submit" class="btn-success">Создать</button>
                 </form>
             </div>
         </div>
@@ -412,7 +433,7 @@
     <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
     <div class="main-content" id="edit-news-section" style="display: none;">
         <div class="container">
-            <h1>Редактировать новость</h1>
+            <h2>Редактировать новость</h2>
             <div class="create-news-section">
                 <form id="editNewsForm" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -427,7 +448,7 @@
                     <label class="form-label">Картинка (опционально)</label>
                     <input type="file" name="image" class="form-control">
 
-                    <button type="submit" class="btn-success" >Сохранить</button>
+                    <button type="submit" class="btn-success">Сохранить</button>
                     <button type="button" class="plus-button" onclick="cancelEdit()">Отмена</button>
                 </form>
             </div>
@@ -515,11 +536,53 @@
             </form>
         </div>
     </div>
+    <div class="main-content" id="request-section" style="display: none;">
+        <h2>Заявки на заселение</h2>
 
+        @if(session('success'))
+            <div style="background-color: #d4edda; color: #155724; padding: 10px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>Студент</th>
+                <th>Корпус</th>
+                <th>Этаж</th>
+                <th>Комната</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($requests as $req)
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td>{{ $req->user->name }}</td>
+                    <td>{{ $req->building->name}}</td>
+                    <td>{{ $req->floor }}</td>
+                    <td>{{ $req->room->room_number }}</td>
+                    <td>{{ $req->status }}</td>
+                    <td>
+                        <a href="{{ route('booking.accept', $req->id) }}"
+                           style="color: green; text-decoration: none; margin-right: 10px;">
+                            Принять
+                        </a>
+                        <a href="{{ route('booking.reject', $req->id) }}"
+                           style="color: red; text-decoration: none;">
+                            Отклонить
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
     <script>
-        // При загрузке страницы
+        // По умолчанию: "Главная" -> seeNews()
         document.addEventListener('DOMContentLoaded', function() {
-            showNews();
+            seeNews();
 
             @if($errors->any())
             openModal();
@@ -529,54 +592,84 @@
             closeModal();
             showUsers();
             @elseif(session('successType') === 'news_created')
-            // Если надо, можно вызвать showNews() или
-            // просто оставить всё, как есть.
             showNews();
             @endif
         });
 
-
-        function showUsers() {
+        // "Главная" (Лента) -> показываем #see-news-section
+        function seeNews() {
+            // Показываем ленту
+            document.getElementById('see-news-section').style.display = 'block';
+            document.getElementById('request-section').style.display = 'none';
+            // Скрываем всё остальное
             document.getElementById('news-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'block';
-        }
-
-        function showNews() {
             document.getElementById('users-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
+        }
+
+        // "Новости" (CRUD) -> показываем #news-section
+        function showNews() {
+            document.getElementById('see-news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'none';
             document.getElementById('news-section').style.display = 'block';
         }
 
+        // "Пользователи"
+        function showUsers() {
+            document.getElementById('see-news-section').style.display = 'none';
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'block';
+        }
+
+        // Кнопка "Создать новость"
         function CreateNews() {
             document.getElementById('news-section').style.display = 'none';
+            document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('users-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'block';
         }
 
+        // Кнопка "Редактировать"
         function EditNews(id, title, content) {
             document.getElementById('news-section').style.display = 'none';
+            document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('users-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'block';
+            document.getElementById('request-section').style.display = 'none';
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
-            // Меняем action формы редактирования
             document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
         }
+        function showRequests() {
+            document.getElementById('see-news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'block';
+        }
 
+
+        // Кнопка "Отмена" (редактирование)
         function cancelEdit() {
             document.getElementById('edit-news-section').style.display = 'none';
             showNews();
         }
 
+        // Модальное окно (создание пользователя)
         function openModal() {
             document.getElementById('modalOverlay').style.display = 'flex';
         }
-
         function closeModal() {
             document.getElementById('modalOverlay').style.display = 'none';
         }

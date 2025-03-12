@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('buildings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('address');
-            $table->integer('floors');
+            $table->string('name');         // имя/название здания
+            $table->string('address');      // адрес (или location)
+            $table->integer('floors_count'); // кол-во этажей
             $table->timestamps();
         });
+
 
     }
 
