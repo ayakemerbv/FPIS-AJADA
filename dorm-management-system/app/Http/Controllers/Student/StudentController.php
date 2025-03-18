@@ -24,7 +24,8 @@ class StudentController extends Controller
     public function personal()
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
-        return view('student.personal', compact('newsList'));
+        $buildings = Building::all();
+        return view('student.personal', compact('newsList','buildings'));
     }
 
     public function updateProfile(Request $request)

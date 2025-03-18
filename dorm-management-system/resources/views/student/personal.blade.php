@@ -539,8 +539,6 @@
             </form>
         </div>
     </div>
-
-    <!-- Проживание -->
     <!-- Проживание -->
     <div class="main-content" id="housing-section">
         <h2>Проживание</h2>
@@ -565,6 +563,39 @@
             <button class="btn-finance">Проверить финансовый кабинет</button>
         </div>
     </div>
+    <!-- Модальное окно для смены комнаты -->
+    <div class="modal-overlay" id="changeRoomModal" style="display: none;">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeChangeRoomModal()">&times;</button>
+            <h2>Заявка на смену комнаты</h2>
+
+            <!-- Форма для смены комнаты -->
+            <form action="{{ route('booking.changeRoom') }}" method="POST">
+                @csrf
+                <label for="buildingSelect">Корпус:</label>
+                <select id="buildingSelect" name="building_id">
+                    <option value="">Выберите корпус</option>
+                    <!-- Тут подставьте свои здания -->
+                    @foreach($buildings as $b)
+                        <option value="{{ $b->id }}">{{ $b->name }}</option>
+                    @endforeach
+                </select>
+
+                <label for="floorSelect">Этаж:</label>
+                <select id="floorSelect" name="floor" disabled>
+                    <option value="">Сначала выберите корпус</option>
+                </select>
+
+                <label for="roomSelect">Комната:</label>
+                <select id="roomSelect" name="room_id" disabled>
+                    <option value="">Сначала выберите этаж</option>
+                </select>
+
+                <button type="submit" class="btn-change">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // При загрузке страницы показываем "Главная" или "Личная информация"?
         // Пусть по умолчанию показываем главную (новости).
