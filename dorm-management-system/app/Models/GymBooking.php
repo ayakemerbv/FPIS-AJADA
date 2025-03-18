@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GymBooking extends Model
 {
@@ -26,7 +27,7 @@ class GymBooking extends Model
     /**
      * Связь с пользователем (студентом)
      */
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_id');
     }
@@ -34,16 +35,44 @@ class GymBooking extends Model
     /**
      * Подтвердить бронирование спортзала
      */
-    public function confirm()
+    public function confirm(): void
     {
-        $this->update(['status' => self::STATUS_CONFIRMED]);
+        if ($this->status !== self::STATUS_CONFIRMED) {
+            $this->update(['status' => self::STATUS_CONFIRMED]);
+        }
     }
 
     /**
      * Отменить бронирование спортзала
      */
-    public function cancel()
+    public function cancel(): void
     {
-        $this->update(['status' => self::STATUS_CANCELLED]);
+        if ($this->status !== self::STATUS_CANCELLED) {
+            $this->update(['status' => self::STATUS_CANCELLED]);
+        }
+    }
+
+    /**
+     * Проверка, является ли текущее бронирование подтвержденным
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->status === self::STATUS_CONFIRMED;
+    }
+
+    /**
+     * Проверка, является ли текущее бронирование отмененным
+     */
+    public function isCancelled(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
+    }
+
+    /**
+     * Проверка, может ли студент редактировать бронирование
+     */
+    public function canBeModifiedBy($user): bool
+    {
+        return $user->id === $this->student_id || $user->isAdmin();
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\GymBookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\Manager\ManagerController;
@@ -80,4 +81,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::post('/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
+    Route::post('/sports', [GymBookingController::class, 'store'])->name('sports.store');
+    // routes/web.php
+    Route::delete('/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
+
 });

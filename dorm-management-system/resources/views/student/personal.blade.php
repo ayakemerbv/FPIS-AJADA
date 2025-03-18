@@ -382,6 +382,24 @@
         .close-button:hover {
             color: #666;
         }
+        /* Блок для формы записи на спорт */
+        .sports-form, .sports-result {
+            background-color: #FFF;
+            border: 1px solid #DDD;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .sports-form select, .sports-form input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .sports-form button {
+            margin-right: 10px;
+        }
 
     </style>
 
@@ -413,8 +431,8 @@
             <i class="fas fa-wrench"></i>
             <span>Запросы на ремонт</span>
         </div>
-        <div class="sidebar-item">
-            <i class="fas fa-trophy"></i>
+        <div class="sidebar-item" onclick="showSportsBooking()">
+            <i class="fas fa-dumbbell"></i>
             <span>Запись на занятия физкультурой</span>
         </div>
 
@@ -595,8 +613,71 @@
             </form>
         </div>
     </div>
+    <!-- БЛОК "ЗАПИСЬ НА ЗАНЯТИЯ ФИЗКУЛЬТУРОЙ" -->
+    <div class="main-content" id="sports-section" style="display: none;">
+        <h2>Запись на занятия физкультурой</h2>
 
+        {{-- Проверяем, есть ли в сессии данные о записи --}}
+        @php
+            $booking = session('sportBooking');
+            // Или, если храните в БД, тогда:
+            // $booking = \App\Models\GymBooking::where('user_id', Auth::id())->first();
+        @endphp
+
+        @if($booking)
+            <!-- ВАРИАНТ 2: Показываем результат (после записи) -->
+            <div class="sports-result" id="sportsResultBlock">
+                <h3>Вы записаны на занятие</h3>
+                <p>Вид спорта: <strong>{{ $booking['sport'] }}</strong>,
+                    Время: <strong>{{ $booking['time'] }}</strong></p>
+                <!-- Кнопка "Отменить" -->
+                <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-change">Отменить?</button>
+                </form>
+            </div>
+        @else
+            <!-- ВАРИАНТ 1: Показываем форму записи (до записи) -->
+            <div class="sports-form" id="sportsFormBlock">
+                <h3>Заявка на занятие физкультурой</h3>
+
+                @if(session('success'))
+                    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
+                    @csrf
+                    <label for="sport">Вид спорта</label>
+                    <select name="sport" id="sport" required>
+                        <option value="">-- Выберите вид спорта --</option>
+                        <option value="Танцы">Танцы</option>
+                        <option value="Баскетбол">Баскетбол</option>
+                        <option value="Волейбол">Волейбол</option>
+                        <!-- ... -->
+                    </select>
+
+                    <label for="time">Выберите время</label>
+                    <input type="time" name="time" id="time" required>
+
+                    <button type="submit" class="btn-change">Записаться</button>
+                    <button type="button" class="btn-change" onclick="cancelSportsForm()">Отменить</button>
+                </form>
+            </div>
+        @endif
+    </div>
     <script>
+        function cancelSportsForm() {
+            document.getElementById('sport').value = '';
+            document.getElementById('time').value = '';
+
+        }
+        function showSportsBooking() {
+            hideAllSections();
+            document.getElementById('sports-section').style.display = 'block';
+        }
         // При загрузке страницы показываем "Главная" или "Личная информация"?
         // Пусть по умолчанию показываем главную (новости).
         document.addEventListener('DOMContentLoaded', function() {
@@ -606,6 +687,7 @@
             document.getElementById('news-section').style.display = 'none';
             document.getElementById('housing-section').style.display = 'none';
             document.getElementById('personal-section').style.display = 'none';
+            document.getElementById('sports-section').style.display = 'none';
         }
         function showNews() {
             hideAllSections()
