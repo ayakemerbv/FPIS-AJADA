@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Building;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +46,6 @@ class BookingController extends Controller
         }
 
 
-
-
         $room = Room::findOrFail($request->room_id);
 
         if ($room->occupied_places >= $room->capacity) {
@@ -71,7 +68,8 @@ class BookingController extends Controller
     // Менеджер видит все заявки в своём общежитии
     public function indexForManager()
     {
-        $requests = Booking::where('status', 'pending')->get();
+        $requests = Booking::with(['user','building','room'])->whereIn('status', ['pending','pending_change'])
+            ->get();
 
         return view('manager.requests', compact('requests'));
     }
@@ -84,6 +82,17 @@ class BookingController extends Controller
 
         if ($room->occupied_places >= $room->capacity) {
             return redirect()->back()->with('error', 'Мест в комнате больше нет!');
+        }
+        elseif ($booking->status === 'pending') {
+            // Обычная заявка на заселение
+            $booking->status = 'accepted';
+            $booking->save();
+            // ... логика «заселения» (можно увеличить occupied_places и т.п.) ...
+        } elseif ($booking->status === 'pending_change') {
+            // Заявка на смену комнаты
+            $booking->status = 'accepted_change';
+            $booking->save();
+            // ... логика: «выселить» из старой комнаты, заселить в новую ...
         }
 
         DB::transaction(function () use ($booking, $room) {
@@ -104,6 +113,27 @@ class BookingController extends Controller
         $booking->update(['status' => 'rejected']);
 
         return redirect()->back()->with('success', 'Заявка отклонена!');
+    }
+    public function changeRoom(Request $request)
+    {
+        $request->validate([
+            'building_id' => 'required|exists:buildings,id',
+            'floor'       => 'required|integer',
+            'room_id'     => 'required|exists:rooms,id',
+        ]);
+
+        // Создаём заявку на «смену комнаты»,
+        // можно завести поле типа (change_room) или status = 'pending_change' и т.д.
+        Booking::create([
+            'user_id'     => Auth::id(),
+            'building_id' => $request->building_id,
+            'floor'       => $request->floor,
+            'room_id'     => $request->room_id,
+            'status'      => 'pending_change', // например, так
+            // Или завести поле 'type' => 'change'
+        ]);
+
+        return redirect()->back()->with('success', 'Заявка на смену комнаты отправлена!');
     }
 }
 

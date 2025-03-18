@@ -2,101 +2,6 @@
 
 @section('content')
     <style>
-        /* ========== СБРОС И ОБЩИЕ СТИЛИ ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F5F5F5;
-        }
-
-        /* ========== КРУГЛЫЕ ИКОНОКИ ========== */
-        .icon-circle,
-        .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .icon-circle i,
-        .avatar-circle i {
-            font-size: 16px;
-        }
-        .avatar-circle {
-            background-color: #6f42c1; /* Фиолетовый */
-            font-weight: bold;
-        }
-
-        /* ========== ВЕРХНЯЯ ПАНЕЛЬ ========== */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            padding: 0 20px;
-            background-color: #FFF;
-            border-bottom: 1px solid #DDD;
-        }
-        .top-nav .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #4A4A4A;
-        }
-        .top-nav .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* ========== АВАТАР + ВСПЛЫВАЮЩЕЕ МЕНЮ ========== */
-        .avatar-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        .avatar-dropdown {
-            display: none;
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            width: 160px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 999;
-            text-align: center;
-        }
-        .avatar-wrapper:hover .avatar-dropdown {
-            display: block;
-        }
-
-        .avatar-name {
-            font-weight: bold;
-            color: #4A4A4A;
-            margin-bottom: 8px;
-        }
-        .avatar-dropdown a {
-            display: block;
-            text-decoration: none;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        .avatar-dropdown a:hover {
-            text-decoration: underline;
-        }
 
         /* ========== ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) ========== */
         .sidebar {
@@ -222,17 +127,19 @@
             margin-bottom: 1rem;
         }
         .heading-row h2 {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #4A4A4A;
         }
         .plus-button {
             background-color: #7e57c2;
             color: #fff;
             border: none;
-            padding: 8px 16px;
+            padding: 5px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 1rem;
+            margin-right: 1000px;
+
         }
         .plus-button:hover {
             background-color: #6f42c1;
@@ -324,6 +231,60 @@
         .close-button:hover {
             color: #666;
         }
+        /* ========== ДЕТАЛИ ПОЛЬЗОВАТЕЛЯ (скрытая секция) ========== */
+        .user-details-section {
+            display: none;
+        }
+        .user-details-card {
+            background-color: #FFF;
+            border: 1px solid #DDD;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .user-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .user-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-info {
+            flex: 1;
+        }
+        .user-info h2 {
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+        .status {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .user-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .user-form label {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .user-form input {
+            padding: 8px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+        }
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
     </style>
 
     <!-- САЙДБАР -->
@@ -336,9 +297,9 @@
             <i class="fas fa-home"></i>
             <span>Новости</span>
         </div>
-        <div class="sidebar-item">
-            <i class="fas fa-store"></i>
-            <span>Купи-Продай</span>
+        <div class="sidebar-item" onclick="showRequests()">
+            <i class="fas fa-bars"></i>
+            <span>Заявки</span>
         </div>
     </div>
 
@@ -441,12 +402,13 @@
             <button class="plus-button" onclick="openModal()">+</button>
         </div>
         <!-- Фильтр / поиск -->
-        <div class="user-filter">
-            <input type="text" placeholder="ID">
-            <input type="text" placeholder="ФИО">
-            <input type="text" placeholder="E-mail">
-            <input type="text" placeholder="Статус">
-        </div>
+        <form method="GET" action="{{ route('admin.users.index') }}" class="user-filter">
+            <input type="text" name="filter_id" placeholder="ID" value="{{ request('filter_id') }}">
+            <input type="text" name="filter_name" placeholder="ФИО" value="{{ request('filter_name') }}">
+            <input type="text" name="filter_email" placeholder="E-mail" value="{{ request('filter_email') }}">
+            <input type="text" name="filter_role" placeholder="Статус" value="{{ request('filter_role') }}">
+            <button type="submit" class="btn-primary">Поиск</button>
+        </form>
 
         <!-- Таблица пользователей -->
         <table class="users-table">
@@ -461,8 +423,16 @@
             <tbody>
             @forelse($users as $user)
                 <tr>
+
                     <td>{{ $user->user_id }}</td>
-                    <td>{{ $user->name }}</td>
+                    <!-- Делаем имя кликабельным, при клике -> viewUserDetail({{ $user->id }}) -->
+                    <td>
+                        <a href="javascript:void(0)"
+                           style="text-decoration: none; color: #333;"
+                           onclick="viewUserDetail({{ $user->id }})">
+                            {{ $user->name }}
+                        </a>
+                    </td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->role }}</td>
                 </tr>
@@ -473,6 +443,64 @@
         </table>
     </div>
 
+    <!-- ДЕТАЛИ ПОЛЬЗОВАТЕЛЯ (скрытая секция) -->
+    <div class="main-content user-details-section" id="user-details-section" style="display: none;">
+        <h2>Личные данные пользователя</h2>
+        <div class="user-details-card">
+            <!-- Фото -->
+            <div class="user-photo" id="user-photo">
+                <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">
+            </div>
+            <!-- Информация -->
+            <div class="user-info">
+                <h2 id="detail-name">Имя Фамилия</h2>
+                <div class="status">Статус: <span id="detail-role"></span></div>
+                <p>Корпус 1, этаж 2, комната 145 (пример)</p>
+
+                <!-- Форма обновления -->
+                <form id="userUpdateForm" class="user-form" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="_method" value="PUT">
+
+                    <div>
+                        <label>ID</label>
+                        <input type="text" name="user_id" id="detail-user_id">
+                    </div>
+                    <div>
+                        <label>Телефон</label>
+                        <input type="text" name="phone" id="detail-phone">
+                    </div>
+                    <div>
+                        <label>E-mail</label>
+                        <input type="email" name="email" id="detail-email">
+                    </div>
+                    <div>
+                        <label>Пароль</label>
+                        <input type="password" disabled value="********">
+                        <!-- Кнопка "Изменить пароль" => Можно сделать модалкой -->
+                    </div>
+                    <div>
+                        <label>Фото</label>
+                        <input type="file" name="photo">
+                    </div>
+
+                    <div class="actions" style="grid-column: 1 / span 2;">
+                        <button type="submit" class="btn-success">Сохранить изменения</button>
+                    </div>
+                </form>
+
+                <!-- Кнопка "Удалить пользователя" -->
+                <form id="userDeleteForm" style="margin-top: 10px;">
+                    @csrf
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-danger"
+                            onclick="return confirm('Точно удалить?')">
+                        Удалить пользователя
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- МОДАЛЬНОЕ ОКНО (создание пользователя) -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
@@ -494,13 +522,13 @@
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
                 <label class="form-label">ФИО</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+                <input type="text" name="name" class="form-control" required>
 
                 <label class="form-label">ID</label>
-                <input type="text" name="user_id" class="form-control" value="{{ old('user_id') }}" required>
+                <input type="text" name="user_id" class="form-control" value="{{ old('user_id', $user->user_id ?? '') }}" required>
 
                 <label class="form-label">E-mail</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
+                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email ?? '') }}" required>
 
                 <label class="form-label">Пароль</label>
                 <input type="password" name="password" class="form-control" required>
@@ -515,7 +543,49 @@
             </form>
         </div>
     </div>
+    <div class="main-content" id="request-section" style="display: none;">
+        <h2>Заявки на заселение</h2>
 
+        @if(session('success'))
+            <div style="background-color: #d4edda; color: #155724; padding: 10px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>Студент</th>
+                <th>Корпус</th>
+                <th>Этаж</th>
+                <th>Комната</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($requests as $req)
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <td>{{ $req->user->name }}</td>
+                    <td>{{ $req->building->name}}</td>
+                    <td>{{ $req->floor }}</td>
+                    <td>{{ $req->room->room_number }}</td>
+                    <td>{{ $req->status }}</td>
+                    <td>
+                        <a href="{{ route('booking.accept', $req->id) }}"
+                           style="color: green; text-decoration: none; margin-right: 10px;">
+                            Принять
+                        </a>
+                        <a href="{{ route('booking.reject', $req->id) }}"
+                           style="color: red; text-decoration: none;">
+                            Отклонить
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
     <script>
         // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
@@ -529,43 +599,44 @@
         closeModal();
         showUsers();
         @elseif(session('successType') === 'news_created')
-        // Если надо, можно вызвать showNews() или
-        // просто оставить всё, как есть.
         showNews();
         @endif
         });
 
-
-        function showUsers() {
+        function hideAllSections() {
+            document.getElementById('users-section').style.display = 'none';
             document.getElementById('news-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'none';
+            document.getElementById('user-details-section').style.display = 'none';
+        }
+        function showUsers() {
+            hideAllSections();
             document.getElementById('users-section').style.display = 'block';
         }
 
         function showNews() {
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
+            hideAllSections();
             document.getElementById('news-section').style.display = 'block';
         }
 
         function CreateNews() {
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
+            hideAllSections();
             document.getElementById('create-news-section').style.display = 'block';
         }
 
         function EditNews(id, title, content) {
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
+            hideAllSections();
             document.getElementById('edit-news-section').style.display = 'block';
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
-            // Меняем action формы редактирования
             document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
+        }
+        function showRequests() {
+            hideAllSections();
+            document.getElementById('request-section').style.display = 'block';
         }
 
         function cancelEdit() {
@@ -579,6 +650,50 @@
 
         function closeModal() {
             document.getElementById('modalOverlay').style.display = 'none';
+        }
+        // Показать детальную информацию о пользователе (через AJAX)
+        async function viewUserDetail(userId) {
+            hideAllSections();
+
+            // Пример: GET-запрос на admin/users/{id}/json (создайте такой маршрут!)
+            // Или используйте admin.users.show => верните JSON
+            let url = '/admin/users/' + userId + '/json'; // Пример
+            try {
+                let response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке пользователя');
+                }
+                let data = await response.json();
+
+                // Заполняем поля в user-details-section
+                document.getElementById('detail-name').textContent = data.name || '';
+                document.getElementById('detail-role').textContent = data.role || '';
+
+                // Фото
+                if (data.photo) {
+                    document.getElementById('user-photo').innerHTML =
+                        `<img src="/storage/${data.photo}" alt="User Photo">`;
+                } else {
+                    document.getElementById('user-photo').innerHTML =
+                        `<img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">`;
+                }
+
+                // Заполняем форму
+                document.getElementById('detail-user_id').value = data.user_id || '';
+                document.getElementById('detail-phone').value = data.phone || '';
+                document.getElementById('detail-email').value = data.email || '';
+
+                // Настраиваем action форм
+                document.getElementById('userUpdateForm').action = '/admin/users/' + data.id;
+                document.getElementById('userDeleteForm').action = '/admin/users/' + data.id;
+
+                // Показываем секцию
+                document.getElementById('user-details-section').style.display = 'block';
+            } catch (error) {
+                alert(error.message);
+                // Можете вернуть в секцию пользователей
+                showUsers();
+            }
         }
     </script>
 @endsection

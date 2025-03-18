@@ -2,96 +2,7 @@
 
 @section('content')
     <style>
-        /* ========== СБРОС И ОБЩИЕ СТИЛИ ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F5F5F5;
-        }
 
-        /* ========== КРУГЛЫЕ ИКОНОКИ ========== */
-        .icon-circle,
-        .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .icon-circle i,
-        .avatar-circle i {
-            font-size: 16px;
-        }
-        .avatar-circle {
-            background-color: #6f42c1; /* Фиолетовый */
-            font-weight: bold;
-        }
-
-        /* ========== ВЕРХНЯЯ ПАНЕЛЬ ========== */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            padding: 0 20px;
-            background-color: #FFF;
-            border-bottom: 1px solid #DDD;
-        }
-        .top-nav .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #4A4A4A;
-        }
-        .top-nav .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* ========== АВАТАР + ВСПЛЫВАЮЩЕЕ МЕНЮ ========== */
-        .avatar-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        .avatar-dropdown {
-            display: none;
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            width: 160px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 999;
-            text-align: center;
-        }
-        .avatar-wrapper:hover .avatar-dropdown {
-            display: block;
-        }
-
-        .avatar-dropdown a {
-            display: block;
-            text-decoration: none;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        .avatar-dropdown a:hover {
-            text-decoration: underline;
-        }
 
         /* ========== ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) ========== */
         .sidebar {
@@ -183,31 +94,6 @@
             background-color: #6f42c1;
         }
 
-        /* ========== СТИЛИ ДЛЯ НОВОСТЕЙ ========== */
-        .news-item {
-            background-color: #B0A5D7; /* Фиолетовый */
-            padding: 27px;
-            color: #fff;
-            max-width: 1200px;
-            height: 250px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .news-item h3 {
-            margin-bottom: 10px;
-            color: #fff;
-        }
-        .news-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .news-item small {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
 
         /* Заголовок + кнопка "+" */
         .heading-row {
@@ -392,7 +278,7 @@
                                     onclick='EditNews({{ $news->id }}, {!! json_encode($news->title) !!}, {!! json_encode(strip_tags($news->content)) !!})'>
                                 Редактировать
                             </button>
-                            <form action="{{ route('admin.news.destroy', $news->id) }}"
+                            <form action="{{ route('manager.news.destroy', $news->id) }}"
                                   method="POST" style="display:inline-block">
                                 @csrf
                                 @method('DELETE')
@@ -413,7 +299,7 @@
         <div class="container">
             <h2>Создать новость</h2>
             <div class="create-news-section">
-                <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('manager.news.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <label class="form-label">Заголовок</label>
                     <input type="text" name="title" class="form-control" required>
@@ -512,7 +398,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.users.store') }}" method="POST">
+            <form action="{{ route('manager.users.store') }}" method="POST">
                 @csrf
                 <label class="form-label">ФИО</label>
                 <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
@@ -536,6 +422,7 @@
             </form>
         </div>
     </div>
+
     <div class="main-content" id="request-section" style="display: none;">
         <h2>Заявки на заселение</h2>
 

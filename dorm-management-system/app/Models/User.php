@@ -57,5 +57,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class, 'user_id');
     }
+    // app/Models/User.php
+
+    public function acceptedBooking()
+    {
+        // Предположим, что поле 'status' в таблице 'bookings' может быть:
+        // 'pending', 'accepted', 'rejected' и т.п.
+        return $this->hasOne(\App\Models\Booking::class, 'user_id')
+            ->where('status', 'accepted');
+    }
+
 
 }

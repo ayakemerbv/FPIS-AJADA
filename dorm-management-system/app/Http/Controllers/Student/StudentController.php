@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
@@ -55,4 +57,42 @@ class StudentController extends Controller
     {
         return view('student.profile');
     }
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        // Правила валидации зависят от того, что вы хотите обновлять
+        $request->validate([
+            'phone'                 => 'nullable|string|max:255',
+            'photo'                 => 'nullable|image|max:2048',
+            'current_password'      => 'required_with:new_password',
+            'new_password'          => 'nullable|confirmed|min:6',
+        ]);
+
+        // Обновляем телефон
+        if ($request->filled('phone')) {
+            $user->phone = $request->phone;
+        }
+
+        // Обновляем пароль, если передан new_password
+        if ($request->filled('new_password')) {
+            // Проверяем текущий пароль
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Текущий пароль введён неверно.']);
+            }
+            // Записываем новый
+            $user->password = Hash::make($request->new_password);
+        }
+
+        // Обновляем фото
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('photos', 'public');
+            $user->photo = $path;
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Данные успешно обновлены!');
+    }
+
 }

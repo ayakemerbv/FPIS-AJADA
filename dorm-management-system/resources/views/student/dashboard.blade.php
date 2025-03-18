@@ -2,105 +2,6 @@
 
 @section('content')
     <style>
-        /* СБРОС */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F5F5F5;
-        }
-
-        /* ОБЩИЕ СТИЛИ ДЛЯ КРУГЛЫХ ИКОНОК */
-        .icon-circle, .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .icon-circle i {
-            font-size: 16px;
-        }
-        .avatar-circle {
-            background-color: #6f42c1; /* Фиолетовый */
-            font-weight: bold;
-        }
-
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            padding: 0 20px;
-            background-color: #FFF;
-            border-bottom: 1px solid #DDD;
-        }
-        .top-nav .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #4A4A4A;
-        }
-        /* Если есть логотип-изображение, раскомментируй:
-        .top-nav .logo img {
-            height: 40px;
-        } */
-        .top-nav .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* ОБЁРТКА ДЛЯ АВАТАРА И МЕНЮ */
-        .avatar-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        /* Меню скрыто по умолчанию */
-        .avatar-dropdown {
-            display: none;
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            width: 160px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 999;
-            text-align: center;
-        }
-        /* При наведении на .avatar-wrapper показываем меню */
-        .avatar-wrapper:hover .avatar-dropdown {
-            display: block;
-        }
-
-        .avatar-name {
-            font-weight: bold;
-            color: #4A4A4A;
-            margin-bottom: 8px;
-        }
-        .avatar-dropdown a {
-            display: block;
-            text-decoration: none;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        .avatar-dropdown a:hover {
-            text-decoration: underline;
-        }
 
         /* ЛЕВАЯ ПАНЕЛЬ */
         .sidebar {
@@ -141,42 +42,16 @@
             color: #4A4A4A;
         }
 
-        /* СТИЛИ ДЛЯ НОВОСТЕЙ */
-        .news-item {
-            background-color: #B0A5D7; /* Фиолетовый */
-            padding: 35px;
-            color: #fff;
-            max-width: 1200px; /* или 200px, на твой вкус */
-            height: 250px;     /* сохраняем пропорции */
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .news-item h3 {
-            margin-bottom: 10px;
-            color: #fff;
-        }
-        .news-item img {
-            width: 100px;       /* Force a wide width */
-            height: 100px;      /* Make it half as tall => "landscape" shape */
-            object-fit: cover;  /* Crop edges if the ratio doesn't match exactly */
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .news-item small {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
         /* Увеличенный кружок с буквой внутри меню (опционально) */
         .avatar-circle-big {
-            width: 50px;
-            height: 50px;
-            font-size: 25px;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            margin-bottom: 8px;
+            /*flex-direction: column;*/
+            margin-bottom: 11px;
         }
 
         /* Кнопка выхода (с иконкой) */
