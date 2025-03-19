@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GymBooking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GymBookingController extends Controller
 {
@@ -16,30 +17,43 @@ class GymBookingController extends Controller
     {
         return GymBooking::with('student')->paginate(10);
     }
+    public function showSportsPage()
+    {
+        $booking = GymBooking::where('user_id', auth()->id())->first();
+
+        return view('sports.page', ['booking' => $booking]);
+    }
+
 
     public function store(Request $request)
     {
         // Валидация
         $validated = $request->validate([
             'sport' => 'required|string',
-            'time'  => 'required', // time or datetime
+            'day' => 'required|array',
+            'day.*' => 'in:Понедельник,Вторник,Среда,Четверг,Пятница,Суббота,Воскресенье',
+            'time'  => 'required|date_format:H:i',
         ]);
 
-        // Сохраняем в базу, например:
-        // SportsBooking::create([
-        //     'user_id' => Auth::id(),
-        //     'sport'   => $validated['sport'],
-        //     'time'    => $validated['time'],
-        //     // ... статус, ...
-        // ]);
+        // Проверяем, есть ли уже запись
+        $existingBooking = GymBooking::where('user_id', Auth::id())->first();
+        if ($existingBooking) {
+            return redirect()->back()->with('error', 'Вы уже записаны на занятие.');
+        }
 
-        // Или просто сохраняем в сессию (упрощённо), чтобы отобразить на экране:
-        session()->put('sportBooking', [
+        // Сохраняем дни в виде строки
+        $daysString = implode(',', $validated['day']);
+
+        // Создаём запись
+        GymBooking::create([
+            'user_id' => Auth::id(),
             'sport' => $validated['sport'],
-            'time'  => $validated['time'],
+            'day' => $daysString, // сохраняем как строку
+            'scheduled_time' => $validated['time'],
+            'status' => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Вы успешно записались на ' . $validated['sport']);
+        return redirect()->back()->with('success', 'Вы успешно записаны на занятие.');
     }
 
     public function confirm(GymBooking $gymBooking)
@@ -54,13 +68,14 @@ class GymBookingController extends Controller
 
     public function cancel()
     {
-        // Если в сессии:
-        session()->forget('sportBooking');
+        $booking = GymBooking::where('user_id', Auth::id())->first();
 
-        // Если в БД, тогда найти запись и удалить/обновить:
-        // $booking = GymBooking::where('user_id', Auth::id())->first();
-        // if ($booking) { $booking->delete(); }
+        if ($booking) {
+            $booking->delete();
+            return redirect()->back()->with('success', 'Вы отменили запись на занятие.');
+        }
 
-        return redirect()->back()->with('success', 'Вы отменили запись на занятие.');
+        return redirect()->back()->with('error', 'У вас нет активной записи.');
     }
+
 }

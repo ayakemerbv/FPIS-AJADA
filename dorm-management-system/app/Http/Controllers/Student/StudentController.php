@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Models\GymBooking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,15 +18,16 @@ class StudentController extends Controller
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all(); // Загружаем список корпусов
-
         return view('student.dashboard', compact('newsList', 'buildings'));
     }
+
 
     public function personal()
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all();
-        return view('student.personal', compact('newsList','buildings'));
+        $booking = GymBooking::where('user_id', Auth::id())->first();
+        return view('student.personal', compact('newsList','buildings', 'booking'));
     }
 
     public function updateProfile(Request $request)

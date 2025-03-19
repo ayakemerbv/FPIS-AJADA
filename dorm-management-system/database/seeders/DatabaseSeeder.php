@@ -13,9 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([
+        $this->call([BuildingRoomSeeder::class]);
+        $this->call(AdminSeeder::class);
 
-            BuildingRoomSeeder::class
-        ]);
     }
 }

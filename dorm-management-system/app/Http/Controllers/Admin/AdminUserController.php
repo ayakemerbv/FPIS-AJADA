@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -25,13 +26,22 @@ class AdminUserController extends Controller
             'role' => 'required|in:student,manager,admin'
         ]);
 
-        User::create([
+        $user=User::create([
             'name' => $request->name,
             'user_id' => $request->user_id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role
         ]);
+
+        if ($user->role === 'student') {
+            Student::create([
+                'user_id' => $user->id,
+                'student_id' => $user->id, // Если student_id = user_id
+                'room_id' => null, // Пока нет комнаты, обновится позже
+            ]);
+        }
+
 
         return redirect()->route('admin.dashboard')
             ->with('successType', 'user_created')

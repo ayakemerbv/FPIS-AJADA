@@ -14,11 +14,8 @@ class GymBooking extends Model
     public const STATUS_CONFIRMED = 'confirmed';
     public const STATUS_CANCELLED = 'cancelled';
 
-    protected $fillable = [
-        'student_id',
-        'scheduled_time',
-        'status',
-    ];
+    protected $fillable = ['user_id', 'sport', 'day', 'scheduled_time', 'status'];
+
 
     protected $casts = [
         'scheduled_time' => 'datetime',
@@ -27,9 +24,9 @@ class GymBooking extends Model
     /**
      * Связь с пользователем (студентом)
      */
-    public function student(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -69,10 +66,10 @@ class GymBooking extends Model
     }
 
     /**
-     * Проверка, может ли студент редактировать бронирование
+     * Проверка, может ли пользователь редактировать бронирование
      */
     public function canBeModifiedBy($user): bool
     {
-        return $user->id === $this->student_id || $user->isAdmin();
+        return $user->id === $this->user_id || ($user->role ?? '') === 'admin';
     }
 }

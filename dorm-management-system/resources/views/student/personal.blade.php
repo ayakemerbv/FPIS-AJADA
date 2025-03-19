@@ -1,3 +1,4 @@
+@php use App\Models\GymBooking; @endphp
 @extends('layouts.app')
 
 @section('content')
@@ -348,6 +349,7 @@
         .modal-content {
             background: #fff;
             width: 400px;
+            height: 350px;
             padding: 20px;
             border-radius: 8px;
             position: relative;
@@ -372,7 +374,7 @@
         }
         .close-button {
             position: absolute;
-            top: 10px;
+            top: 0px;
             right: 10px;
             background: none;
             border: none;
@@ -384,6 +386,8 @@
         }
         /* Блок для формы записи на спорт */
         .sports-form, .sports-result {
+            width: 700px;
+            /*height: 350px;*/
             background-color: #FFF;
             border: 1px solid #DDD;
             border-radius: 8px;
@@ -617,19 +621,14 @@
     <div class="main-content" id="sports-section" style="display: none;">
         <h2>Запись на занятия физкультурой</h2>
 
-        {{-- Проверяем, есть ли в сессии данные о записи --}}
-        @php
-            $booking = session('sportBooking');
-            // Или, если храните в БД, тогда:
-            // $booking = \App\Models\GymBooking::where('user_id', Auth::id())->first();
-        @endphp
-
         @if($booking)
-            <!-- ВАРИАНТ 2: Показываем результат (после записи) -->
+            <!-- ВАРИАНТ 2: Показываем результат (если пользователь записан) -->
             <div class="sports-result" id="sportsResultBlock">
                 <h3>Вы записаны на занятие</h3>
-                <p>Вид спорта: <strong>{{ $booking['sport'] }}</strong>,
-                    Время: <strong>{{ $booking['time'] }}</strong></p>
+                <p>Вид спорта: <strong>{{ $booking->sport }}</strong>,
+                    День недели: <strong>{{ $booking->day }}</strong>,
+                    Время: <strong>{{ $booking->scheduled_time }}</strong></p>
+
                 <!-- Кнопка "Отменить" -->
                 <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
                     @csrf
@@ -638,7 +637,7 @@
                 </form>
             </div>
         @else
-            <!-- ВАРИАНТ 1: Показываем форму записи (до записи) -->
+            <!-- ВАРИАНТ 1: Показываем форму записи (если пользователь не записан) -->
             <div class="sports-form" id="sportsFormBlock">
                 <h3>Заявка на занятие физкультурой</h3>
 
@@ -656,8 +655,19 @@
                         <option value="Танцы">Танцы</option>
                         <option value="Баскетбол">Баскетбол</option>
                         <option value="Волейбол">Волейбол</option>
-                        <!-- ... -->
+                        <option value="Волейбол">Футбол</option>
                     </select>
+
+                    <label for="day">Выберите день недели</label>
+                    <div id="day-selection">
+                        <label><input type="checkbox" name="day[]" value="Понедельник"> Понедельник</label>
+                        <label><input type="checkbox" name="day[]" value="Вторник"> Вторник</label>
+                        <label><input type="checkbox" name="day[]" value="Среда"> Среда</label>
+                        <label><input type="checkbox" name="day[]" value="Четверг"> Четверг</label>
+                        <label><input type="checkbox" name="day[]" value="Пятница"> Пятница</label>
+                        <label><input type="checkbox" name="day[]" value="Суббота"> Суббота</label>
+                        <label><input type="checkbox" name="day[]" value="Воскресенье"> Воскресенье</label>
+                    </div>
 
                     <label for="time">Выберите время</label>
                     <input type="time" name="time" id="time" required>
@@ -668,6 +678,7 @@
             </div>
         @endif
     </div>
+
     <script>
         function cancelSportsForm() {
             document.getElementById('sport').value = '';
@@ -678,6 +689,7 @@
             hideAllSections();
             document.getElementById('sports-section').style.display = 'block';
         }
+
         // При загрузке страницы показываем "Главная" или "Личная информация"?
         // Пусть по умолчанию показываем главную (новости).
         document.addEventListener('DOMContentLoaded', function() {

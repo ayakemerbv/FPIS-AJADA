@@ -81,8 +81,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::post('/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
-    Route::post('/sports', [GymBookingController::class, 'store'])->name('sports.store');
-    // routes/web.php
+    Route::post('/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
     Route::delete('/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
+    Route::get('/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
+
 
 });
