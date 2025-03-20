@@ -247,7 +247,7 @@
                     console.log("Комнаты:", data);
 
                     if (!data || data.length === 0) {
-                        roomSelect.innerHTML = '<option value="">Нет доступных комнат</option>';
+                        roomSelect  .innerHTML = '<option value="">Нет доступных комнат</option>';
                         roomSelect.disabled = true;
                         return;
                     }

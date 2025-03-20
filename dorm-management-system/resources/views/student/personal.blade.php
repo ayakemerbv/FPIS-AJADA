@@ -431,7 +431,7 @@
             <i class="fas fa-coins"></i>
             <span>Финансовый кабинет</span>
         </div>
-        <div class="sidebar-item">
+        <div class="sidebar-item" onclick = "showRequestRepair()">
             <i class="fas fa-wrench"></i>
             <span>Запросы на ремонт</span>
         </div>
@@ -617,6 +617,62 @@
             </form>
         </div>
     </div>
+
+    <div class="main-content" id="request-repair" style="display: none;">
+        <h2>RUSTEM TEST1</h2>
+
+        {{-- Проверяем, есть ли в сессии данные о записи --}}
+        @php
+            $booking = session('sportBooking');
+            // Или, если храните в БД, тогда:
+            // $booking = \App\Models\GymBooking::where('user_id', Auth::id())->first();
+        @endphp
+
+        @if($booking)
+            <!-- ВАРИАНТ 2: Показываем результат (после записи) -->
+            <div class="sports-result" id="sportsResultBlock">
+                <h3>Вы записаны на занятие</h3>
+                <p>Вид спорта: <strong>{{ $booking['sport'] }}</strong>,
+                    Время: <strong>{{ $booking['time'] }}</strong></p>
+                <!-- Кнопка "Отменить" -->
+                <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-change">Отменить?</button>
+                </form>
+            </div>
+        @else
+            <!-- ВАРИАНТ 1: Показываем форму записи (до записи) -->
+            <div class="sports-form" id="sportsFormBlock">
+                <h3>Заявка на ремонт</h3>
+
+                @if(session('success'))
+                    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
+                    @csrf
+                    <label for="sport">Вид спорта</label>
+                    <select name="sport" id="sport" required>
+                        <option value="">-- Выберите вид спорта --</option>
+                        <option value="Танцы">Танцы</option>
+                        <option value="Баскетбол">Баскетбол</option>
+                        <option value="Волейбол">Волейбол</option>
+                        <!-- ... -->
+                    </select>
+
+                    <label for="time">Выберите время</label>
+                    <input type="time" name="time" id="time" required>
+
+                    <button type="submit" class="btn-change">Записаться</button>
+                    <button type="button" class="btn-change" onclick="cancelSportsForm()">Отменить</button>
+                </form>
+            </div>
+        @endif
+    </div>
+
     <!-- БЛОК "ЗАПИСЬ НА ЗАНЯТИЯ ФИЗКУЛЬТУРОЙ" -->
     <div class="main-content" id="sports-section" style="display: none;">
         <h2>Запись на занятия физкультурой</h2>
@@ -685,6 +741,12 @@
             document.getElementById('time').value = '';
 
         }
+
+        function showRequestRepair() {
+            hideAllSections();
+            document.getElementById('request-repair').style.display = 'block';
+        }
+
         function showSportsBooking() {
             hideAllSections();
             document.getElementById('sports-section').style.display = 'block';
