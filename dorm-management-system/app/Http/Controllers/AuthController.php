@@ -37,6 +37,8 @@ class AuthController extends Controller
                     return redirect()->route('manager.dashboard'); // маршрут для менеджера
                 case 'student':
                     return redirect()->route('student.dashboard'); // маршрут для студента
+                case 'employee':
+                    return redirect()->route('employee.dashboard');
                 default:
                     return redirect('/'); // или другая страница по умолчанию
             }

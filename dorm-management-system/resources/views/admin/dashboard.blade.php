@@ -525,10 +525,10 @@
                 <input type="text" name="name" class="form-control" required>
 
                 <label class="form-label">ID</label>
-                <input type="text" name="user_id" class="form-control" value="{{ old('user_id', $user->user_id ?? '') }}" required>
+                <input type="text" name="user_id" class="form-control" value="..." required>
 
                 <label class="form-label">E-mail</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email ?? '') }}" required>
+                <input type="email" name="email" class="form-control" value="..." required>
 
                 <label class="form-label">Пароль</label>
                 <input type="password" name="password" class="form-control" required>
@@ -537,6 +537,7 @@
                 <select name="role" class="form-control">
                     <option value="student" @if(old('role') === 'student') selected @endif>Студент</option>
                     <option value="manager" @if(old('role') === 'manager') selected @endif>Менеджер</option>
+                    <option value="employee" @if(old('role') === 'employee') selected @endif>Сотрудник</option>
                     <option value="admin" @if(old('role') === 'admin') selected @endif>Админ</option>
                 </select>
                 <button type="submit" class="btn-success" style="margin-top: 10px;">Создать</button>

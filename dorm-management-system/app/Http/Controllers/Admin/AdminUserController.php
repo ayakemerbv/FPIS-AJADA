@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +24,8 @@ class AdminUserController extends Controller
             'user_id' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required|in:student,manager,admin'
+            'role' => 'required|in:student,manager,admin,employee',
+            'job_type' => 'nullable|string|max:255',
         ]);
 
         $user=User::create([
@@ -39,6 +41,14 @@ class AdminUserController extends Controller
                 'user_id' => $user->id,
                 'student_id' => $user->id, // Если student_id = user_id
                 'room_id' => null, // Пока нет комнаты, обновится позже
+            ]);
+        }
+        elseif ($user->role === 'employee') {
+            Employee::create([
+                'user_id' => $user->id,
+                'employee_id' => $user->id,
+                'name' => $user->name,
+                'job_type' => $request->job_type ?? 'Не указано',
             ]);
         }
 

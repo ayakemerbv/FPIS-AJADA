@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GymBookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Manager\ManagerUserController;
 use App\Http\Controllers\Manager\NewsManagerController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +86,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
     Route::delete('/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
     Route::get('/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
+// Запросы на ремонты
+    Route::get('student/personal/create-request', [RequestController::class, 'create'])->name('request.create');
+    Route::post('student/personal', [RequestController::class, 'store'])->name('request.store');
+    Route::get('student/personal/requests', [RequestController::class, 'index'])->name('request.index');
+    Route::get('student/personal/requests/{id}', [RequestController::class, 'show'])->name('request.show');
+    Route::get('student/personal/requests/{id}/edit', [RequestController::class, 'edit'])->name('request.edit');
+    Route::put('student/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
+    Route::delete('student/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
+// Employee dashboard
+    Route::middleware(['auth', ])->group(function () {
+        Route::get('employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
+        Route::get('employee/dashboard/requests', [EmployeeController::class, 'requests'])->name('employee.requests');
+        Route::get('employee/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
+        Route::get('employee/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
+        Route::put('employee/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
 
-
+    });
 });

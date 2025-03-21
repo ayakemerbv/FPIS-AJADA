@@ -404,6 +404,26 @@
         .sports-form button {
             margin-right: 10px;
         }
+        .btn-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3b82f6; /* Синий цвет */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 220px;
+            text-align: center;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-nav:hover {
+            background-color: #2563eb; /* Чуть темнее при наведении */
+            transform: scale(1.05);
+        }
 
     </style>
 
@@ -618,60 +638,30 @@
         </div>
     </div>
 
-    <div class="main-content" id="request-repair" style="display: none;">
-        <h2>RUSTEM TEST1</h2>
-
-        {{-- Проверяем, есть ли в сессии данные о записи --}}
-        @php
-            $booking = session('sportBooking');
-            // Или, если храните в БД, тогда:
-            // $booking = \App\Models\GymBooking::where('user_id', Auth::id())->first();
-        @endphp
-
-        @if($booking)
-            <!-- ВАРИАНТ 2: Показываем результат (после записи) -->
-            <div class="sports-result" id="sportsResultBlock">
-                <h3>Вы записаны на занятие</h3>
-                <p>Вид спорта: <strong>{{ $booking['sport'] }}</strong>,
-                    Время: <strong>{{ $booking['time'] }}</strong></p>
-                <!-- Кнопка "Отменить" -->
-                <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-change">Отменить?</button>
-                </form>
-            </div>
-        @else
-            <!-- ВАРИАНТ 1: Показываем форму записи (до записи) -->
-            <div class="sports-form" id="sportsFormBlock">
-                <h3>Заявка на ремонт</h3>
-
-                @if(session('success'))
-                    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
-                        {{ session('success') }}
+    <div class="flex space-x-6 items-start main-content" id="request-repair" style="display: none;">
+        <div class="row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Создать запрос на ремонт</strong></h2>
+                        <p class="card-text">Заполните форму и отправьте заявку на ремонт. Мы рассмотрим ваш запрос в ближайшее время.</p>
+                        <a href="{{route('request.create')}}" class="btn btn-primary mt-3">Создать запрос</a>
                     </div>
-                @endif
-
-                <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
-                    @csrf
-                    <label for="sport">Вид спорта</label>
-                    <select name="sport" id="sport" required>
-                        <option value="">-- Выберите вид спорта --</option>
-                        <option value="Танцы">Танцы</option>
-                        <option value="Баскетбол">Баскетбол</option>
-                        <option value="Волейбол">Волейбол</option>
-                        <!-- ... -->
-                    </select>
-
-                    <label for="time">Выберите время</label>
-                    <input type="time" name="time" id="time" required>
-
-                    <button type="submit" class="btn-change">Записаться</button>
-                    <button type="button" class="btn-change" onclick="cancelSportsForm()">Отменить</button>
-                </form>
+                </div>
             </div>
-        @endif
+
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title"><strong>Мои запросы</strong></h2>
+                        <p class="card-text">Просмотрите статус ваших заявок на ремонт, отслеживайте их выполнение и получайте обновления.</p>
+                        <a href="{{route('request.index')}}" class="btn btn-primary mt-3">Посмотреть запросы</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <!-- БЛОК "ЗАПИСЬ НА ЗАНЯТИЯ ФИЗКУЛЬТУРОЙ" -->
     <div class="main-content" id="sports-section" style="display: none;">
@@ -762,6 +752,7 @@
             document.getElementById('housing-section').style.display = 'none';
             document.getElementById('personal-section').style.display = 'none';
             document.getElementById('sports-section').style.display = 'none';
+            document.getElementById('request-repair').style.display = 'none';
         }
         function showNews() {
             hideAllSections()
