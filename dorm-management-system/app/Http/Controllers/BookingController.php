@@ -83,28 +83,27 @@ class BookingController extends Controller
         if ($room->occupied_places >= $room->capacity) {
             return redirect()->back()->with('error', 'Мест в комнате больше нет!');
         }
-        elseif ($booking->status === 'pending') {
-            // Обычная заявка на заселение
-            $booking->status = 'accepted';
-            $booking->save();
-            // ... логика «заселения» (можно увеличить occupied_places и т.п.) ...
-        } elseif ($booking->status === 'pending_change') {
-            // Заявка на смену комнаты
-            $booking->status = 'accepted_change';
-            $booking->save();
-            // ... логика: «выселить» из старой комнаты, заселить в новую ...
-        }
 
         DB::transaction(function () use ($booking, $room) {
-            // Принятие заявки
-            $booking->update(['status' => 'accepted']);
+            if ($booking->status === 'pending') {
+                $booking->update(['status' => 'accepted']);
+            } elseif ($booking->status === 'pending_change') {
+                $booking->update(['status' => 'accepted_change']);
+            }
 
-            // Теперь увеличиваем количество занятых мест
             $room->update(['occupied_places' => $room->occupied_places + 1]);
+
+            Booking::where('user_id', $booking->user_id)
+                ->where('status', 'pending')
+                ->where('id', '!=', $booking->id)
+                ->update(['status' => 'rejected']);
+
+            $booking->user->refresh();
         });
 
-        return redirect()->back()->with('success', 'Заявка принята!');
+        return redirect()->back()->with('success', 'Заявка принята! Все другие заявки отклонены.');
     }
+
 
     // Отклонить заявку
     public function reject($id)
@@ -129,8 +128,7 @@ class BookingController extends Controller
             'building_id' => $request->building_id,
             'floor'       => $request->floor,
             'room_id'     => $request->room_id,
-            'status'      => 'pending_change', // например, так
-            // Или завести поле 'type' => 'change'
+            'status'      => 'pending',
         ]);
 
         return redirect()->back()->with('success', 'Заявка на смену комнаты отправлена!');

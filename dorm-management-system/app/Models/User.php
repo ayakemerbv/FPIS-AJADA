@@ -61,11 +61,11 @@ class User extends Authenticatable
 
     public function acceptedBooking()
     {
-        // Предположим, что поле 'status' в таблице 'bookings' может быть:
-        // 'pending', 'accepted', 'rejected' и т.п.
-        return $this->hasOne(\App\Models\Booking::class, 'user_id')
-            ->where('status', 'accepted');
+        return $this->hasOne(Booking::class)
+            ->whereIn('status', ['accepted', 'accepted_change'])
+            ->latest(); // Берем последнюю принятую заявку
     }
+
 
 
 }

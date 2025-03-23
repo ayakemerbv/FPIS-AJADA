@@ -15,6 +15,7 @@ use App\Http\Controllers\Manager\NewsManagerController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Student\StudentController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -71,6 +72,7 @@ Route::middleware(['auth', ])->group(function () {
     Route::get('manager/users/create', [ManagerUserController::class, 'create'])->name('manager.users.create');
     Route::post('manager/users', [ManagerUserController::class, 'store'])->name('manager.users.store');
     Route::get('manager/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
+
 });
 
 // Студенческая панель
@@ -86,6 +88,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
     Route::delete('/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
     Route::get('/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
+    Route::get('/refresh-user', function () {
+        Auth::user()->refresh();
+        return back();
+    })->name('refresh.user');
+
 // Запросы на ремонты
     Route::get('student/personal/create-request', [RequestController::class, 'create'])->name('request.create');
     Route::post('student/personal', [RequestController::class, 'store'])->name('request.store');

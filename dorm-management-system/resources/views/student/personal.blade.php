@@ -594,10 +594,13 @@
                     Этаж: {{ Auth::user()->acceptedBooking->room->floor }},
                     Комната: {{ Auth::user()->acceptedBooking->room->room_number }}
                 </p>
+
             @else
                 <p>Пока не заселен</p>
             @endif
             <button class="btn-finance" onclick="openChangeRoomModal()">Сменить комнату</button>
+            <a href="{{ route('refresh.user') }}" class="btn btn-secondary">Обновить данные</a>
+
         </div>
 
         <div class="housing-card">
