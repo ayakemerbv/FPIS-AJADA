@@ -64,12 +64,7 @@ class RequestController extends Controller
             'employee_id' => 'nullable|exists:employees,id',
         ]);
 
-        $repairRequest->update([
-            'type' => $request->type,
-            'description' => $request->description,
-            'employee_id' => $request->employee_id ?: null,
-            'status' => $request->status,
-        ]);
+        $repairRequest->update($request->all());
 
         return redirect()->route('request.index')->with('success', 'Запрос успешно обновлён');
     }
