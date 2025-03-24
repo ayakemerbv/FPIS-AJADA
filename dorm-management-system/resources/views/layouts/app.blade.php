@@ -67,6 +67,7 @@
         font-weight: bold;
         color: #4A4A4A;
     }
+
     .top-nav .nav-icons {
         display: flex;
         align-items: center;
@@ -142,14 +143,19 @@
         /*flex-direction: column;*/
         margin-bottom: 5px;
     }
+    .logo {
+        width: 45px;
+        height: auto;
+    }
+
 
 </style>
 <body>
 
 <div class="top-nav">
     <div class="logo">
-        {{-- Если есть логотип, раскомментируй:
-        <img src="{{ asset('images/dms-logo.png') }}" alt="DMS Logo"> --}}
+{{--        Если есть логотип, раскомментируй:--}}
+        <img src="{{ asset('storage/icon/dark icon.png') }}" alt="DMS Logo">
         DMS
     </div>
     <div class="nav-icons">
