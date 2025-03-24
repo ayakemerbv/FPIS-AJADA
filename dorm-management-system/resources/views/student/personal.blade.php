@@ -704,7 +704,7 @@
                         <option value="Танцы">Танцы</option>
                         <option value="Баскетбол">Баскетбол</option>
                         <option value="Волейбол">Волейбол</option>
-                        <option value="Волейбол">Футбол</option>
+                        <option value="Футбол">Футбол</option>
                     </select>
 
                     <label for="day">Выберите день недели</label>
