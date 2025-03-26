@@ -11,13 +11,13 @@ class RequestController extends Controller
 
     public function index(){
         $requests = RepairRequest::where('user_id', auth()->id())->get();
-
         return view('request.index', compact('requests'));
     }
     public function create(){
         $employees = Employee::all();
-
         return view('request.create', compact('employees'));
+
+
     }
 
     public function store(Request $request){
@@ -38,7 +38,8 @@ class RequestController extends Controller
             $repairRequest->file = $filePath;
         }
 
-        return redirect()->route('request.index');
+        return redirect()->route('request.index')->with('successType', 'request_created')
+            ->with('success', 'Запрос создан!');
     }
 
     public function show($id)
@@ -47,6 +48,7 @@ class RequestController extends Controller
 
         return view('request.show', compact('request'));
     }
+
 
     public function edit($id){
 //        dd($repairRequest);
@@ -66,7 +68,9 @@ class RequestController extends Controller
 
         $repairRequest->update($request->all());
 
-        return redirect()->route('request.index')->with('success', 'Запрос успешно обновлён');
+        return redirect()->route('student.personal')
+            ->with('successType', 'request_updated')
+            ->with('success', 'Запрос обновлен!');
     }
 
 

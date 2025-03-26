@@ -131,7 +131,9 @@ class BookingController extends Controller
             'status'      => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Заявка на смену комнаты отправлена!');
+        return redirect()->route('student.personal')
+            ->with('successType', 'change_room_created')
+            ->with('success', 'Заявка на смену комнаты отправлена!');
     }
 }
 

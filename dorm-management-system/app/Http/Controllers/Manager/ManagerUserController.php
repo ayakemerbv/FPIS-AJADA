@@ -32,6 +32,7 @@ class ManagerUserController extends Controller
             'role' => $request->role
         ]);
 
+
         return redirect()->route('manager.dashboard')
             ->with('successType', 'user_created')
             ->with('success', 'Пользователь создан!');

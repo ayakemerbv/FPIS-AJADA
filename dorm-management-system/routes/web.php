@@ -7,7 +7,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GymBookingController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Manager\ManagerUserController;
@@ -19,40 +18,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-//Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-//// Новости (публичные)
-//Route::get('/news', [NewsController::class, 'index'])->name('news.index');
-//Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 
-//// ==============================
-//// 2. Маршруты для авторизованных
-//// ==============================
-//Route::middleware(['auth'])->group(function () {
-//
-//    // Просмотр студентов
-//    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-//
-//    // Бронирование комнат
-//    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
-//
+
 //    // Оплата
 //    Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 //
-//    // Заявка на обслуживание (maintenance)
-//    Route::post('/maintenance-request', [MaintenanceController::class, 'store'])->name('maintenance.store');
-//
-//    // Бронирование спортзала
-//    Route::get('/gym-bookings', [GymBookingController::class, 'index'])->name('gymBookings.index');
-//    Route::post('/gym-bookings', [GymBookingController::class, 'store'])->name('gymBookings.store');
-//    Route::patch('/gym-bookings/{gymBooking}/confirm', [GymBookingController::class, 'confirm'])->name('gymBookings.confirm');
-//    Route::patch('/gym-bookings/{gymBooking}/cancel', [GymBookingController::class, 'cancel'])->name('gymBookings.cancel');
-//});
 
 Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -79,21 +55,24 @@ Route::middleware(['auth', ])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
     Route::get('/student/personal', [StudentController::class, 'personal'])->name('student.personal');
+    Route::get('student/personal/{id?}', [StudentController::class, 'personal'])->name('student.personal');
+
     Route::post('/student/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
     Route::patch('/student/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
-    Route::get('/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
-    Route::get('/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
-    Route::post('/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
-    Route::post('/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
-    Route::delete('/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
-    Route::get('/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
+    Route::get('/student/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
+    Route::get('/student/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
+    Route::post('/student/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::post('/student/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
+    Route::post('/student/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
+    Route::delete('/student/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
+    Route::get('/student/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
     Route::get('/refresh-user', function () {
         Auth::user()->refresh();
-        return back();
+        return redirect()->route('student.personal')
+            ->with('successType', 'user_updated')
+            ->with('success', 'Пользователь обновлен!');
     })->name('refresh.user');
 
-// Запросы на ремонты
     Route::get('student/personal/create-request', [RequestController::class, 'create'])->name('request.create');
     Route::post('student/personal', [RequestController::class, 'store'])->name('request.store');
     Route::get('student/personal/requests', [RequestController::class, 'index'])->name('request.index');
@@ -101,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('student/personal/requests/{id}/edit', [RequestController::class, 'edit'])->name('request.edit');
     Route::put('student/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
     Route::delete('student/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
+
 // Employee dashboard
     Route::middleware(['auth', ])->group(function () {
         Route::get('employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');

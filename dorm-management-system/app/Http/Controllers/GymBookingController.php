@@ -52,8 +52,10 @@ class GymBookingController extends Controller
             'scheduled_time' => $validated['time'],
             'status' => 'pending',
         ]);
+        return redirect()->route('student.personal')
+            ->with('successType', 'gym_created')
+            ->with('success', 'Вы успешно записаны на занятие.');
 
-        return redirect()->back()->with('success', 'Вы успешно записаны на занятие.');
     }
 
     public function confirm(GymBooking $gymBooking)
@@ -72,7 +74,9 @@ class GymBookingController extends Controller
 
         if ($booking) {
             $booking->delete();
-            return redirect()->back()->with('success', 'Вы отменили запись на занятие.');
+            return redirect()->route('student.personal')
+                ->with('successType', 'gym_canceled')
+                ->with('success', 'Вы отменили запись на занятие.');
         }
 
         return redirect()->back()->with('error', 'У вас нет активной записи.');

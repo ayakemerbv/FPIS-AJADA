@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Employee;
+use App\Models\Manager;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -41,6 +43,18 @@ class AdminUserController extends Controller
                 'user_id' => $user->id,
                 'student_id' => $user->id, // Если student_id = user_id
                 'room_id' => null, // Пока нет комнаты, обновится позже
+            ]);
+        }
+        elseif ($user->role === 'manager'){
+            Manager::create([
+                'user_id' => $user->id,
+                'manager_id' => $user->id,
+            ]);
+        }
+        elseif ($user->role === 'admin'){
+            Admin::create([
+                'user_id' => $user->id,
+                'admin_id' => $user->id,
             ]);
         }
         elseif ($user->role === 'employee') {
