@@ -434,7 +434,6 @@
 
     </style>
 
-
 {{--     ЛЕВАЯ ПАНЕЛЬ--}}
     <div class="sidebar">
         <div class="sidebar-item" onclick="showNews()">

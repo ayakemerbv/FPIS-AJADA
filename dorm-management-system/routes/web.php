@@ -24,70 +24,65 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-
-
 //    // Оплата
 //    Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 //
 
 Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
-    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::resource('news', NewsAdminController::class)->names('admin.news');
+    Route::get('/dashboard/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
+    Route::post('/dashboard/users', [AdminUserController::class, 'store'])->name('admin.users.store');
+    Route::get('/dashboard/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::resource('/dashboard/news', NewsAdminController::class)->names('admin.news');
 });
 
 // Менеджерская панель
-Route::middleware(['auth', ])->group(function () {
-    Route::get('/manager/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
-    Route::get('/manager/requests', [BookingController::class, 'indexForManager'])->name('manager.requests');
-    Route::get('/manager/requests/{id}/accept', [BookingController::class, 'accept'])->name('booking.accept');
-    Route::get('/manager/requests/{id}/reject', [BookingController::class, 'reject'])->name('booking.reject');
-    Route::resource('manager/news', NewsManagerController::class)->names('manager.news');
-    Route::get('manager/users/create', [ManagerUserController::class, 'create'])->name('manager.users.create');
-    Route::post('manager/users', [ManagerUserController::class, 'store'])->name('manager.users.store');
-    Route::get('manager/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
+Route::middleware(['auth','role:manager'])->prefix('manager')->group(function () {
+    Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
+    Route::get('/dashboard/requests', [BookingController::class, 'indexForManager'])->name('manager.requests');
+    Route::get('/dashboard/requests/{id}/accept', [BookingController::class, 'accept'])->name('booking.accept');
+    Route::get('/dashboard/requests/{id}/reject', [BookingController::class, 'reject'])->name('booking.reject');
+    Route::resource('/dashboard/news', NewsManagerController::class)->names('manager.news');
+    Route::get('/dashboard/users/create', [ManagerUserController::class, 'create'])->name('manager.users.create');
+    Route::post('/dashboard/users', [ManagerUserController::class, 'store'])->name('manager.users.store');
+    Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
 
 });
 
 // Студенческая панель
-Route::middleware(['auth'])->group(function () {
-    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
-    Route::get('/student/personal', [StudentController::class, 'personal'])->name('student.personal');
-    Route::get('student/personal/{id?}', [StudentController::class, 'personal'])->name('student.personal');
-
-    Route::post('/student/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
-    Route::patch('/student/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
-    Route::get('/student/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
-    Route::get('/student/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
-    Route::post('/student/booking/store', [BookingController::class, 'store'])->name('booking.store');
-    Route::post('/student/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
-    Route::post('/student/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
-    Route::delete('/student/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
-    Route::get('/student/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
+Route::middleware(['auth','role:student'])->prefix('student')->group(function (){
+    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
+    Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
+    Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
+    Route::get('/personal/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
+    Route::get('/personal/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
+    Route::post('/personal/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::post('/personal/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
+    Route::post('/personal/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
+    Route::delete('/personal/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
+    Route::get('/personal/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
     Route::get('/refresh-user', function () {
         Auth::user()->refresh();
         return redirect()->route('student.personal')
             ->with('successType', 'user_updated')
             ->with('success', 'Пользователь обновлен!');
     })->name('refresh.user');
-
-    Route::get('student/personal/create-request', [RequestController::class, 'create'])->name('request.create');
-    Route::post('student/personal', [RequestController::class, 'store'])->name('request.store');
-    Route::get('student/personal/requests', [RequestController::class, 'index'])->name('request.index');
-    Route::get('student/personal/requests/{id}', [RequestController::class, 'show'])->name('request.show');
-    Route::get('student/personal/requests/{id}/edit', [RequestController::class, 'edit'])->name('request.edit');
-    Route::put('student/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
-    Route::delete('student/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
+    Route::get('/personal/create-request', [RequestController::class, 'create'])->name('request.create');
+    Route::post('/personal', [RequestController::class, 'store'])->name('request.store');
+    Route::get('/personal/requests', [RequestController::class, 'index'])->name('request.index');
+    Route::get('/personal/requests/{id}', [RequestController::class, 'show'])->name('request.show');
+    Route::get('/personal/requests/{id}/edit', [RequestController::class, 'edit'])->name('request.edit');
+    Route::put('/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
+    Route::delete('/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
 
 // Employee dashboard
-    Route::middleware(['auth', ])->group(function () {
-        Route::get('employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
-        Route::get('employee/dashboard/requests', [EmployeeController::class, 'requests'])->name('employee.requests');
-        Route::get('employee/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
-        Route::get('employee/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
-        Route::put('employee/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
+    Route::middleware(['auth','role:employee'])->prefix('employee')->group(function (){
+        Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
+        Route::get('/dashboard/requests', [EmployeeController::class, 'requests'])->name('employee.requests');
+        Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
+        Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
+        Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
 
     });
 });
