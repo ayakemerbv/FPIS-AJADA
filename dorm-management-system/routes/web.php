@@ -75,14 +75,16 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
     Route::get('/personal/requests/{id}/edit', [RequestController::class, 'edit'])->name('request.edit');
     Route::put('/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
     Route::delete('/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
-
+});
 // Employee dashboard
     Route::middleware(['auth','role:employee'])->prefix('employee')->group(function (){
         Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
+        Route::post('/updateProfile', [EmployeeController::class, 'updateProfile'])->name('employee.updateProfile');
+        Route::patch('/updatePassword', [EmployeeController::class, 'updatePassword'])->name('employee.updatePassword');
         Route::get('/dashboard/requests', [EmployeeController::class, 'requests'])->name('employee.requests');
         Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
         Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
         Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
 
-    });
+
 });

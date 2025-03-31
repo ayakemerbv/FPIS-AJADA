@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-//        if (Auth::attempt($credentials)) {
+//        if (Auth::attempt($credentials))  {
 //            return redirect()->route('admin.users.create'); // После входа перенаправляем на регистрацию юзера
 //        }
         \Log::info('Попытка входа', ['email' => $request->email, 'password' => $request->password]);

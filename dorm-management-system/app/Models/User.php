@@ -66,6 +66,10 @@ class User extends Authenticatable
             ->latest(); // Берем последнюю принятую заявку
     }
 
+    public function employee(){
+        return $this->hasOne(Employee::class);
+    }
+
 
 
 }
