@@ -34,7 +34,9 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::post('/dashboard/users', [AdminUserController::class, 'store'])->name('admin.users.store');
     Route::get('/dashboard/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::resource('/dashboard/news', NewsAdminController::class)->names('admin.news');
-    Route::get('/admin/users/{id}/json', [AdminUserController::class, 'getUserJson']);
+    Route::get('/users/{id}/json', [AdminUserController::class, 'getUserJson']);
+
+
 
 });
 

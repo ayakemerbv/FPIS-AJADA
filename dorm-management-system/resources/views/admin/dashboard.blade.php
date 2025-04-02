@@ -541,8 +541,6 @@
             </form>
         </div>
     </div>
-
-
     <script>
         // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {

@@ -182,7 +182,7 @@
             <i class="fas fa-user"></i>
             <span>Личная информация</span>
         </a>
-        @if(Auth::user()->role === 'student')
+
         <div class="sidebar-item">
             <i class="fas fa-wrench"></i>
             <span><a href="{{ route('employee.requests') }}">Просмотр заявок</a></span>
