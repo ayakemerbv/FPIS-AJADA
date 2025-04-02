@@ -440,11 +440,12 @@
             <i class="fas fa-home"></i>
             <span>Главная</span>
         </div>
+
         <a class="sidebar-item" onclick="showPersonal()">
             <i class="fas fa-user"></i>
             <span>Личная информация</span>
         </a>
-
+        @if(Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
         <div class="sidebar-item" onclick="showHousing()">
             <i class="fas fa-building"></i>
             <span>Проживание</span>
@@ -461,6 +462,7 @@
             <i class="fas fa-wrench"></i>
             <span>Запросы на ремонт</span>
         </div>
+        @endif
         <div class="sidebar-item" onclick="showSportsBooking()">
             <i class="fas fa-dumbbell"></i>
             <span>Запись на занятия физкультурой</span>
@@ -500,7 +502,6 @@
                 </div>
                 <div class="personal-info">
                     <div class="personal-name">{{ Auth::user()->name }}</div>
-                    <div class="personal-status">Статус: Проживающий</div>
 
                     <!-- Пример локации -->
                     <div class="personal-location">

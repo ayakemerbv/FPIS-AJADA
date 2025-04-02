@@ -6,7 +6,7 @@
         /* ========== ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) ========== */
         .sidebar {
             position: fixed;
-            top: 60px; /* высота верхней панели */
+            top: 60px;
             left: 0;
             width: 200px;
             height: calc(100vh - 60px);
@@ -297,10 +297,7 @@
             <i class="fas fa-home"></i>
             <span>Новости</span>
         </div>
-        <div class="sidebar-item" onclick="showRequests()">
-            <i class="fas fa-bars"></i>
-            <span>Заявки</span>
-        </div>
+
     </div>
 
     <!-- СЕКЦИЯ НОВОСТЕЙ (по умолчанию видна) -->
@@ -544,53 +541,12 @@
             </form>
         </div>
     </div>
-    <div class="main-content" id="request-section" style="display: none;">
-        <h2>Заявки на заселение</h2>
 
-        @if(session('success'))
-            <div style="background-color: #d4edda; color: #155724; padding: 10px;">
-                {{ session('success') }}
-            </div>
-        @endif
 
-        <table style="width:100%; border-collapse: collapse;">
-            <thead>
-            <tr>
-                <th>Студент</th>
-                <th>Корпус</th>
-                <th>Этаж</th>
-                <th>Комната</th>
-                <th>Статус</th>
-                <th>Действия</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($requests as $req)
-                <tr style="border-bottom: 1px solid #ccc;">
-                    <td>{{ $req->user->name }}</td>
-                    <td>{{ $req->building->name}}</td>
-                    <td>{{ $req->floor }}</td>
-                    <td>{{ $req->room->room_number }}</td>
-                    <td>{{ $req->status }}</td>
-                    <td>
-                        <a href="{{ route('booking.accept', $req->id) }}"
-                           style="color: green; text-decoration: none; margin-right: 10px;">
-                            Принять
-                        </a>
-                        <a href="{{ route('booking.reject', $req->id) }}"
-                           style="color: red; text-decoration: none;">
-                            Отклонить
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
     <script>
         // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-        showNews();
+        showUsers();
 
         @if($errors->any())
         openModal();
@@ -610,7 +566,6 @@
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
             document.getElementById('users-section').style.display = 'none';
-            document.getElementById('request-section').style.display = 'none';
             document.getElementById('user-details-section').style.display = 'none';
         }
         function showUsers() {
@@ -634,10 +589,6 @@
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
             document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
-        }
-        function showRequests() {
-            hideAllSections();
-            document.getElementById('request-section').style.display = 'block';
         }
 
         function cancelEdit() {
@@ -692,7 +643,6 @@
                 document.getElementById('user-details-section').style.display = 'block';
             } catch (error) {
                 alert(error.message);
-                // Можете вернуть в секцию пользователей
                 showUsers();
             }
         }

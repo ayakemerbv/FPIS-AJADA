@@ -143,21 +143,34 @@
         /*flex-direction: column;*/
         margin-bottom: 5px;
     }
-    .logo {
-        width: 45px;
-        height: auto;
+    .logo-link {
+        display: flex;
+        align-items: center; /* Выравнивает по вертикали */
+        text-decoration: none; /* Убирает подчеркивание у ссылки */
+        color: inherit; /* Наследует цвет текста */
+    }
+
+    .logo-img {
+        height: 40px; /* Или любой другой размер */
+        margin-right: 10px; /* Отступ между логотипом и текстом */
+    }
+
+    .logo-text {
+        font-size: 20px; /* Размер текста */
+        font-weight: bold; /* Жирный шрифт */
     }
 
 
 </style>
 <body>
-
 <div class="top-nav">
     <div class="logo">
-{{--        Если есть логотип, раскомментируй:--}}
-        <img src="{{ asset('storage/icon/dark icon.png') }}" alt="DMS Logo">
-        DMS
+        <a href="{{ route('student.dashboard') }}" class="logo-link">
+            <img src="{{ asset('storage/icon/dark icon.png') }}" alt="DMS Logo" class="logo-img">
+            <span class="logo-text">DMS</span>
+        </a>
     </div>
+
     <div class="nav-icons">
         {{-- Зелёный плюсик --}}
         <div class="icon-circle" style="background-color: #28a745;">
@@ -187,11 +200,9 @@
                 </div>
 
                 <!-- Профиль -->
-                @if(Auth::user()->role === 'student'
-                    && Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
+                @if(Auth::user()->role === 'student')
                     <a href="{{ route('student.personal') }}">Мой профиль</a>
                 @endif
-
 
                 <!-- Выход (иконка + текст) -->
                 <form action="{{ route('logout') }}" method="POST" class="logout-form">

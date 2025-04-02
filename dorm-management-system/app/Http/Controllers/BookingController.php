@@ -3,23 +3,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Room;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
-    // Получение списка этажей в корпусе
     public function getFloors($building_id)
     {
         $floors = Room::where('building_id', $building_id)
-            ->pluck('floor')
-            ->unique()
-            ->sort()
-            ->values(); // Убираем лишние индексы
+            ->select('floor')
+            ->distinct()
+            ->orderBy('floor')
+            ->pluck('floor');
+
+        if ($floors->isEmpty()) {
+            return response()->json(['message' => 'Нет этажей в этом корпусе'], 404);
+        }
 
         return response()->json($floors);
     }
+
 
 
     // Получение списка свободных комнат на этаже
@@ -51,7 +56,6 @@ class BookingController extends Controller
         if ($room->occupied_places >= $room->capacity) {
             return redirect()->back()->with('error', 'Комната уже заполнена!');
         }
-
 
         Booking::create([
             'user_id'     => Auth::id(),
@@ -91,19 +95,26 @@ class BookingController extends Controller
                 $booking->update(['status' => 'accepted_change']);
             }
 
-            $room->update(['occupied_places' => $room->occupied_places + 1]);
+            // Увеличиваем количество занятых мест
+            $room->increment('occupied_places');
 
+            // Отклоняем другие заявки пользователя
             Booking::where('user_id', $booking->user_id)
                 ->where('status', 'pending')
                 ->where('id', '!=', $booking->id)
                 ->update(['status' => 'rejected']);
+
+            // Обновляем или создаем студента с назначением комнаты
+            Student::updateOrCreate(
+                ['user_id' => $booking->user_id], // Поиск по user_id
+                ['room_id' => $room->id] // Обновление room_id
+            );
 
             $booking->user->refresh();
         });
 
         return redirect()->back()->with('success', 'Заявка принята! Все другие заявки отклонены.');
     }
-
 
     // Отклонить заявку
     public function reject($id)

@@ -69,34 +69,7 @@
         .logout-form button:hover {
             text-decoration: underline;
         }
-        /* Стили боковой панели */
-        .housing-sidebar {
-            position: fixed;
-            right: -320px;
-            top: 60px;
-            width: 300px;
-            height: calc(100vh - 60px);
-            background-color: #FFF;
-            border-left: 1px solid #DDD;
-            padding: 20px;
-            transition: right 0.3s ease-in-out;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .housing-sidebar.open {
-            right: 0;
-        }
-        .housing-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .close-btn {
-            cursor: pointer;
-            font-size: 20px;
-            border: none;
-            background: none;
-        }
+
         .housing-form label {
             display: block;
             margin-top: 10px;
@@ -107,13 +80,54 @@
             padding: 8px;
             margin-top: 5px;
         }
-        .hidden {
-            display: none !important;
+        .application-container {
+            /*display: flex;*/
+            /*justify-content: center;*/
+            /*align-items: center;*/
+            margin-left: 280px;
+            margin-top: 50px;
+            height: 100vh;
+            background-color: #f8f9fa;
         }
-    </style>
+        .application-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        .application-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4A4A4A;
+        }
+        .application-box select,
+        .application-box button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
 
-    {{-- ВЕРХНЯЯ ПАНЕЛЬ --}}
-{{--    --}}
+        }
+        .application-box button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .application-box button:hover {
+            background: #0056b3;
+        }
+        #housing-sidebar {
+            display: none; /* Скрываем заявку изначально */
+        }
+
+        #housing-sidebar.open {
+            display: block; /* Показываем при открытии */
+        }
+
+    </style>
 
     {{-- ЛЕВАЯ ПАНЕЛЬ --}}
     <div class="sidebar">
@@ -121,10 +135,12 @@
             <i class="fas fa-home"></i>
             <span>Лента</span>
         </div>
-        <div class="sidebar-item" onclick="toggleSection('housing')">
-            <i class="fas fa-bed"></i>
-            <span>Проживание</span>
-        </div>
+        @if(Auth::check() && Auth::user()->role === 'student' && Auth::user()->room_id === null)
+            <div class="sidebar-item" onclick="toggleSection('housing')">
+                <i class="fas fa-bed"></i>
+                <span>Проживание</span>
+            </div>
+        @endif
         <div class="sidebar-item">
             <i class="fas fa-store"></i>
             <span>Купи-Продай</span>
@@ -151,32 +167,33 @@
     </div>
 
     {{-- Боковая панель заявки на проживание --}}
-    <div class="housing-sidebar" id="housing-sidebar">
-        <div class="housing-header">
-            <h3>Выбор комнаты</h3>
-            <button class="close-btn" onclick="toggleSection('news')">&times;</button>
+    <div class="application-container" id="housing-sidebar">
+        <div class="application-box">
+            <h2>Заявка на заселение</h2>
+            <form action="{{ route('booking.store') }}" method="POST">
+                @csrf
+                <label for="building">Выберите корпус:</label>
+                <select name="building_id" id="building">
+                    <option value="">Выберите корпус</option>
+                    @foreach($buildings as $building)
+                        <option value="{{ $building->id }}">{{ $building->name }}</option>
+                    @endforeach
+                </select>
+
+                <label for="floor">Выберите этаж:</label>
+                <select name="floor" id="floor" disabled>
+                    <option value="">Сначала выберите корпус</option>
+                </select>
+
+                <label for="room">Выберите комнату:</label>
+                <select name="room_id" id="room" disabled>
+                    <option value="">Сначала выберите этаж</option>
+                </select>
+
+                <button type="submit">Заселиться</button>
+            </form>
         </div>
-        <form class="housing-form" action="{{ route('booking.store') }}" method="POST">
-            @csrf
-            <select name="building_id" id="building">
-                <option value="">Выберите корпус</option>
-                @foreach($buildings as $building)
-                    <option value="{{ $building->id }}">{{ $building->name }}</option>
-                @endforeach
-            </select>
-
-            <select name="floor" id="floor" disabled>
-                <option value="">Сначала выберите корпус</option>
-            </select>
-
-            <select name="room_id" id="room" disabled>
-                <option value="">Сначала выберите этаж</option>
-            </select>
-
-            <button type="submit">Заселиться</button>
-        </form>
     </div>
-
     <script>
         function toggleSection(section) {
             console.log("Функция toggleSection вызвана:", section);
@@ -212,18 +229,14 @@
                 }
 
                 try {
-                    console.log(`Загружаем этажи для корпуса ID: ${buildingId}`);
-                    const response = await fetch(`/floors/${buildingId}`);
+                    const response = await fetch(`/student/personal/floors/${buildingId}`);
                     const data = await response.json();
-                    console.log("Этажи:", data);
-
-                    if (!data || data.length === 0) {
-                        floorSelect.innerHTML = '<option value="">Нет доступных этажей</option>';
+                    floorSelect.innerHTML = '<option value="">Выберите этаж</option>';
+                    if (data.length === 0) {
+                        floorSelect.innerHTML = '<option value="">Нет этажей</option>';
                         floorSelect.disabled = true;
                         return;
                     }
-
-                    floorSelect.innerHTML = '<option value="">Выберите этаж</option>';
                     data.forEach(floor => {
                         floorSelect.innerHTML += `<option value="${floor}">${floor}</option>`;
                     });
@@ -241,29 +254,23 @@
                 }
 
                 try {
-                    console.log(`Загружаем комнаты для корпуса ID: ${buildingId}, этаж: ${floor}`);
-                    const response = await fetch(`/rooms/${buildingId}/${floor}`);
+                    const response = await fetch(`/student/personal/rooms/${buildingId}/${floor}`);
                     const data = await response.json();
-                    console.log("Комнаты:", data);
-
-                    if (!data || data.length === 0) {
-                        roomSelect  .innerHTML = '<option value="">Нет доступных комнат</option>';
+                    roomSelect.innerHTML = '<option value="">Выберите комнату</option>';
+                    if (data.length === 0) {
+                        roomSelect.innerHTML = '<option value="">Нет свободных комнат</option>';
                         roomSelect.disabled = true;
                         return;
                     }
-
-                    roomSelect.innerHTML = '<option value="">Выберите комнату</option>';
                     data.forEach(room => {
                         roomSelect.innerHTML += `<option value="${room.id}">${room.room_number}</option>`;
                     });
-
                     roomSelect.disabled = false;
                 } catch (error) {
                     console.error("Ошибка загрузки комнат:", error);
                 }
             }
 
-            // Добавляем обработчики событий
             buildingSelect.addEventListener("change", function () {
                 const buildingId = this.value;
                 loadFloors(buildingId);
@@ -277,7 +284,6 @@
                 loadRooms(buildingId, floor);
             });
         });
-
-    </script>
+</script>
 
 @endsection

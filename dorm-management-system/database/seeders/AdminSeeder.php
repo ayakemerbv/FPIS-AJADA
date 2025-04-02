@@ -16,6 +16,7 @@ class AdminSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@kbtu.kz'], // Проверяем, есть ли уже такой админ
             [
+                'user_id'=>'111',
                 'name' => 'Admin',
                 'password' => Hash::make('admin123'), // Хешируем пароль
                 'role' => 'admin',

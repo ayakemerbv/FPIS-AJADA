@@ -34,6 +34,8 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::post('/dashboard/users', [AdminUserController::class, 'store'])->name('admin.users.store');
     Route::get('/dashboard/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::resource('/dashboard/news', NewsAdminController::class)->names('admin.news');
+    Route::get('/admin/users/{id}/json', [AdminUserController::class, 'getUserJson']);
+
 });
 
 // Менеджерская панель
@@ -55,8 +57,10 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
     Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
     Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
     Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
+
     Route::get('/personal/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
     Route::get('/personal/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
+
     Route::post('/personal/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::post('/personal/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
     Route::post('/personal/sports/store', [GymBookingController::class, 'store'])->name('sports.store');

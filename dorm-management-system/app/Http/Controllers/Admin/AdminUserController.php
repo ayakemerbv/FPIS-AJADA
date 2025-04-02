@@ -77,5 +77,14 @@ class AdminUserController extends Controller
         $users = User::all();
         return view('admin.dashboard', compact('users'));
     }
+    public function getUserJson($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'Пользователь не найден'], 404);
+        }
+        return response()->json($user);
+    }
+
 
 }

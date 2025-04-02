@@ -174,7 +174,7 @@
     </style>
 
     <div class="sidebar">
-        <div class="sidebar-item" onclick="showSection('news-section')">
+        <div class="sidebar-item" onclick="showNews()">
             <i class="fas fa-home"></i>
             <span>Главная</span>
         </div>
@@ -182,6 +182,7 @@
             <i class="fas fa-user"></i>
             <span>Личная информация</span>
         </a>
+        @if(Auth::user()->role === 'student')
         <div class="sidebar-item">
             <i class="fas fa-wrench"></i>
             <span><a href="{{ route('employee.requests') }}">Просмотр заявок</a></span>
@@ -319,6 +320,9 @@
         }
         function closePasswordModal() {
             document.getElementById('passwordModal').style.display = 'none';
+        }
+        function showNews() {
+            document.getElementById('news-section').style.display = 'block';
         }
     </script>
 @endsection
