@@ -591,7 +591,6 @@
     <!-- Проживание -->
     <div class="main-content" id="housing-section">
         <h2>Проживание</h2>
-
         <div class="housing-card">
             <h3>Проживание</h3>
             @if(Auth::user()->acceptedBooking)
@@ -609,7 +608,6 @@
             <a href="{{ route('refresh.user') }}" class="btn btn-secondary">Обновить данные</a>
 
         </div>
-
         <div class="housing-card">
             <h3>Предстоящие оплаты</h3>
             <button class="btn-finance">Проверить финансовый кабинет</button>
@@ -1066,7 +1064,7 @@
 
                 if (!buildingId) return;
 
-                const response = await fetch(`/floors/${buildingId}`);
+                const response = await fetch(`/student/personal/floors/${buildingId}`);
                 const floors = await response.json();
 
                 if (!floors || floors.length === 0) {
@@ -1089,7 +1087,7 @@
 
                 if (!floor) return;
 
-                const response = await fetch(`/rooms/${buildingId}/${floor}`);
+                const response = await fetch(`/student/personal/rooms/${buildingId}/${floor}`);
                 const rooms = await response.json();
 
                 if (!rooms || rooms.length === 0) {
