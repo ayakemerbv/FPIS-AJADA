@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\NewsAdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GymBookingController;
 use App\Http\Controllers\MaintenanceController;
@@ -59,14 +60,16 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
     Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
     Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
     Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
-
     Route::get('/personal/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
     Route::get('/personal/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
-
+    Route::post('/document/upload', [DocumentController::class, 'store'])->name('document.upload');
+    Route::post('personal/document/upload', [DocumentController::class, 'upload'])->name('document.upload');
     Route::post('/personal/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::post('/personal/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
     Route::post('/personal/sports/store', [GymBookingController::class, 'store'])->name('sports.store');
     Route::delete('/personal/sports', [GymBookingController::class, 'cancel'])->name('sports.cancel');
+    Route::post('/personal/sports/recovery', [GymBookingController::class, 'recovery'])->name('sports.recovery');
+    Route::delete('/personal/sports/recovery/{recovery}', [GymBookingController::class, 'cancelRecovery'])->name('sports.recovery.cancel');
     Route::get('/personal/sports', [GymBookingController::class, 'showSportsPage'])->name('sports.page');
     Route::get('/refresh-user', function () {
         Auth::user()->refresh();

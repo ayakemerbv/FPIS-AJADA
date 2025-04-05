@@ -31,7 +31,6 @@
             background-color: #6f42c1; /* Фиолетовый */
             font-weight: bold;
         }
-
         /* ВЕРХНЯЯ ПАНЕЛЬ */
         .top-nav {
             display: flex;
@@ -59,7 +58,6 @@
             align-items: center;
             gap: 15px;
         }
-
         /* ОБЁРТКА ДЛЯ АВАТАРА И МЕНЮ */
         .avatar-wrapper {
             position: relative;
@@ -99,7 +97,6 @@
         .avatar-dropdown a:hover {
             text-decoration: underline;
         }
-
         /* ЛЕВАЯ ПАНЕЛЬ */
         .sidebar {
             position: fixed;
@@ -127,7 +124,6 @@
             font-size: 18px;
             color: #4A4A4A;
         }
-
         /* ОСНОВНОЙ КОНТЕНТ */
         .main-content {
             margin-left: 200px; /* отступ под ширину сайдбара */
@@ -138,7 +134,6 @@
             margin-bottom: 20px;
             color: #4A4A4A;
         }
-
         /* Кнопка выхода (с иконкой) */
         .logout-form button {
             background: none;
@@ -160,7 +155,6 @@
             font-family: Arial, sans-serif;
             background-color: #F5F5F5;
         }
-
         /* Основной контейнер */
         .main-content {
             margin-left: 200px; /* Если у тебя сайдбар 200px */
@@ -195,7 +189,6 @@
             display: flex;
             gap: 20px;
         }
-
         /* Левая часть — фото */
         .personal-photo {
             width: 180px;
@@ -208,7 +201,6 @@
             height: 100%;
             object-fit: cover; /* чтобы фото заполняло блок */
         }
-
         /* Правая часть — текст и форма */
         .personal-info {
             flex: 1; /* чтобы занимала оставшееся пространство */
@@ -228,7 +220,6 @@
             color: #666;
             margin-bottom: 16px;
         }
-
         /* Сетка для ID, телефона, email, пароля */
         .personal-form {
             display: grid;
@@ -247,7 +238,6 @@
             border: 1px solid #CCC;
             border-radius: 4px;
         }
-
         /* Кнопка */
         .personal-actions {
             margin-top: 20px;
@@ -267,7 +257,6 @@
         #personal-section {
             display: none; /* скрыты */
         }
-
         /* Общие стили для .main-content */
         .main-content {
             margin-left: 200px;
@@ -302,7 +291,6 @@
         .btn-finance:hover {
             background-color: #6f42c1;
         }
-
         /* Скрываем некоторые секции по умолчанию */
         #personal-section,
         #housing-section {
@@ -426,14 +414,63 @@
             text-align: center;
             box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
         }
-
         .btn-nav:hover {
             background-color: #2563eb; /* Чуть темнее при наведении */
             transform: scale(1.05);
         }
+        #uploadForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .sports-result {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sports-result h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .sports-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            flex: 1 1 300px;
+        }
+
+        .info-item label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-item span {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .edit-link {
+            color: #007bff;
+            text-decoration: none;
 
     </style>
-
 {{--     ЛЕВАЯ ПАНЕЛЬ--}}
     <div class="sidebar">
         <div class="sidebar-item" onclick="showNews()">
@@ -450,8 +487,8 @@
             <i class="fas fa-building"></i>
             <span>Проживание</span>
         </div>
-        <div class="sidebar-item">
-            <i class="fa-solid fa-clipboard">‌</i>
+        <div class="sidebar-item" onclick="showDocuments()">
+            <i class="fa-solid fa-clipboard"></i>
             <span>Документы</span>
         </div>
         <div class="sidebar-item">
@@ -467,10 +504,8 @@
             <i class="fas fa-dumbbell"></i>
             <span>Запись на занятия физкультурой</span>
         </div>
-
     </div>
-
-    {{-- Блок с новостями --}}
+    {{-- Новости --}}
     <div class="main-content" id="news-section">
         <h2>Новости</h2>
         @isset($newsList)
@@ -488,7 +523,7 @@
             @endforelse
         @endisset
     </div>
-
+    <!-- Личная информация -->
     <div class="main-content" id="personal-section" style="display: none;">
         <h2>Личные данные</h2>
         <div class="personal-card">
@@ -502,7 +537,6 @@
                 </div>
                 <div class="personal-info">
                     <div class="personal-name">{{ Auth::user()->name }}</div>
-
                     <!-- Пример локации -->
                     <div class="personal-location">
                         @if(Auth::user()->acceptedBooking)
@@ -556,7 +590,6 @@
             </div>
         </div>
     </div>
-
     <!-- МОДАЛЬНОЕ ОКНО ДЛЯ СМЕНЫ ПАРОЛЯ -->
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-content">
@@ -645,66 +678,49 @@
             </form>
         </div>
     </div>
-    <div class="main-content" id="sports-section" style="display: none;">
-        <h2>Запись на занятия физкультурой</h2>
-
-        @if($booking)
-            <!-- ВАРИАНТ 2: Показываем результат (если пользователь записан) -->
-            <div class="sports-result" id="sportsResultBlock">
-                <h3>Вы записаны на занятие</h3>
-                <p>Вид спорта: <strong>{{ $booking->sport }}</strong>,
-                    День недели: <strong>{{ $booking->day }}</strong>,
-                    Время: <strong>{{ $booking->scheduled_time }}</strong></p>
-
-                <!-- Кнопка "Отменить" -->
-                <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-change">Отменить?</button>
-                </form>
-            </div>
-        @else
-            <!-- ВАРИАНТ 1: Показываем форму записи (если пользователь не записан) -->
-            <div class="sports-form" id="sportsFormBlock">
-                <h3>Заявка на занятие физкультурой</h3>
-
-                @if(session('success'))
-                    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
-                    @csrf
-                    <label for="sport">Вид спорта</label>
-                    <select name="sport" id="sport" required>
-                        <option value="">-- Выберите вид спорта --</option>
-                        <option value="Танцы">Танцы</option>
-                        <option value="Баскетбол">Баскетбол</option>
-                        <option value="Волейбол">Волейбол</option>
-                        <option value="Футбол">Футбол</option>
-                    </select>
-
-                    <label for="day">Выберите день недели</label>
-                    <div id="day-selection">
-                        <label><input type="checkbox" name="day[]" value="Понедельник"> Понедельник</label>
-                        <label><input type="checkbox" name="day[]" value="Вторник"> Вторник</label>
-                        <label><input type="checkbox" name="day[]" value="Среда"> Среда</label>
-                        <label><input type="checkbox" name="day[]" value="Четверг"> Четверг</label>
-                        <label><input type="checkbox" name="day[]" value="Пятница"> Пятница</label>
-                        <label><input type="checkbox" name="day[]" value="Суббота"> Суббота</label>
-                        <label><input type="checkbox" name="day[]" value="Воскресенье"> Воскресенье</label>
-                    </div>
-
-                    <label for="time">Выберите время</label>
-                    <input type="time" name="time" id="time" required>
-
-                    <button type="submit" class="btn-change">Записаться</button>
-                    <button type="button" class="btn-change" onclick="cancelSportsForm()">Отменить</button>
-                </form>
-            </div>
-        @endif
+    <!-- Документы -->
+    <div id="documents-section" class="main-content" style="display: none;">
+        <h2>Документы</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>№</th>
+                    <th>Тип</th>
+                    <th>Файл</th>
+                    <th>Годен до</th>
+                    <th>Статус</th>
+                </tr>
+                <tbody>
+                @forelse($documents as $doc)
+                    <tr>
+                        <td>{{ $doc->id }}</td>
+                        <td><a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank">{{ $doc->file_name }}</a></td>
+                        <td>{{ $doc->created_at->format('d.m.Y') }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" class="text-center">Документы не найдены</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+        <button id="uploadButton" class="btn btn-primary mt-3">Загрузить новый</button>
     </div>
+    <!-- Форма загрузки документа (скрыта по умолчанию) -->
+    <div id="uploadForm" style="display: none; margin-top: 20px;">
+        <form action="{{ route('document.upload') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-2">
+                <label for="documentFile" class="form-label">Выберите файл:</label>
+                <input type="file" name="documentFile" id="documentFile" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Загрузить</button>
+            <button type="button" id="cancelUpload" class="btn btn-secondary">Отмена</button>
+        </form>
+    </div>
+    <!-- Запросы на ремонт -->
     <div class="flex space-x-6 items-start main-content" id="repair-list" style="display: none;">
         <div class="row">
             <div class="col-sm-6 mb-3 mb-sm-0">
@@ -776,7 +792,7 @@
             </form>
         </div>
     </div>
-    {{-- Блок со списком запросов --}}
+    <!-- Блок со списком запросов -->
     <div class="container mt-5 main-content" id="request-list" style="display: none;">
         <div class="card shadow-sm">
             <div class="card-body">
@@ -822,6 +838,7 @@
             </div>
         </div>
     </div>
+    <!-- Детали запросов-->
     @foreach($requests as $request)
         <div id="request-details-{{ $request->id }}" class="request-details" style="display: none;">
             <div class="container">
@@ -930,12 +947,136 @@
         </div>
     </div>
     @endforeach
+    <!-- Запись на занятия физкультурой -->
+    <div class="main-content" id="sports-section" style="display: none;">
+        <h2>Запись на занятия физкультурой</h2>
 
+        @if($booking)
+            <!-- ВАРИАНТ 2: Пользователь уже записан -->
+            <div class="sports-result" id="sportsResultBlock">
+                <h3>Вы записаны на занятие</h3>
+                <div class="sports-info">
+                    <div class="info-item">
+                        <label>Вид спорта:</label>
+                        <span>{{ $booking->sport }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>День недели и время:</label>
+                        <span>{{ $booking->day }} {{ $booking->scheduled_time }}</span>
+                    </div>
+                    <!-- Форма для отмены записи на занятие -->
+                    <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-change">Отменить?</button>
+                    </form>
+                </div>
+
+                <!-- Блок отработки -->
+                <div class="recovery-section">
+                    <h4>Отработка занятия</h4>
+                    @if($recoveries->count() > 0)
+                        <div class="recovery-list">
+                            @foreach($recoveries as $recovery)
+                                <div class="recovery-item">
+                                    <div class="info-item">
+                                        <label>Вид спорта:</label>
+                                        <span>{{ $recovery->sport }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Время:</label>
+                                        <span>{{ $recovery->scheduled_time }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>Дата:</label>
+                                        <span>{{ $recovery->created_at->format('d.m.Y') }}</span>
+                                    </div>
+                                    <!-- Форма для отмены отработки -->
+                                    <form action="{{ route('sports.recovery.cancel', $recovery->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-change">Отменить</button>
+                                    </form>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>У вас нет запланированных отработок</p>
+                    @endif
+                    <!-- Кнопка для открытия модального окна добавления новой отработки -->
+                    <button onclick="showRecoveryModal()" class="btn-change">+</button>
+                </div>
+            </div>
+        @else
+            <!-- ВАРИАНТ 1: Форма записи -->
+            <div class="sports-form" id="sportsFormBlock">
+                <h3>Запись на занятия физкультурой</h3>
+                <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
+                    @csrf
+
+                    <label for="sport">Вид спорта</label>
+                    <select name="sport" id="sport" required>
+                        <option value="">Выберите</option>
+                        <option value="Танцы">Танцы</option>
+                        <option value="Баскетбол">Баскетбол</option>
+                        <option value="Волейбол">Волейбол</option>
+                        <option value="Футбол">Футбол</option>
+                    </select>
+
+                    <!-- Блок выбора дней недели -->
+                    <label>Выберите дни недели</label>
+                    <div id="day-selection">
+                        <label><input type="checkbox" name="day[]" value="Понедельник"> Понедельник</label>
+                        <label><input type="checkbox" name="day[]" value="Вторник"> Вторник</label>
+                        <label><input type="checkbox" name="day[]" value="Среда"> Среда</label>
+                        <label><input type="checkbox" name="day[]" value="Четверг"> Четверг</label>
+                        <label><input type="checkbox" name="day[]" value="Пятница"> Пятница</label>
+                        <label><input type="checkbox" name="day[]" value="Суббота"> Суббота</label>
+                        <label><input type="checkbox" name="day[]" value="Воскресенье"> Воскресенье</label>
+                    </div>
+
+                    <label for="time">Выбрать время урока</label>
+                    <input type="time" name="time" id="time" required>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="autoEnroll">
+                        <label for="autoEnroll">Настроить автоматическую запись</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Записаться</button>
+                    <button type="button" class="btn-secondary" onclick="cancelSportsForm()">Отменить</button>
+                </form>
+            </div>
+        @endif
+    </div>
+
+    <!-- Модальное окно для записи на отработку физкультуры -->
+    <div id="recoveryModal" class="modal">
+        <div class="modal-content">
+            <h3>Запись на отработку физкультуры</h3>
+            <form action="{{ route('sports.recovery') }}" method="POST">
+                @csrf
+                <label for="recoverySport">Вид спорта</label>
+                <select name="recoverySport" id="recoverySport" required>
+                    <option value="">Выберите</option>
+                    <option value="Танцы">Танцы</option>
+                    <option value="Баскетбол">Баскетбол</option>
+                    <option value="Волейбол">Волейбол</option>
+                    <option value="Футбол">Футбол</option>
+                </select>
+
+                <label for="recoveryTime">Выбрать время урока</label>
+                <input type="time" name="recoveryTime" id="recoveryTime" required>
+
+                <button type="submit" class="btn-primary">Записаться</button>
+                <button type="button" class="btn-secondary" onclick="closeRecoveryModal()">Удалить</button>
+            </form>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             showNews();
-
             @if(session('successType') === 'profile_updated')
             showPersonal();
             @elseif(session('successType') === 'request_updated')
@@ -952,78 +1093,6 @@
             showHousing()
             @endif
         });
-        document.getElementById("file-upload").addEventListener("change", function () {
-            let fileName = this.files[0] ? this.files[0].name : "Не выбрано";
-            document.getElementById("file-label").textContent = `📎 ${fileName}`;
-        });
-        function cancelSportsForm() {
-            document.getElementById('sport').value = '';
-            document.getElementById('time').value = '';
-        }
-        function showRequestRepair() {
-            hideAllSections();
-            document.getElementById('repair-list').style.display = 'block';
-        }
-        // Функция для показа деталей запроса
-        function openRequestDetails(id) {
-            // Скрываем список запросов
-            document.getElementById('request-list').style.display = 'none';
-            // Показываем блок с деталями для данного запроса
-            document.getElementById('request-details-' + id).style.display = 'block';
-        }
-
-        // Функция для закрытия деталей запроса и возврата к списку
-        function closeRequestDetails(id) {
-            document.getElementById('request-details-' + id).style.display = 'none';
-            document.getElementById('request-list').style.display = 'block';
-        }
-        // Показать блок со списком запросов
-        function openRequestList() {
-            hideAllSections();
-            document.getElementById('request-list').style.display = 'block';
-        }
-        // Закрыть список запросов и вернуться в блок выбора запросов
-        function closeRequestList() {
-            document.getElementById('request-list').style.display = 'none';
-            // Если нужно вернуть блок выбора действий, его можно снова показать:
-            document.getElementById('repair-list').style.display = 'block';
-        }
-        // Открыть модальное окно
-        function openRepairModal() {
-            document.getElementById('repairModal').style.display = 'flex';
-        }
-        // Закрыть модальное окно
-        function closeRepairModal() {
-            document.getElementById('repairModal').style.display = 'none';
-        }
-        // Открыть модальное окно редактирования для конкретного запроса
-        function openEditModal(id) {
-            document.getElementById('edit-modal-' + id).style.display = 'flex';
-        }
-        function closeEditModal(id) {
-            document.getElementById('edit-modal-' + id).style.display = 'none';
-        }
-        // Изменение текста метки при выборе файла
-        document.getElementById("file-upload").addEventListener("change", function () {
-            let fileName = this.files[0] ? this.files[0].name : "Не выбрано";
-            document.getElementById("file-label").textContent = `📎 ${fileName}`;
-        });
-        function showSportsBooking() {
-            hideAllSections();
-            document.getElementById('sports-section').style.display = 'block';
-        }
-        function hideAllSections() {
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('housing-section').style.display = 'none';
-            document.getElementById('personal-section').style.display = 'none';
-            document.getElementById('sports-section').style.display = 'none';
-            document.getElementById('repair-list').style.display = 'none';
-            document.getElementById('request-list').style.display = 'none';
-            document.getElementById('repairModal').style.display = 'none';
-            @foreach($requests as $request)
-            document.getElementById('edit-modal-{{ $request->id }}').style.display = 'none';
-            @endforeach
-        }
         function showNews() {
             hideAllSections()
             document.getElementById('news-section').style.display = 'block';
@@ -1032,15 +1101,15 @@
             hideAllSections()
             document.getElementById('personal-section').style.display = 'block';
         }
-        function showHousing() {
-            hideAllSections()
-            document.getElementById('housing-section').style.display = 'block';
-        }
         function openPasswordModal() {
             document.getElementById('passwordModal').style.display = 'flex';
         }
         function closePasswordModal() {
             document.getElementById('passwordModal').style.display = 'none';
+        }
+        function showHousing() {
+            hideAllSections()
+            document.getElementById('housing-section').style.display = 'block';
         }
         // Модальное окно: смена комнаты
         function openChangeRoomModal() {
@@ -1101,6 +1170,91 @@
                 });
                 roomSelect.disabled = false;
             });
+            console.log("DOM полностью загружен");
         });
+        function showDocuments() {
+            hideAllSections();
+            document.getElementById('documents-section').style.display = 'block';
+        }
+        document.getElementById('uploadButton').addEventListener('click', function () {
+            document.getElementById('uploadForm').style.display = 'block';
+        });
+        document.getElementById('cancelUpload').addEventListener('click', function () {
+            document.getElementById('uploadForm').style.display = 'none';
+        });
+
+        function showRequestRepair() {
+            hideAllSections();
+            document.getElementById('repair-list').style.display = 'block';
+        }
+        function openRequestDetails(id) {
+            // Скрываем список запросов
+            document.getElementById('request-list').style.display = 'none';
+            // Показываем блок с деталями для данного запроса
+            document.getElementById('request-details-' + id).style.display = 'block';
+        }
+        function closeRequestDetails(id) {
+            document.getElementById('request-details-' + id).style.display = 'none';
+            document.getElementById('request-list').style.display = 'block';
+        }
+        function openRequestList() {
+            hideAllSections();
+            document.getElementById('request-list').style.display = 'block';
+        }
+        function closeRequestList() {
+            document.getElementById('request-list').style.display = 'none';
+            // Если нужно вернуть блок выбора действий, его можно снова показать:
+            document.getElementById('repair-list').style.display = 'block';
+        }
+        function openRepairModal() {
+            document.getElementById('repairModal').style.display = 'flex';
+        }
+        function closeRepairModal() {
+            document.getElementById('repairModal').style.display = 'none';
+        }
+        function openEditModal(id) {
+            document.getElementById('edit-modal-' + id).style.display = 'flex';
+        }
+        function closeEditModal(id) {
+            document.getElementById('edit-modal-' + id).style.display = 'none';
+        }
+        document.getElementById("file-upload").addEventListener("change", function () {
+            let fileName = this.files[0] ? this.files[0].name : "Не выбрано";
+            document.getElementById("file-label").textContent = `📎 ${fileName}`;
+        });
+        function showSportsBooking() {
+            hideAllSections();
+            document.getElementById('sports-section').style.display = 'block';
+        }
+
+        function cancelSportsForm() {
+            document.getElementById('sport').value = '';
+            document.getElementById('time').value = '';
+            // Сбросить выбранные дни недели
+            const checkboxes = document.querySelectorAll('#day-selection input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+
+        function showRecoveryModal() {
+            document.getElementById('recoveryModal').style.display = 'block';
+        }
+
+        function closeRecoveryModal() {
+            document.getElementById('recoveryModal').style.display = 'none';
+        }
+
+        function hideAllSections() {
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('personal-section').style.display = 'none';
+            document.getElementById('housing-section').style.display = 'none';
+            document.getElementById('documents-section').style.display='none';
+            document.getElementById('repair-list').style.display = 'none';
+            document.getElementById('request-list').style.display = 'none';
+            document.getElementById('repairModal').style.display = 'none';
+            document.getElementById('sports-section').style.display = 'none';
+            @foreach($requests as $request)
+            document.getElementById('edit-modal-{{ $request->id }}').style.display = 'none';
+            @endforeach
+        }
     </script>
 @endsection

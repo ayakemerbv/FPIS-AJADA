@@ -15,15 +15,28 @@ class Document extends Model
         'file_path',
     ];
 
+    // Связь с моделью студента
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
-    public function upload($file)
+    /**
+     * Загружает файл в папку "documents" и сохраняет путь и имя файла в базе.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return Document
+     */
+    public function upload($file, $student_id)
     {
         $path = $file->store('documents');
-        $this->file_path = $path;
-        $this->save();
+
+        // Создаем новую запись в БД
+        return self::create([
+            'student_id' => $student_id,
+            'file_name' => $file->getClientOriginalName(),
+            'file_path' => $path,
+        ]);
     }
+
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Models\Document;
 use App\Models\Employee;
 use App\Models\GymBooking;
+use App\Models\Recovery;
 use App\Models\Request as RepairRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,8 +32,10 @@ class StudentController extends Controller
         $requests = RepairRequest::where('user_id', auth()->id())->get();
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all();
+        $recoveries = Recovery::where('user_id', auth()->id())->get();
+        $documents = Document::all();
         $booking = GymBooking::where('user_id', Auth::id())->first();
-        return view('student.personal', compact('newsList','buildings', 'booking', 'employees', 'requests'));
+        return view('student.personal', compact('newsList','buildings', 'booking', 'employees', 'requests','documents','recoveries'));
     }
 
     public function updateProfile(Request $request)

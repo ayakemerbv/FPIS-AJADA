@@ -138,7 +138,7 @@
         @if(Auth::check() && Auth::user()->role === 'student' && Auth::user()->room_id === null)
             <div class="sidebar-item" onclick="toggleSection('housing')">
                 <i class="fas fa-bed"></i>
-                <span>Проживание</span>
+                <span>Заявка на заселение</span>
             </div>
         @endif
         <div class="sidebar-item">
