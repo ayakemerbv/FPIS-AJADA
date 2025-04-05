@@ -468,7 +468,7 @@
 
         .edit-link {
             color: #007bff;
-            text-decoration: none;
+            text-decoration: none;}
 
     </style>
 {{--     ЛЕВАЯ ПАНЕЛЬ--}}
