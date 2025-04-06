@@ -51,9 +51,8 @@ class NewsManagerController extends Controller
     public function edit($id)
     {
         $news = News::findOrFail($id);
-        return view('manager.dashboard', compact('news'));
+        return view('manager.news.edit', compact('news')); // Заменили на правильное представление
     }
-
 
     public function update(Request $request, $id)
     {
@@ -66,7 +65,6 @@ class NewsManagerController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Удалим старую картинку (если нужна такая логика)
             if ($news->image) {
                 Storage::disk('public')->delete($news->image);
             }
@@ -76,8 +74,9 @@ class NewsManagerController extends Controller
 
         $news->update($data);
 
-        return redirect()->route('manager.dashboard')->with('success', 'Новость обновлена!');
+        return redirect()->route('manager.news.index')->with('success', 'Новость обновлена!'); // Заменили на правильный маршрут
     }
+
 
 
     public function destroy($id)

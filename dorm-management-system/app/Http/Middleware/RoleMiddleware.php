@@ -14,7 +14,6 @@ class RoleMiddleware
             return redirect('/')->with('error', 'Доступ запрещён!');
         }
 
-        // Если нужно поддержать несколько ролей через запятую, распарсим:
         $roleArray = explode(',', $roles);
 
         if (! in_array(Auth::user()->role, $roleArray)) {

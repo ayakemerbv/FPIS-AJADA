@@ -45,9 +45,9 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
     Route::get('/dashboard/requests/{id}/accept', [BookingController::class, 'accept'])->name('booking.accept');
     Route::get('/dashboard/requests/{id}/reject', [BookingController::class, 'reject'])->name('booking.reject');
     Route::resource('/dashboard/news', NewsManagerController::class)->names('manager.news');
-    Route::get('/dashboard/users/create', [ManagerUserController::class, 'create'])->name('manager.users.create');
-    Route::post('/dashboard/users', [ManagerUserController::class, 'store'])->name('manager.users.store');
-    Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
+    Route::put('/dashboard/news/{news}', [NewsManagerController::class, 'update'])->name('manager.news.update');
+
+
 });
 
 // Студенческая панель

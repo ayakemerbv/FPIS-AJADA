@@ -1,234 +1,188 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
+   <style>:root {
+           --sidebar-width: 200px;
+           --header-height: 60px;
+           --primary-color: #7e57c2;
+           --primary-hover: #6f42c1;
+           --success-color: #28a745;
+           --success-hover: #218838;
+           --text-color: #333;
+           --border-color: #DDD;
+           --bg-light: #F9F9F9;
+           --bg-main: #F5F5F5;
+       }
 
+       /* Sidebar */
+       .sidebar {
+           position: fixed;
+           top: var(--header-height);
+           left: 0;
+           width: var(--sidebar-width);
+           height: calc(100vh - var(--header-height));
+           background-color: #fff;
+           border-right: 1px solid var(--border-color);
+           padding-top: 20px;
+       }
+       .sidebar-item {
+           display: flex;
+           align-items: center;
+           gap: 10px;
+           padding: 12px 20px;
+           color: var(--text-color);
+           text-decoration: none;
+           cursor: pointer;
+       }
+       .sidebar-item:hover {
+           background-color: #efefef;
+       }
+       .sidebar-item i {
+           font-size: 18px;
+       }
 
-        /* ========== ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) ========== */
-        .sidebar {
-            position: fixed;
-            top: 60px; /* высота верхней панели */
-            left: 0;
-            width: 200px;
-            height: calc(100vh - 60px);
-            background-color: #FFF;
-            border-right: 1px solid #DDD;
-            padding-top: 20px;
-        }
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            color: #333;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .sidebar-item:hover {
-            background-color: #EFEFEF;
-        }
-        .sidebar-item i {
-            font-size: 18px;
-            color: #4A4A4A;
-        }
+       /* Main Content */
+       .main-content {
+           margin-left: var(--sidebar-width);
+           padding: 80px 20px 20px;
+           background-color: var(--bg-main);
+           min-height: calc(100vh - var(--header-height));
+       }
+       .main-content h2 {
+           margin-bottom: 20px;
+           color: var(--text-color);
+       }
 
-        /* ========== ОСНОВНОЙ КОНТЕНТ ========== */
-        .main-content {
-            margin-left: 200px; /* отступ под ширину сайдбара */
-            padding: 20px;
-            padding-top: 80px; /* чтобы контент не лез под шапку */
-            background-color: #F5F5F5;
-            min-height: calc(100vh - 60px);
-        }
-        .main-content h2 {
-            margin-bottom: 20px;
-            color: #4A4A4A;
-        }
+       /* Table */
+       .table, .users-table {
+           width: 100%;
+           border-collapse: collapse;
+           background-color: #fff;
+       }
+       .table th, .table td, .users-table th, .users-table td {
+           padding: 12px;
+           border: 1px solid var(--border-color);
+           text-align: left;
+           font-size: 0.95rem;
+           color: var(--text-color);
+       }
+       .table th, .users-table th {
+           background-color: var(--bg-light);
+       }
+       .users-table tr:last-child td {
+           border-bottom: none;
+       }
 
-        /* ========== ТАБЛИЦЫ, ФОРМЫ ========== */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .table th, .table td {
-            padding: 12px;
-            border: 1px solid #DDD;
-            text-align: left;
-        }
-        .table th {
-            background-color: #F9F9F9;
-        }
-        .form-label {
-            font-weight: bold;
-            margin-top: 8px;
-            display: block;
-        }
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-            padding: 8px 16px;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .btn-success:hover {
-            background-color: #218838;
-        }
-        .btn-primary {
-            background-color: #7e57c2;
-            border: none;
-            padding: 8px 16px;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-        .btn-primary:hover {
-            background-color: #6f42c1;
-        }
+       /* Form */
+       .form-label {
+           font-weight: bold;
+           display: block;
+           margin: 8px 0 4px;
+       }
+       .form-control {
+           width: 100%;
+           padding: 8px;
+           margin-bottom: 12px;
+           border: 1px solid #ccc;
+           border-radius: 4px;
+       }
 
+       /* Buttons */
+       .btn-success, .btn-primary, .plus-button {
+           padding: 8px 16px;
+           border-radius: 4px;
+           border: none;
+           color: #fff;
+           cursor: pointer;
+       }
+       .btn-success {
+           background-color: var(--success-color);
+       }
+       .btn-success:hover {
+           background-color: var(--success-hover);
+       }
+       .btn-primary, .plus-button {
+           background-color: var(--primary-color);
+       }
+       .btn-primary:hover, .plus-button:hover {
+           background-color: var(--primary-hover);
+       }
 
-        /* Заголовок + кнопка "+" */
-        .heading-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        .heading-row h2 {
-            font-size: 2rem;
-            color: #4A4A4A;
-        }
-        .plus-button {
-            background-color: #7e57c2;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .plus-button:hover {
-            background-color: #6f42c1;
-        }
+       /* Utility */
+       .heading-row {
+           display: flex;
+           align-items: center;
+           justify-content: space-between;
+           margin-bottom: 1rem;
+       }
+       .user-filter {
+           display: flex;
+           gap: 8px;
+           margin-bottom: 1rem;
+       }
+       .user-filter input {
+           padding: 8px;
+           border: 1px solid #ccc;
+           border-radius: 4px;
+           font-size: 0.9rem;
+       }
+       .logout-form button {
+           background: none;
+           border: none;
+           color: var(--text-color);
+           font-size: 0.9rem;
+           cursor: pointer;
+       }
+       .logout-form button:hover {
+           text-decoration: underline;
+       }
+       a.my-span-style {
+           text-decoration: none;
+           color: var(--text-color);
+       }
+       a.my-span-style:hover {
+           color: #555;
+       }
 
-        /* Фильтр (ID, ФИО, E-mail, Статус) */
-        .user-filter {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 1rem;
-        }
-        .user-filter input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+       /* Modal */
+       .modal-overlay {
+           display: none;
+           position: fixed;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           background: rgba(0,0,0,0.5);
+           align-items: center;
+           justify-content: center;
+           z-index: 9999;
+       }
+       .modal-content {
+           background: #fff;
+           width: 500px;
+           padding: 20px;
+           border-radius: 8px;
+           position: relative;
+       }
+       .close-button {
+           position: absolute;
+           top: 10px;
+           right: 10px;
+           background: none;
+           border: none;
+           font-size: 1.2rem;
+           cursor: pointer;
+       }
+       .close-button:hover {
+           color: #666;
+       }</style>
 
-        /* Таблица пользователей */
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #FFF;
-            border: 1px solid #DDD;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .users-table th, .users-table td {
-            padding: 12px;
-            border-bottom: 1px solid #EEE;
-            font-size: 0.95rem;
-            color: #333;
-        }
-        .users-table th {
-            background-color: #F9F9F9;
-            text-align: left;
-        }
-
-        /* Кнопка выхода (с иконкой) */
-        .logout-form button {
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 0.9rem;
-            cursor: pointer;
-            gap: 6px;
-        }
-        .logout-form button:hover {
-            text-decoration: underline;
-        }
-        a.my-span-style {
-            text-decoration: none;
-            color: #333;
-        }
-        a.my-span-style:hover {
-            text-decoration: none;
-            color: #555;
-        }
-
-        /* Модальное окно */
-        .modal-overlay {
-            display: none; /* скрыто по умолчанию */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5); /* затемнение фона */
-            align-items: center;
-            justify-content: center;
-            z-index: 9999; /* поверх всего */
-        }
-        .modal-content {
-            background: #fff;
-            width: 500px; /* ширина модального окна */
-            padding: 20px;
-            border-radius: 8px;
-            position: relative;
-        }
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .close-button:hover {
-            color: #666;
-        }
-    </style>
-
-    <!-- САЙДБАР -->
-    <div class="sidebar">
-        <!-- Кнопка "Главная" -> показывает #see-news-section -->
-        <div class="sidebar-item" onclick="seeNews()">
-            <i class="fas fa-home"></i>
-            <span>Лента</span>
-        </div>
-        <!-- Кнопка "Новости" -> показывает #news-section (CRUD новостей) -->
-        <div class="sidebar-item" onclick="showNews()">
-            <i class="fas fa-newspaper"></i>
-            <span>Новости</span>
-        </div>
-        <!-- Кнопка "Пользователи" -->
-        <div class="sidebar-item" onclick="showUsers()">
-            <i class="fas fa-user"></i>
-            <span>Пользователи</span>
-        </div>
-        <div class="sidebar-item" onclick="showRequests()">
-            <i class="fas fa-bars"></i>
-            <span>Заявки</span>
-        </div>
-    </div>
+   <!-- Sidebar -->
+   <div class="sidebar">
+       <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-home"></i><span>Лента</span></div>
+       <div class="sidebar-item" onclick="showNews()"><i class="fas fa-newspaper"></i><span>Новости</span></div>
+       <div class="sidebar-item" onclick="showRequests()"><i class="fas fa-bars"></i><span>Заявки</span></div>
+   </div>
 
     <!-- Блок с новостями (ЛЕНТА) -->
     <div class="main-content" id="see-news-section" style="display: none;">
@@ -248,7 +202,6 @@
             @endforelse
         @endisset
     </div>
-
     <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
     <div class="main-content" id="news-section" style="display: none;">
         <div class="container">
@@ -293,7 +246,6 @@
             </table>
         </div>
     </div>
-
     <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
     <div class="main-content" id="create-news-section" style="display: none;">
         <div class="container">
@@ -315,7 +267,6 @@
             </div>
         </div>
     </div>
-
     <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
     <div class="main-content" id="edit-news-section" style="display: none;">
         <div class="container">
@@ -340,89 +291,6 @@
             </div>
         </div>
     </div>
-
-    <!-- СЕКЦИЯ ПОЛЬЗОВАТЕЛЕЙ (скрыта по умолчанию) -->
-    <div class="main-content" id="users-section" style="display: none;">
-        <div class="heading-row">
-            <h2>Список пользователей</h2>
-            <button class="plus-button" onclick="openModal()">+</button>
-        </div>
-        <!-- Фильтр / поиск -->
-        <div class="user-filter">
-            <input type="text" placeholder="ID">
-            <input type="text" placeholder="ФИО">
-            <input type="text" placeholder="E-mail">
-            <input type="text" placeholder="Статус">
-        </div>
-
-        <!-- Таблица пользователей -->
-        <table class="users-table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>ФИО</th>
-                <th>E-mail</th>
-                <th>Статус</th>
-            </tr>
-            </thead>
-            <tbody>
-            @forelse($users as $user)
-                <tr>
-                    <td>{{ $user->user_id }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->role }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="4">Нет пользователей</td></tr>
-            @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО (создание пользователя) -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content">
-            <button class="close-button" onclick="closeModal()">×</button>
-            <h2>Создать пользователя</h2>
-
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    @foreach($errors->all() as $err)
-                        <p>{{ $err }}</p>
-                    @endforeach
-                </div>
-            @endif
-
-            <form action="{{ route('manager.users.store') }}" method="POST">
-                @csrf
-                <label class="form-label">ФИО</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
-
-                <label class="form-label">ID</label>
-                <input type="text" name="user_id" class="form-control" value="{{ old('user_id') }}" required>
-
-                <label class="form-label">E-mail</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
-
-                <label class="form-label">Пароль</label>
-                <input type="password" name="password" class="form-control" required>
-
-                <label class="form-label">Роль</label>
-                <select name="role" class="form-control">
-                    <option value="student" @if(old('role') === 'student') selected @endif>Студент</option>
-                    <option value="manager" @if(old('role') === 'manager') selected @endif>Менеджер</option>
-                    <option value="admin" @if(old('role') === 'admin') selected @endif>Админ</option>
-                </select>
-                <button type="submit" class="btn-success" style="margin-top: 10px;">Создать</button>
-            </form>
-        </div>
-    </div>
-
     <div class="main-content" id="request-section" style="display: none;">
         <h2>Заявки на заселение</h2>
 
@@ -475,11 +343,9 @@
         // По умолчанию: "Главная" -> seeNews()
         document.addEventListener('DOMContentLoaded', function() {
             seeNews();
-
             @if($errors->any())
             openModal();
             @endif
-
             @if(session('successType') === 'user_created')
             closeModal();
             showUsers();
@@ -487,83 +353,45 @@
             showNews();
             @endif
         });
-
         // "Главная" (Лента) -> показываем #see-news-section
         function seeNews() {
-            // Показываем ленту
+            hideAllSections();
             document.getElementById('see-news-section').style.display = 'block';
-            document.getElementById('request-section').style.display = 'none';
-            // Скрываем всё остальное
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
         }
-
         // "Новости" (CRUD) -> показываем #news-section
         function showNews() {
-            document.getElementById('see-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('request-section').style.display = 'none';
+            hideAllSections()
             document.getElementById('news-section').style.display = 'block';
         }
-
-        // "Пользователи"
-        function showUsers() {
-            document.getElementById('see-news-section').style.display = 'none';
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('request-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'block';
-        }
-
         // Кнопка "Создать новость"
         function CreateNews() {
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('see-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('request-section').style.display = 'none';
+            hideAllSections()
             document.getElementById('create-news-section').style.display = 'block';
         }
-
         // Кнопка "Редактировать"
         function EditNews(id, title, content) {
-            document.getElementById('news-section').style.display = 'none';
-            document.getElementById('see-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
+            hideAllSections();
             document.getElementById('edit-news-section').style.display = 'block';
-            document.getElementById('request-section').style.display = 'none';
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
-            document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
+            document.getElementById('editNewsForm').action = '/manager/news/' + id;
+
         }
         function showRequests() {
-            document.getElementById('see-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
-            document.getElementById('create-news-section').style.display = 'none';
-            document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('news-section').style.display = 'none';
+            hideAllSections();
             document.getElementById('request-section').style.display = 'block';
         }
-
-
         // Кнопка "Отмена" (редактирование)
         function cancelEdit() {
             document.getElementById('edit-news-section').style.display = 'none';
             showNews();
         }
-
-        // Модальное окно (создание пользователя)
-        function openModal() {
-            document.getElementById('modalOverlay').style.display = 'flex';
-        }
-        function closeModal() {
-            document.getElementById('modalOverlay').style.display = 'none';
+        function hideAllSections() {
+            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('see-news-section').style.display = 'none';
+            document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('edit-news-section').style.display = 'none';
+            document.getElementById('request-section').style.display = 'none';
         }
     </script>
 @endsection

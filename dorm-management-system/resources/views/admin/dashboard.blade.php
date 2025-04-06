@@ -439,7 +439,6 @@
             </tbody>
         </table>
     </div>
-
     <!-- ДЕТАЛИ ПОЛЬЗОВАТЕЛЯ (скрытая секция) -->
     <div class="main-content user-details-section" id="user-details-section" style="display: none;">
         <h2>Личные данные пользователя</h2>

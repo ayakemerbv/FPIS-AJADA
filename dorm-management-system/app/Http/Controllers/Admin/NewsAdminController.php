@@ -23,7 +23,6 @@ class NewsAdminController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Валидация
         $data = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',

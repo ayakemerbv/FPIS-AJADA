@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Показать страницу входа
+
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Логин
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -26,10 +25,9 @@ class AuthController extends Controller
         \Log::info('Попытка входа', ['email' => $request->email, 'password' => $request->password]);
 
         if (\Auth::attempt($credentials)) {
-            // Пользователь авторизован
+
             $user = \Auth::user();
 
-            // Проверяем роль
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.dashboard'); // маршрут для админа
@@ -47,7 +45,6 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Неверные данные'])->withInput();
     }
 
-    // Выход
     public function logout()
     {
         Auth::logout();

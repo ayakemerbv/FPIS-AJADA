@@ -25,8 +25,6 @@ class BookingController extends Controller
         return response()->json($floors);
     }
 
-
-
     // Получение списка свободных комнат на этаже
     public function getRooms($building_id, $floor) {
         $rooms = Room::where('building_id', $building_id)
@@ -132,8 +130,6 @@ class BookingController extends Controller
             'room_id'     => 'required|exists:rooms,id',
         ]);
 
-        // Создаём заявку на «смену комнаты»,
-        // можно завести поле типа (change_room) или status = 'pending_change' и т.д.
         Booking::create([
             'user_id'     => Auth::id(),
             'building_id' => $request->building_id,

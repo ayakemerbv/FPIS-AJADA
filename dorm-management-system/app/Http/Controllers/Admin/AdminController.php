@@ -14,7 +14,6 @@ class AdminController extends Controller
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $users = User::all();
         $requests = Booking::where('status', 'pending')->get();
-
         return view('admin.dashboard', compact('users', 'newsList', 'requests'));
     }
     public function index(Request $request)
@@ -34,7 +33,6 @@ class AdminController extends Controller
             $query->where('role', 'like', '%'.$request->filter_role.'%');
         }
 
-        // Получаем результат
         $users = $query->get();
 
         return view('admin.dashboard', [
@@ -47,7 +45,7 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         return view('admin.users.show', compact('user'));
     }
-    // AdminUserController
+
     public function showJson($id)
     {
         $user = User::findOrFail($id);
