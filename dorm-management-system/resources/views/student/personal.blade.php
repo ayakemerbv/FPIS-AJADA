@@ -1,8 +1,7 @@
 
 @extends('layouts.app')
 @section('content')
-    <style>
-        /* СБРОС */
+    <style>/* ===== СБРОС СТИЛЕЙ ===== */
         * {
             margin: 0;
             padding: 0;
@@ -12,26 +11,8 @@
             font-family: Arial, sans-serif;
             background-color: #F5F5F5;
         }
-        /* ОБЩИЕ СТИЛИ ДЛЯ КРУГЛЫХ ИКОНОК */
-        .icon-circle, .avatar-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .icon-circle i {
-            font-size: 16px;
-        }
-        .avatar-circle {
-            background-color: #6f42c1; /* Фиолетовый */
-            font-weight: bold;
-        }
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
+
+        /* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
         .top-nav {
             display: flex;
             align-items: center;
@@ -49,21 +30,17 @@
             font-weight: bold;
             color: #4A4A4A;
         }
-        /* Если есть логотип-изображение, раскомментируй:
-        .top-nav .logo img {
-            height: 40px;
-        } */
         .top-nav .nav-icons {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        /* ОБЁРТКА ДЛЯ АВАТАРА И МЕНЮ */
+
+        /* ===== АВАТАР И ДРОПДАУН МЕНЮ ===== */
         .avatar-wrapper {
             position: relative;
             display: inline-block;
         }
-        /* Меню скрыто по умолчанию */
         .avatar-dropdown {
             display: none;
             position: absolute;
@@ -78,7 +55,6 @@
             z-index: 999;
             text-align: center;
         }
-        /* При наведении на .avatar-wrapper показываем меню */
         .avatar-wrapper:hover .avatar-dropdown {
             display: block;
         }
@@ -97,10 +73,11 @@
         .avatar-dropdown a:hover {
             text-decoration: underline;
         }
-        /* ЛЕВАЯ ПАНЕЛЬ */
+
+        /* ===== БОКОВАЯ ПАНЕЛЬ ===== */
         .sidebar {
             position: fixed;
-            top: 60px; /* высота шапки */
+            top: 60px;
             left: 0;
             width: 200px;
             height: calc(100vh - 60px);
@@ -114,82 +91,105 @@
             gap: 10px;
             padding: 12px 20px;
             color: #333;
+            cursor: pointer;
             text-decoration: none;
         }
         .sidebar-item:hover {
             background-color: #EFEFEF;
-            cursor: pointer;
         }
         .sidebar-item i {
             font-size: 18px;
             color: #4A4A4A;
         }
-        /* ОСНОВНОЙ КОНТЕНТ */
-        .main-content {
-            margin-left: 200px; /* отступ под ширину сайдбара */
-            padding: 20px;
-            padding-top: 80px;  /* чтобы контент не лез под шапку */
-        }
-        .main-content h2 {
-            margin-bottom: 20px;
-            color: #4A4A4A;
-        }
-        /* Кнопка выхода (с иконкой) */
-        .logout-form button {
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 0.9rem;
-            cursor: pointer;
-            gap: 6px;            /* отступ между иконкой и текстом */
-        }
-        .logout-form button:hover {
-            text-decoration: underline;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #F5F5F5;
-        }
-        /* Основной контейнер */
-        .main-content {
-            margin-left: 200px; /* Если у тебя сайдбар 200px */
-            padding-top: 80px; /* чтобы не залезать под шапку */
-            background-color: #F5F5F5;
-            min-height: calc(100vh - 60px);
-        }
-        .request-details {
-            margin-left: -200px; /* Если у тебя сайдбар 200px */
-            padding-top: 20px; /* чтобы не залезать под шапку */
-            /*background-color: #F5F5F5;*/
-            min-height: calc(100vh - 60px);
 
+        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 80px;
+            background-color: #F5F5F5;
+            min-height: calc(100vh - 60px);
         }
-        /* Заголовок */
         .main-content h2 {
             margin-bottom: 20px;
             color: #4A4A4A;
             font-size: 1.5rem;
         }
 
-        /* Карточка «Личные данные» */
-        .personal-card {
+        /* ===== КАРТОЧКИ, ФОРМЫ, ТАБЛИЦЫ ===== */
+        .personal-card,
+        .housing-card,
+        .sports-form,
+        .sports-result {
             background-color: #FFF;
             border: 1px solid #DDD;
             border-radius: 8px;
             padding: 20px;
+            margin-bottom: 20px;
+        }
+        .personal-form,
+        .sports-form select,
+        .sports-form input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
         }
 
-        /* Контейнер с фото и основной инфой */
+        /* ===== КНОПКИ ===== */
+        .btn-primary,
+        .btn-secondary,
+        .btn-change,
+        .btn-finance {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #7e57c2;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #6f42c1;
+        }
+        .btn-secondary {
+            background-color: #ccc;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #bbb;
+        }
+        .btn-change {
+            background-color: #7e57c2;
+            color: #fff;
+        }
+        .btn-change:hover {
+            background-color: #6f42c1;
+        }
+        .btn-finance {
+            background-color: #7e57c2;
+            color: #fff;
+        }
+        .btn-finance:hover {
+            background-color: #6f42c1;
+        }
+
+        /* ===== ЛИЧНЫЕ ДАННЫЕ, ИНФОРМАЦИЯ ===== */
         .personal-content {
             display: flex;
             gap: 20px;
         }
-        /* Левая часть — фото */
         .personal-photo {
             width: 180px;
             height: 180px;
@@ -199,31 +199,25 @@
         .personal-photo img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* чтобы фото заполняло блок */
+            object-fit: cover;
         }
-        /* Правая часть — текст и форма */
         .personal-info {
-            flex: 1; /* чтобы занимала оставшееся пространство */
+            flex: 1;
         }
         .personal-name {
             font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 4px;
         }
-        .personal-status {
+        .personal-status,
+        .personal-location {
             font-size: 0.9rem;
             color: #666;
             margin-bottom: 8px;
         }
-        .personal-location {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 16px;
-        }
-        /* Сетка для ID, телефона, email, пароля */
         .personal-form {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 столбца */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
         .personal-form label {
@@ -238,138 +232,35 @@
             border: 1px solid #CCC;
             border-radius: 4px;
         }
-        /* Кнопка */
         .personal-actions {
             margin-top: 20px;
         }
-        .btn-change {
-            background-color: #7e57c2;
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-change:hover {
-            background-color: #6f42c1;
-        }
-        #news-section,
-        #personal-section {
-            display: none; /* скрыты */
-        }
-        /* Общие стили для .main-content */
-        .main-content {
-            margin-left: 200px;
-            padding: 20px;
-            padding-top: 80px;
-        }
-        /* Карточки для блока "Проживание" */
-        .housing-card {
-            background-color: #FFF;
-            border: 1px solid #DDD;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px; /* отступ между карточками */
-        }
-        .housing-card h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            color: #333;
-        }
-        .housing-card p {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .btn-finance {
-            background-color: #7e57c2;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-finance:hover {
-            background-color: #6f42c1;
-        }
-        /* Скрываем некоторые секции по умолчанию */
-        #personal-section,
-        #housing-section {
-            display: none;
-        }
-        /* Проживание (housing-section) */
-        .housing-card {
-            background-color: #FFF;
-            border: 1px solid #DDD;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .housing-card h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            color: #333;
-        }
-        .housing-card p {
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .btn-finance {
-            background-color: #7e57c2;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-finance:hover {
-            background-color: #6f42c1;
-        }
-        .container {
-            width: 900px;
 
-        }
-        /* Модальное окно (смена пароля / смена комнаты) */
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
         .modal-overlay {
-            display: none;
+            display: none; /* скрыто по умолчанию */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5); /* затемненный фон */
+            z-index: 9999;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
         }
         .modal-content {
             background: #fff;
             width: 400px;
-            height: 550px;
+            max-width: 90%;
             padding: 20px;
             border-radius: 8px;
             position: relative;
-        }
-        .modal-content h2 {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-        .modal-content .form-group {
-            margin-bottom: 12px;
-        }
-        .modal-content label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .close-button {
             position: absolute;
-            top: 0px;
+            top: 10px;
             right: 10px;
             background: none;
             border: none;
@@ -379,31 +270,68 @@
         .close-button:hover {
             color: #666;
         }
-        /* Блок для формы записи на спорт */
-        .sports-form, .sports-result {
-            width: 700px;
-            /*height: 350px;*/
-            background-color: #FFF;
-            border: 1px solid #DDD;
-            border-radius: 8px;
-            padding: 20px;
+
+        /* ===== СПОРТИВНАЯ СЕКЦИЯ ===== */
+        .sports-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-bottom: 20px;
         }
-        .sports-form select, .sports-form input {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+        .info-item {
+            flex: 1 1 300px;
         }
-        .sports-form button {
-            margin-right: 10px;
+        .info-item label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info-item span {
+            font-size: 1rem;
+            color: #333;
+        }
+        .edit-link {
+            align-self: flex-end;
+            color: #007bff;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== ОТРАБОТКА (Recovery) ===== */
+        .recovery-section {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+        .recovery-list {
+            margin-bottom: 15px;
+        }
+        .recovery-item {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .no-recovery {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ===== ПРОЧИЕ СТИЛИ ===== */
+        .container {
+            width: 900px;
         }
         .btn-nav {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #3b82f6; /* Синий цвет */
+            background-color: #3b82f6;
             color: white;
             padding: 12px 20px;
             border-radius: 10px;
@@ -415,9 +343,11 @@
             box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
         }
         .btn-nav:hover {
-            background-color: #2563eb; /* Чуть темнее при наведении */
+            background-color: #2563eb;
             transform: scale(1.05);
         }
+
+        /* Стили для формы загрузки документа (uploadForm) */
         #uploadForm {
             display: none;
             position: fixed;
@@ -429,47 +359,6 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .sports-result {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .sports-result h3 {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .sports-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            flex: 1 1 300px;
-        }
-
-        .info-item label {
-            font-weight: bold;
-            color: #555;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .info-item span {
-            font-size: 1rem;
-            color: #333;
-        }
-
-        .edit-link {
-            color: #007bff;
-            text-decoration: none;}
-
     </style>
 {{--     ЛЕВАЯ ПАНЕЛЬ--}}
     <div class="sidebar">

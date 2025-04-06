@@ -36,9 +36,6 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::resource('/dashboard/news', NewsAdminController::class)->names('admin.news');
     Route::get('/users/{id}/json', [AdminUserController::class, 'getUserJson']);
-
-
-
 });
 
 // Менеджерская панель
@@ -51,7 +48,6 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
     Route::get('/dashboard/users/create', [ManagerUserController::class, 'create'])->name('manager.users.create');
     Route::post('/dashboard/users', [ManagerUserController::class, 'store'])->name('manager.users.store');
     Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
-
 });
 
 // Студенческая панель
@@ -85,6 +81,7 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
     Route::put('/personal/requests/{repairRequest}', [RequestController::class, 'update'])->name('request.update');
     Route::delete('/personal/requests/{repairRequest}', [RequestController::class, 'destroy'])->name('request.destroy');
 });
+
 // Employee dashboard
     Route::middleware(['auth','role:employee'])->prefix('employee')->group(function (){
         Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
@@ -94,6 +91,4 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
         Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
         Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
         Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
-
-
 });

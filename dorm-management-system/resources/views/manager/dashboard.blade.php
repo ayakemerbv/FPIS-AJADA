@@ -460,6 +460,11 @@
                            style="color: red; text-decoration: none;">
                             Отклонить
                         </a>
+                        <a href="{{ route('booking.reject', $req->id) }}"
+                           style="color: red; text-decoration: none;">
+                            на рассмотрении
+                        </a>
+
                     </td>
                 </tr>
             @endforeach

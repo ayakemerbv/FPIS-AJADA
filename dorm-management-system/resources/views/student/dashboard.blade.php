@@ -2,16 +2,15 @@
 
 @section('content')
     <style>
-
-        /* ЛЕВАЯ ПАНЕЛЬ */
+        /* Sidebar */
         .sidebar {
             position: fixed;
-            top: 60px; /* высота шапки */
+            top: 60px;
             left: 0;
             width: 200px;
             height: calc(100vh - 60px);
-            background-color: #FFF;
-            border-right: 1px solid #DDD;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
             padding-top: 20px;
         }
         .sidebar-item {
@@ -23,26 +22,25 @@
             text-decoration: none;
         }
         .sidebar-item:hover {
-            background-color: #EFEFEF;
+            background-color: #efefef;
             cursor: pointer;
         }
         .sidebar-item i {
             font-size: 18px;
-            color: #4A4A4A;
+            color: #4a4a4a;
         }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
+        /* Main Content */
         .main-content {
-            margin-left: 200px; /* отступ под ширину сайдбара */
-            padding: 20px;
-            padding-top: 80px;  /* чтобы контент не лез под шапку */
+            margin-left: 200px;
+            padding: 80px 20px 20px;
         }
         .main-content h2 {
             margin-bottom: 20px;
-            color: #4A4A4A;
+            color: #4a4a4a;
         }
 
-        /* Увеличенный кружок с буквой внутри меню (опционально) */
+        /* Avatar Circle */
         .avatar-circle-big {
             width: 45px;
             height: 45px;
@@ -50,40 +48,36 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /*flex-direction: column;*/
             margin-bottom: 11px;
         }
 
-        /* Кнопка выхода (с иконкой) */
+        /* Logout */
         .logout-form button {
             background: none;
             border: none;
             color: #333;
             font-size: 0.9rem;
             cursor: pointer;
-            /*display: flex;*/
-            /*justify-content: center;!* иконка + текст в одну строку *!*/
-            /*align-items: center;*/
-            gap: 6px;            /* отступ между иконкой и текстом */
+            gap: 6px;
         }
         .logout-form button:hover {
             text-decoration: underline;
         }
 
+        /* Application Form */
         .housing-form label {
             display: block;
             margin-top: 10px;
             font-weight: bold;
         }
-        .housing-form select, .housing-form button {
+        .housing-form select,
+        .housing-form button {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
         }
+
         .application-container {
-            /*display: flex;*/
-            /*justify-content: center;*/
-            /*align-items: center;*/
             margin-left: 280px;
             margin-top: 50px;
             height: 100vh;
@@ -99,7 +93,7 @@
         .application-box h2 {
             text-align: center;
             margin-bottom: 20px;
-            color: #4A4A4A;
+            color: #4a4a4a;
         }
         .application-box select,
         .application-box button {
@@ -108,34 +102,31 @@
             margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
-
         }
         .application-box button {
-            background: #007bff;
+            background: #7e57c2;
             color: white;
             border: none;
             cursor: pointer;
         }
         .application-box button:hover {
-            background: #0056b3;
+            background: #6f42c1;
         }
+
         #housing-sidebar {
-            display: none; /* Скрываем заявку изначально */
+            display: none;
         }
-
         #housing-sidebar.open {
-            display: block; /* Показываем при открытии */
+            display: block;
         }
-
     </style>
 
-    {{-- ЛЕВАЯ ПАНЕЛЬ --}}
     <div class="sidebar">
         <div class="sidebar-item" onclick="toggleSection('news')">
             <i class="fas fa-home"></i>
             <span>Лента</span>
         </div>
-        @if(Auth::check() && Auth::user()->role === 'student' && Auth::user()->room_id === null)
+        @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id == null)
             <div class="sidebar-item" onclick="toggleSection('housing')">
                 <i class="fas fa-bed"></i>
                 <span>Заявка на заселение</span>
@@ -147,7 +138,6 @@
         </div>
     </div>
 
-    {{-- Раздел новостей --}}
     <div class="main-content" id="news-section">
         <h2>Новости</h2>
         @isset($newsList)
@@ -166,7 +156,6 @@
         @endisset
     </div>
 
-    {{-- Боковая панель заявки на проживание --}}
     <div class="application-container" id="housing-sidebar">
         <div class="application-box">
             <h2>Заявка на заселение</h2>
@@ -194,23 +183,16 @@
             </form>
         </div>
     </div>
+
     <script>
         function toggleSection(section) {
-            console.log("Функция toggleSection вызвана:", section);
             const newsSection = document.getElementById('news-section');
             const housingSidebar = document.getElementById('housing-sidebar');
 
-            if (!newsSection || !housingSidebar) {
-                console.error("ID не найден.");
-                return;
-            }
-
             if (section === 'housing') {
-                console.log("Открываем sidebar 'housing'");
                 housingSidebar.classList.add('open');
                 newsSection.classList.add('hidden');
             } else {
-                console.log("Закрываем sidebar 'housing'");
                 housingSidebar.classList.remove('open');
                 newsSection.classList.remove('hidden');
             }
@@ -227,7 +209,6 @@
                     floorSelect.disabled = true;
                     return;
                 }
-
                 try {
                     const response = await fetch(`/student/personal/floors/${buildingId}`);
                     const data = await response.json();
@@ -252,7 +233,6 @@
                     roomSelect.disabled = true;
                     return;
                 }
-
                 try {
                     const response = await fetch(`/student/personal/rooms/${buildingId}/${floor}`);
                     const data = await response.json();
@@ -284,6 +264,5 @@
                 loadRooms(buildingId, floor);
             });
         });
-</script>
-
+    </script>
 @endsection
