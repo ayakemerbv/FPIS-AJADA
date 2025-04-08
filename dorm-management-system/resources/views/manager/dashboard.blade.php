@@ -374,7 +374,7 @@
             document.getElementById('edit-news-section').style.display = 'block';
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
-            document.getElementById('editNewsForm').action = '/manager/news/' + id;
+            document.getElementById('editNewsForm').action = '/manager/dashboard/news/' + id;
 
         }
         function showRequests() {

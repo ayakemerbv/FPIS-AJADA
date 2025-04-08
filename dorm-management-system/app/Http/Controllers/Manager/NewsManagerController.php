@@ -74,7 +74,7 @@ class NewsManagerController extends Controller
 
         $news->update($data);
 
-        return redirect()->route('manager.news.index')->with('success', 'Новость обновлена!'); // Заменили на правильный маршрут
+        return redirect()->route('manager.dashboard')->with('success', 'Новость обновлена!'); // Заменили на правильный маршрут
     }
 
 

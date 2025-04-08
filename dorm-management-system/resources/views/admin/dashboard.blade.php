@@ -486,14 +486,18 @@
                 </form>
 
                 <!-- Кнопка "Удалить пользователя" -->
-                <form id="userDeleteForm" style="margin-top: 10px;">
+                <form id="userDeleteForm"
+                      action="{{ route('admin.users.destroy', $user->id) }}"
+                      method="POST"
+                      style="margin-top: 10px;">
                     @csrf
-                    <input type="hidden" name="_method" value="DELETE">
+                    @method('DELETE')
                     <button type="submit" class="btn-danger"
                             onclick="return confirm('Точно удалить?')">
                         Удалить пользователя
                     </button>
                 </form>
+
             </div>
         </div>
     </div>
@@ -633,8 +637,8 @@
                 document.getElementById('detail-email').value = data.email || '';
 
                 // Настраиваем action форм
-                document.getElementById('userUpdateForm').action = '/admin/users/' + data.id;
-                document.getElementById('userDeleteForm').action = '/admin/users/' + data.id;
+                document.getElementById('userUpdateForm').action = '/admin/dashboard/users/' + data.id;
+                document.getElementById('userDeleteForm').action = '/admin/dashboard/users/' + data.id;
 
                 // Показываем секцию
                 document.getElementById('user-details-section').style.display = 'block';

@@ -10,9 +10,11 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AdminUserController extends Controller
 {
+
 
     public function create()
     {
@@ -30,7 +32,7 @@ class AdminUserController extends Controller
             'job_type' => 'nullable|string|max:255',
         ]);
 
-        $user=User::create([
+        $user = User::create([
             'name' => $request->name,
             'user_id' => $request->user_id,
             'email' => $request->email,
@@ -44,20 +46,17 @@ class AdminUserController extends Controller
                 'student_id' => $user->id, // Если student_id = user_id
                 'room_id' => null, // Пока нет комнаты, обновится позже
             ]);
-        }
-        elseif ($user->role === 'manager'){
+        } elseif ($user->role === 'manager') {
             Manager::create([
                 'user_id' => $user->id,
                 'manager_id' => $user->id,
             ]);
-        }
-        elseif ($user->role === 'admin'){
+        } elseif ($user->role === 'admin') {
             Admin::create([
                 'user_id' => $user->id,
                 'admin_id' => $user->id,
             ]);
-        }
-        elseif ($user->role === 'employee') {
+        } elseif ($user->role === 'employee') {
             Employee::create([
                 'user_id' => $user->id,
                 'employee_id' => $user->id,
@@ -72,11 +71,43 @@ class AdminUserController extends Controller
             ->with('success', 'Пользователь создан!');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.dashboard', compact('users'));
+        $query = User::query();
+
+        if ($request->filled('filter_id')) {
+            $query->where('user_id', 'like', '%'.$request->filter_id.'%');
+        }
+        if ($request->filled('filter_name')) {
+            $query->where('name', 'like', '%'.$request->filter_name.'%');
+        }
+        if ($request->filled('filter_email')) {
+            $query->where('email', 'like', '%'.$request->filter_email.'%');
+        }
+        if ($request->filled('filter_role')) {
+            $query->where('role', 'like', '%'.$request->filter_role.'%');
+        }
+
+        $users = $query->get();
+
+        return view('admin.dashboard', [
+            'users' => $users,
+            'newsList' => collect(), // empty collection to avoid the error
+        ]);    }
+
+
+    public function destroy($id)
+    {
+        Log::info("Deleting user with ID: $id");
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.dashboard')
+            ->with('successType', 'user_deleted')
+            ->with('success', 'Пользователь удалён!');
     }
+
+
     public function getUserJson($id)
     {
         $user = User::find($id);
@@ -85,7 +116,6 @@ class AdminUserController extends Controller
         }
         return response()->json($user);
     }
-
 
 
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\News;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -19,19 +20,6 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         $query = User::query();
-
-        if ($request->filled('filter_id')) {
-            $query->where('user_id', 'like', '%'.$request->filter_id.'%');
-        }
-        if ($request->filled('filter_name')) {
-            $query->where('name', 'like', '%'.$request->filter_name.'%');
-        }
-        if ($request->filled('filter_email')) {
-            $query->where('email', 'like', '%'.$request->filter_email.'%');
-        }
-        if ($request->filled('filter_role')) {
-            $query->where('role', 'like', '%'.$request->filter_role.'%');
-        }
 
         $users = $query->get();
 
