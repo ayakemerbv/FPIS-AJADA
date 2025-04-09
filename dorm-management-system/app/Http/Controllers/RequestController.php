@@ -6,9 +6,7 @@ use App\Models\Employee;
 use App\Models\Request as RepairRequest;
 use Illuminate\Http\Request;
 
-class RequestController extends Controller
-{
-
+class RequestController extends Controller{
     public function index(){
         $requests = RepairRequest::where('user_id', auth()->id())->get();
         return view('request.index', compact('requests'));
@@ -16,10 +14,7 @@ class RequestController extends Controller
     public function create(){
         $employees = Employee::all();
         return view('request.create', compact('employees'));
-
-
     }
-
     public function store(Request $request){
         $validatedData = $request->validate([
             'type' => 'required|string',
@@ -38,7 +33,7 @@ class RequestController extends Controller
             $repairRequest->file = $filePath;
         }
 
-        return redirect()->route('request.index')->with('successType', 'request_created')
+        return redirect()->route('student.personal')->with('successType', 'request_created')
             ->with('success', 'Запрос создан!');
     }
 
@@ -48,13 +43,10 @@ class RequestController extends Controller
 
         return view('request.show', compact('request'));
     }
-
-
     public function edit($id){
 //        dd($repairRequest);
         $employees = Employee::all();
         $repairRequest = RepairRequest::findOrFail($id);
-
         return view('request.edit', compact('repairRequest', 'employees'));
     }
 
@@ -72,12 +64,8 @@ class RequestController extends Controller
             ->with('successType', 'request_updated')
             ->with('success', 'Запрос обновлен!');
     }
-
-
     public function destroy(RepairRequest $repairRequest){
         $repairRequest->delete();
         return redirect()->route('request.index')->with('success', 'RepairRequest has been deleted');
     }
-
-
 }

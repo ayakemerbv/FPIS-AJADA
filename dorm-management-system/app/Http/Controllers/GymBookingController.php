@@ -25,8 +25,6 @@ class GymBookingController extends Controller
         return view('sports.page', compact('booking', 'recoveries'));
     }
 
-
-
     public function store(Request $request)
     {
         // Валидация данных: требуем хотя бы один выбранный день
@@ -99,7 +97,9 @@ class GymBookingController extends Controller
             'scheduled_time' => $request->recoveryTime,
         ]);
 
-        return redirect()->back()->with('success', 'Вы успешно записаны на отработку!');
+        return redirect()->route('student.personal')
+            ->with('successType', 'recovery_created')
+            ->with('success', 'Вы успешно записаны на отработку.');
     }
     public function cancelRecovery($recoveryId)
     {
@@ -113,7 +113,9 @@ class GymBookingController extends Controller
 
         $recovery->delete();
 
-        return redirect()->back()->with('success', 'Отработка успешно отменена.');
+        return redirect()->route('student.personal')
+            ->with('successType', 'recovery_canceled')
+            ->with('success', 'Вы отменили запись на занятие.');
     }
 
 

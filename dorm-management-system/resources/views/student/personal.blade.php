@@ -839,7 +839,6 @@
     <!-- Запись на занятия физкультурой -->
     <div class="main-content" id="sports-section" style="display: none;">
         <h2>Запись на занятия физкультурой</h2>
-
         @if($booking)
             <!-- ВАРИАНТ 2: Пользователь уже записан -->
             <div class="sports-result" id="sportsResultBlock">
@@ -884,7 +883,7 @@
                                     <form action="{{ route('sports.recovery.cancel', $recovery->id) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-change">Отменить</button>
+                                        <button type="submit" class="btn-change">Отменить?</button>
                                     </form>
                                 </div>
                             @endforeach
@@ -938,7 +937,6 @@
             </div>
         @endif
     </div>
-
     <!-- Модальное окно для записи на отработку физкультуры -->
     <div id="recoveryModal" class="modal">
         <div class="modal-content">
@@ -976,6 +974,10 @@
             showSportsBooking();
             @elseif(session('successType') === 'gym_canceled')
             showSportsBooking();
+            @elseif(session('successType') === 'recovery_created')
+            showSportsBooking();
+            @elseif(session('successType') === 'recovery_canceled')
+            showSportsBooking();
             @elseif(session('successType') === 'change_room_created')
             showHousing();
             @elseif(session('successType') === 'user_updated')
@@ -1000,14 +1002,12 @@
             hideAllSections()
             document.getElementById('housing-section').style.display = 'block';
         }
-        // Модальное окно: смена комнаты
         function openChangeRoomModal() {
             document.getElementById('changeRoomModal').style.display = 'flex';
         }
         function closeChangeRoomModal() {
             document.getElementById('changeRoomModal').style.display = 'none';
         }
-        // Пример AJAX-загрузки этажей/комнат
         document.addEventListener('DOMContentLoaded', function() {
             const buildingSelect = document.getElementById('buildingSelect');
             const floorSelect = document.getElementById('floorSelect');
@@ -1071,15 +1071,12 @@
         document.getElementById('cancelUpload').addEventListener('click', function () {
             document.getElementById('uploadForm').style.display = 'none';
         });
-
         function showRequestRepair() {
             hideAllSections();
             document.getElementById('repair-list').style.display = 'block';
         }
         function openRequestDetails(id) {
-            // Скрываем список запросов
-            document.getElementById('request-list').style.display = 'none';
-            // Показываем блок с деталями для данного запроса
+            hideAllSections();
             document.getElementById('request-details-' + id).style.display = 'block';
         }
         function closeRequestDetails(id) {
@@ -1092,7 +1089,6 @@
         }
         function closeRequestList() {
             document.getElementById('request-list').style.display = 'none';
-            // Если нужно вернуть блок выбора действий, его можно снова показать:
             document.getElementById('repair-list').style.display = 'block';
         }
         function openRepairModal() {
@@ -1115,7 +1111,6 @@
             hideAllSections();
             document.getElementById('sports-section').style.display = 'block';
         }
-
         function cancelSportsForm() {
             document.getElementById('sport').value = '';
             document.getElementById('time').value = '';
@@ -1123,15 +1118,12 @@
             const checkboxes = document.querySelectorAll('#day-selection input[type="checkbox"]');
             checkboxes.forEach(cb => cb.checked = false);
         }
-
         function showRecoveryModal() {
-            document.getElementById('recoveryModal').style.display = 'block';
+            document.getElementById('recoveryModal').style.display = 'flex';
         }
-
         function closeRecoveryModal() {
             document.getElementById('recoveryModal').style.display = 'none';
         }
-
         function hideAllSections() {
             document.getElementById('news-section').style.display = 'none';
             document.getElementById('personal-section').style.display = 'none';

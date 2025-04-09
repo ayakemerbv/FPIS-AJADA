@@ -291,6 +291,7 @@
             </div>
         </div>
     </div>
+   <!-- СЕКЦИЯ заявки на заселение -->
     <div class="main-content" id="request-section" style="display: none;">
         <h2>Заявки на заселение</h2>
 
@@ -340,48 +341,38 @@
         </table>
     </div>
     <script>
-        // По умолчанию: "Главная" -> seeNews()
         document.addEventListener('DOMContentLoaded', function() {
             seeNews();
             @if($errors->any())
             openModal();
             @endif
-            @if(session('successType') === 'user_created')
-            closeModal();
-            showUsers();
-            @elseif(session('successType') === 'news_created')
+            @if(session('successType') === 'news_created')
             showNews();
             @endif
         });
-        // "Главная" (Лента) -> показываем #see-news-section
         function seeNews() {
             hideAllSections();
             document.getElementById('see-news-section').style.display = 'block';
         }
-        // "Новости" (CRUD) -> показываем #news-section
         function showNews() {
             hideAllSections()
             document.getElementById('news-section').style.display = 'block';
         }
-        // Кнопка "Создать новость"
         function CreateNews() {
             hideAllSections()
             document.getElementById('create-news-section').style.display = 'block';
         }
-        // Кнопка "Редактировать"
         function EditNews(id, title, content) {
             hideAllSections();
             document.getElementById('edit-news-section').style.display = 'block';
             document.getElementById('edit-title').value = title;
             document.getElementById('edit-content').value = content;
             document.getElementById('editNewsForm').action = '/manager/dashboard/news/' + id;
-
         }
         function showRequests() {
             hideAllSections();
             document.getElementById('request-section').style.display = 'block';
         }
-        // Кнопка "Отмена" (редактирование)
         function cancelEdit() {
             document.getElementById('edit-news-section').style.display = 'none';
             showNews();

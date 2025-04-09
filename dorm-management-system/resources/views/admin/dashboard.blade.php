@@ -2,16 +2,28 @@
 
 @section('content')
     <style>
+        :root {
+            --sidebar-width: 200px;
+            --header-height: 60px;
+            --primary-color: #7e57c2;
+            --primary-hover: #6f42c1;
+            --success-color: #28a745;
+            --success-hover: #218838;
+            --text-color: #333;
+            --border-color: #DDD;
+            --bg-light: #F9F9F9;
+            --bg-main: #F5F5F5;
+        }
 
-        /* ========== ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) ========== */
+        /* ========== Сайдбар ========== */
         .sidebar {
             position: fixed;
-            top: 60px;
+            top: var(--header-height);
             left: 0;
-            width: 200px;
-            height: calc(100vh - 60px);
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
             background-color: #FFF;
-            border-right: 1px solid #DDD;
+            border-right: 1px solid var(--border-color);
             padding-top: 20px;
         }
         .sidebar-item {
@@ -19,7 +31,7 @@
             align-items: center;
             gap: 10px;
             padding: 12px 20px;
-            color: #333;
+            color: var(--text-color);
             text-decoration: none;
             cursor: pointer;
         }
@@ -28,74 +40,116 @@
         }
         .sidebar-item i {
             font-size: 18px;
-            color: #4A4A4A;
+            color: var(--text-color);
         }
 
-        /* ========== ОСНОВНОЙ КОНТЕНТ ========== */
+        /* ========== Основной контент ========== */
         .main-content {
-            margin-left: 200px; /* отступ под ширину сайдбара */
-            padding: 20px;
-            padding-top: 80px; /* чтобы контент не лез под шапку */
-            background-color: #F5F5F5;
-            min-height: calc(100vh - 60px);
+            margin-left: var(--sidebar-width);
+            padding: 80px 20px 20px;
+            background-color: var(--bg-main);
+            min-height: calc(100vh - var(--header-height));
         }
-        .main-content h2 {
+        .main-content h2,
+        .main-content h1 {
             margin-bottom: 20px;
-            color: #4A4A4A;
+            color: var(--text-color);
         }
 
-        /* ========== ТАБЛИЦЫ, ФОРМЫ ========== */
-        .table {
+        /* ========== Таблицы и формы ========== */
+        .table, .users-table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #FFF;
         }
-        .table th, .table td {
+        .table th, .table td,
+        .users-table th, .users-table td {
             padding: 12px;
-            border: 1px solid #DDD;
+            border: 1px solid var(--border-color);
             text-align: left;
+            font-size: 0.95rem;
+            color: var(--text-color);
         }
-        .table th {
-            background-color: #F9F9F9;
+        .table th, .users-table th {
+            background-color: var(--bg-light);
+        }
+        .users-table tr:last-child td {
+            border-bottom: none;
         }
         .form-label {
             font-weight: bold;
-            margin-top: 8px;
             display: block;
+            margin: 8px 0 4px;
         }
         .form-control {
             width: 100%;
             padding: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        .btn-success {
-            background-color: #28a745;
-            border: none;
+
+        /* ========== Кнопки ========== */
+        .btn-success, .btn-primary, .plus-button {
             padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
             color: #fff;
             cursor: pointer;
-            border-radius: 4px;
+        }
+        .btn-success {
+            background-color: var(--success-color);
         }
         .btn-success:hover {
-            background-color: #218838;
+            background-color: var(--success-hover);
         }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            padding: 8px 16px;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-            text-decoration: none;
+        .btn-primary, .plus-button {
+            background-color: var(--primary-color);
         }
-        .btn-primary:hover {
-            background-color: #0056b3;
+        .btn-primary:hover, .plus-button:hover {
+            background-color: var(--primary-hover);
         }
 
-        /* ========== СТИЛИ ДЛЯ НОВОСТЕЙ ========== */
+        /* ========== Утилиты ========== */
+        .heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .user-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .user-filter input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .logout-form button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            gap: 6px;
+        }
+        .logout-form button:hover {
+            text-decoration: underline;
+        }
+        a.my-span-style {
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        a.my-span-style:hover {
+            color: #555;
+        }
+
+        /* ========== Стили для новостей ========== */
         .news-item {
-            background-color: #B0A5D7; /* Фиолетовый */
+            background-color: #B0A5D7;
             padding: 35px;
             color: #fff;
             max-width: 1200px;
@@ -119,19 +173,13 @@
             opacity: 0.9;
         }
 
-        /* Заголовок + кнопка \"+\" */
-        .heading-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
+        /* ========== Заголовок и кнопка "+" ========== */
         .heading-row h2 {
             font-size: 1.4rem;
-            color: #4A4A4A;
+            color: var(--text-color);
         }
         .plus-button {
-            background-color: #7e57c2;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 5px 12px;
@@ -139,82 +187,27 @@
             cursor: pointer;
             font-size: 1rem;
             margin-right: 1000px;
-
         }
         .plus-button:hover {
-            background-color: #6f42c1;
+            background-color: var(--primary-hover);
         }
 
-        /* Фильтр (ID, ФИО, E-mail, Статус) */
-        .user-filter {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 1rem;
-        }
-        .user-filter input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        /* Таблица пользователей */
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #FFF;
-            border: 1px solid #DDD;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .users-table th, .users-table td {
-            padding: 12px;
-            border-bottom: 1px solid #EEE;
-            font-size: 0.95rem;
-            color: #333;
-        }
-        .users-table th {
-            background-color: #F9F9F9;
-            text-align: left;
-        }
-
-        /* Кнопка выхода (с иконкой) */
-        .logout-form button {
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 0.9rem;
-            cursor: pointer;
-            gap: 6px;
-        }
-        .logout-form button:hover {
-            text-decoration: underline;
-        }
-        a.my-span-style {
-            text-decoration: none;
-            color: #333;
-        }
-        a.my-span-style:hover {
-            text-decoration: none;
-            color: #555;
-        }
-
-        /* Модальное окно */
+        /* ========== Модальное окно ========== */
         .modal-overlay {
-            display: none; /* скрыто по умолчанию */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5); /* затемнение фона */
+            background: rgba(0,0,0,0.5);
             align-items: center;
             justify-content: center;
-            z-index: 9999; /* поверх всего */
+            z-index: 9999;
         }
         .modal-content {
             background: #fff;
-            width: 500px; /* ширина модального окна */
+            width: 500px;
             padding: 20px;
             border-radius: 8px;
             position: relative;
@@ -231,13 +224,14 @@
         .close-button:hover {
             color: #666;
         }
-        /* ========== ДЕТАЛИ ПОЛЬЗОВАТЕЛЯ (скрытая секция) ========== */
+
+        /* ========== Детали пользователя ========== */
         .user-details-section {
             display: none;
         }
         .user-details-card {
             background-color: #FFF;
-            border: 1px solid #DDD;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             display: flex;
@@ -287,7 +281,7 @@
         }
     </style>
 
-    <!-- САЙДБАР -->
+    <!-- ========== Сайдбар ========== -->
     <div class="sidebar">
         <div class="sidebar-item" onclick="showUsers()">
             <i class="fas fa-user"></i>
@@ -297,13 +291,31 @@
             <i class="fas fa-home"></i>
             <span>Новости</span>
         </div>
-
     </div>
 
-    <!-- СЕКЦИЯ НОВОСТЕЙ (по умолчанию видна) -->
-    <div class="main-content" id="news-section" style="display: block;">
+    <!-- ========== Блок с новостями (Лента) ========== -->
+    <div class="main-content" id="see-news-section" style="display: none;">
+        <h2>Новости</h2>
+        @isset($newsList)
+            @forelse($newsList as $news)
+                <div class="news-item">
+                    @if($news->image)
+                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
+                    @endif
+                    <h3>{{ $news->title }}</h3>
+                    <p>{{ $news->content }}</p>
+                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
+                </div>
+            @empty
+                <p>Нет новостей</p>
+            @endforelse
+        @endisset
+    </div>
+
+    <!-- ========== Секция "Новости" (CRUD) ========== -->
+    <div class="main-content" id="news-section" style="display: none;">
         <div class="container">
-            <h1>Новости</h1>
+            <h2>Управление новостями</h2>
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -333,7 +345,7 @@
                                   method="POST" style="display:inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')" >Удалить</button>
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')">Удалить</button>
                             </form>
                         </td>
                     </tr>
@@ -345,7 +357,7 @@
         </div>
     </div>
 
-    <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
+    <!-- ========== Секция создания новости (скрыта) ========== -->
     <div class="main-content" id="create-news-section" style="display: none;">
         <div class="container">
             <h1>Создать новость</h1>
@@ -361,13 +373,13 @@
                     <label class="form-label">Картинка (опционально)</label>
                     <input type="file" name="image" class="form-control">
 
-                    <button type="submit" class="btn-success" >Создать</button>
+                    <button type="submit" class="btn-success">Создать</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
+    <!-- ========== Секция редактирования новости (скрыта) ========== -->
     <div class="main-content" id="edit-news-section" style="display: none;">
         <div class="container">
             <h1>Редактировать новость</h1>
@@ -385,14 +397,14 @@
                     <label class="form-label">Картинка (опционально)</label>
                     <input type="file" name="image" class="form-control">
 
-                    <button type="submit" class="btn-success" >Сохранить</button>
+                    <button type="submit" class="btn-success">Сохранить</button>
                     <button type="button" class="plus-button" onclick="cancelEdit()">Отмена</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- СЕКЦИЯ ПОЛЬЗОВАТЕЛЕЙ (скрыта по умолчанию) -->
+    <!-- ========== Секция пользователей (скрыта) ========== -->
     <div class="main-content" id="users-section" style="display: none;">
         <div class="heading-row">
             <h2>Список пользователей</h2>
@@ -420,12 +432,10 @@
             <tbody>
             @forelse($users as $user)
                 <tr>
-
                     <td>{{ $user->user_id }}</td>
-                    <!-- Делаем имя кликабельным, при клике -> viewUserDetail({{ $user->id }}) -->
                     <td>
                         <a href="javascript:void(0)"
-                           style="text-decoration: none; color: #333;"
+                           style="text-decoration: none; color: var(--text-color);"
                            onclick="viewUserDetail({{ $user->id }})">
                             {{ $user->name }}
                         </a>
@@ -439,7 +449,8 @@
             </tbody>
         </table>
     </div>
-    <!-- ДЕТАЛИ ПОЛЬЗОВАТЕЛЯ (скрытая секция) -->
+
+    <!-- ========== Секция деталей пользователя (скрыта) ========== -->
     <div class="main-content user-details-section" id="user-details-section" style="display: none;">
         <h2>Личные данные пользователя</h2>
         <div class="user-details-card">
@@ -473,7 +484,6 @@
                     <div>
                         <label>Пароль</label>
                         <input type="password" disabled value="********">
-                        <!-- Кнопка "Изменить пароль" => Можно сделать модалкой -->
                     </div>
                     <div>
                         <label>Фото</label>
@@ -492,25 +502,22 @@
                       style="margin-top: 10px;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-danger"
-                            onclick="return confirm('Точно удалить?')">
+                    <button type="submit" class="btn-danger" onclick="return confirm('Точно удалить?')">
                         Удалить пользователя
                     </button>
                 </form>
-
             </div>
         </div>
     </div>
-    <!-- МОДАЛЬНОЕ ОКНО (создание пользователя) -->
+
+    <!-- ========== Модальное окно (создание пользователя) ========== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <button class="close-button" onclick="closeModal()">×</button>
             <h2>Создать пользователя</h2>
-
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
-
             @if($errors->any())
                 <div class="alert alert-danger">
                     @foreach($errors->all() as $err)
@@ -518,21 +525,16 @@
                     @endforeach
                 </div>
             @endif
-
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
                 <label class="form-label">ФИО</label>
                 <input type="text" name="name" class="form-control" required>
-
                 <label class="form-label">ID</label>
                 <input type="text" name="user_id" class="form-control" value="..." required>
-
                 <label class="form-label">E-mail</label>
                 <input type="email" name="email" class="form-control" value="..." required>
-
                 <label class="form-label">Пароль</label>
                 <input type="password" name="password" class="form-control" required>
-
                 <label class="form-label">Роль</label>
                 <select name="role" class="form-control">
                     <option value="student" @if(old('role') === 'student') selected @endif>Студент</option>
@@ -544,21 +546,19 @@
             </form>
         </div>
     </div>
+
     <script>
-        // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-        showUsers();
-
-        @if($errors->any())
-        openModal();
-        @endif
-
-        @if(session('successType') === 'user_created')
-        closeModal();
-        showUsers();
-        @elseif(session('successType') === 'news_created')
-        showNews();
-        @endif
+            showUsers();
+            @if($errors->any())
+            openModal();
+            @endif
+            @if(session('successType') === 'user_created')
+            closeModal();
+            showUsers();
+            @elseif(session('successType') === 'news_created')
+            showNews();
+            @endif
         });
 
         function hideAllSections() {
@@ -566,24 +566,20 @@
             document.getElementById('news-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
-            document.getElementById('users-section').style.display = 'none';
             document.getElementById('user-details-section').style.display = 'none';
         }
         function showUsers() {
             hideAllSections();
             document.getElementById('users-section').style.display = 'block';
         }
-
         function showNews() {
             hideAllSections();
             document.getElementById('news-section').style.display = 'block';
         }
-
         function CreateNews() {
             hideAllSections();
             document.getElementById('create-news-section').style.display = 'block';
         }
-
         function EditNews(id, title, content) {
             hideAllSections();
             document.getElementById('edit-news-section').style.display = 'block';
@@ -591,38 +587,27 @@
             document.getElementById('edit-content').value = content;
             document.getElementById('editNewsForm').action = '{{ url("admin/news") }}/' + id;
         }
-
         function cancelEdit() {
             document.getElementById('edit-news-section').style.display = 'none';
             showNews();
         }
-
         function openModal() {
             document.getElementById('modalOverlay').style.display = 'flex';
         }
-
         function closeModal() {
             document.getElementById('modalOverlay').style.display = 'none';
         }
-        // Показать детальную информацию о пользователе (через AJAX)
         async function viewUserDetail(userId) {
             hideAllSections();
-
-            // Пример: GET-запрос на admin/users/{id}/json (создайте такой маршрут!)
-            // Или используйте admin.users.show => верните JSON
-            let url = '/admin/users/' + userId + '/json'; // Пример
+            let url = '/admin/users/' + userId + '/json';
             try {
                 let response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Ошибка при загрузке пользователя');
                 }
                 let data = await response.json();
-
-                // Заполняем поля в user-details-section
                 document.getElementById('detail-name').textContent = data.name || '';
                 document.getElementById('detail-role').textContent = data.role || '';
-
-                // Фото
                 if (data.photo) {
                     document.getElementById('user-photo').innerHTML =
                         `<img src="/storage/${data.photo}" alt="User Photo">`;
@@ -630,17 +615,11 @@
                     document.getElementById('user-photo').innerHTML =
                         `<img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">`;
                 }
-
-                // Заполняем форму
                 document.getElementById('detail-user_id').value = data.user_id || '';
                 document.getElementById('detail-phone').value = data.phone || '';
                 document.getElementById('detail-email').value = data.email || '';
-
-                // Настраиваем action форм
                 document.getElementById('userUpdateForm').action = '/admin/dashboard/users/' + data.id;
                 document.getElementById('userDeleteForm').action = '/admin/dashboard/users/' + data.id;
-
-                // Показываем секцию
                 document.getElementById('user-details-section').style.display = 'block';
             } catch (error) {
                 alert(error.message);

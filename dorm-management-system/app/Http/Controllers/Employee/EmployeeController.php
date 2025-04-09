@@ -1,25 +1,27 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Hash;
 use App\Models\Employee;
 use App\Models\News;
-use Illuminate\Http\Request;
 use App\Models\Request as RepairRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
-    //
 
     public function dashboard(){
         $newsList = News::all();
         $user = request()->user();
-        return view('employee.dashboard', compact('newsList', 'user'));
+        $repairRequests = RepairRequest::all();
+        return view('employee.dashboard', compact('newsList', 'user','repairRequests'));
     }
     public function requests(){
-        $repairRequests = RepairRequest::all();
+        $repairRequests = RepairRequest::where('user_id', auth()->id())->get();
         return view('employee.requests', compact('repairRequests'));
     }
     public function show($id){
