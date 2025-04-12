@@ -124,22 +124,22 @@
     <div class="sidebar">
         <div class="sidebar-item" onclick="toggleSection('news')">
             <i class="fas fa-home"></i>
-            <span>Лента</span>
+            <span>{{ __('messages.feed') }}</span>
         </div>
         @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id == null)
             <div class="sidebar-item" onclick="toggleSection('housing')">
                 <i class="fas fa-bed"></i>
-                <span>Заявка на заселение</span>
+                <span>{{ __('messages.housing_application') }}</span>
             </div>
         @endif
         <div class="sidebar-item">
             <i class="fas fa-store"></i>
-            <span>Купи-Продай</span>
+            <span>{{ __('messages.marketplace') }}</span>
         </div>
     </div>
 
     <div class="main-content" id="news-section">
-        <h2>Новости</h2>
+        <h2>{{ __('messages.news') }}</h2>
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
@@ -151,35 +151,35 @@
                     <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
                 </div>
             @empty
-                <p>Нет новостей</p>
+                <p>{{ __('messages.no_news') }}</p>
             @endforelse
         @endisset
     </div>
 
     <div class="application-container" id="housing-sidebar">
         <div class="application-box">
-            <h2>Заявка на заселение</h2>
+            <h2>{{ __('messages.housing_application') }}</h2>
             <form action="{{ route('booking.store') }}" method="POST">
                 @csrf
-                <label for="building">Выберите корпус:</label>
+                <label for="building">{{ __('messages.select_building') }}:</label>
                 <select name="building_id" id="building">
-                    <option value="">Выберите корпус</option>
+                    <option value="">{{ __('messages.select_building') }}</option>
                     @foreach($buildings as $building)
                         <option value="{{ $building->id }}">{{ $building->name }}</option>
                     @endforeach
                 </select>
 
-                <label for="floor">Выберите этаж:</label>
+                <label for="floor">{{ __('messages.select_floor') }}:</label>
                 <select name="floor" id="floor" disabled>
-                    <option value="">Сначала выберите корпус</option>
+                    <option value="">{{ __('messages.choose_building_first') }}</option>
                 </select>
 
-                <label for="room">Выберите комнату:</label>
+                <label for="room">{{ __('messages.select_room') }}:</label>
                 <select name="room_id" id="room" disabled>
-                    <option value="">Сначала выберите этаж</option>
+                    <option value="">{{ __('messages.choose_floor_first') }}</option>
                 </select>
 
-                <button type="submit">Заселиться</button>
+                <button type="submit">{{ __('messages.apply') }}</button>
             </form>
         </div>
     </div>
@@ -205,16 +205,16 @@
 
             async function loadFloors(buildingId) {
                 if (!buildingId) {
-                    floorSelect.innerHTML = '<option value="">Сначала выберите корпус</option>';
+                    floorSelect.innerHTML = '<option value="">{{ __('messages.choose_building_first') }}</option>';
                     floorSelect.disabled = true;
                     return;
                 }
                 try {
                     const response = await fetch(`/student/personal/floors/${buildingId}`);
                     const data = await response.json();
-                    floorSelect.innerHTML = '<option value="">Выберите этаж</option>';
+                    floorSelect.innerHTML = '<option value="">{{ __('messages.select_floor') }}</option>';
                     if (data.length === 0) {
-                        floorSelect.innerHTML = '<option value="">Нет этажей</option>';
+                        floorSelect.innerHTML = '<option value="">{{ __('messages.no_floors') }}</option>';
                         floorSelect.disabled = true;
                         return;
                     }
@@ -223,22 +223,22 @@
                     });
                     floorSelect.disabled = false;
                 } catch (error) {
-                    console.error("Ошибка загрузки этажей:", error);
+                    console.error("Error loading floors:", error);
                 }
             }
 
             async function loadRooms(buildingId, floor) {
                 if (!floor) {
-                    roomSelect.innerHTML = '<option value="">Сначала выберите этаж</option>';
+                    roomSelect.innerHTML = '<option value="">{{ __('messages.choose_floor_first') }}</option>';
                     roomSelect.disabled = true;
                     return;
                 }
                 try {
                     const response = await fetch(`/student/personal/rooms/${buildingId}/${floor}`);
                     const data = await response.json();
-                    roomSelect.innerHTML = '<option value="">Выберите комнату</option>';
+                    roomSelect.innerHTML = '<option value="">{{ __('messages.select_room') }}</option>';
                     if (data.length === 0) {
-                        roomSelect.innerHTML = '<option value="">Нет свободных комнат</option>';
+                        roomSelect.innerHTML = '<option value="">{{ __('messages.no_rooms') }}</option>';
                         roomSelect.disabled = true;
                         return;
                     }
@@ -247,14 +247,14 @@
                     });
                     roomSelect.disabled = false;
                 } catch (error) {
-                    console.error("Ошибка загрузки комнат:", error);
+                    console.error("Error loading rooms:", error);
                 }
             }
 
             buildingSelect.addEventListener("change", function () {
                 const buildingId = this.value;
                 loadFloors(buildingId);
-                roomSelect.innerHTML = '<option value="">Сначала выберите этаж</option>';
+                roomSelect.innerHTML = '<option value="">{{ __('messages.choose_floor_first') }}</option>';
                 roomSelect.disabled = true;
             });
 

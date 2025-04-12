@@ -210,47 +210,48 @@
     <div class="sidebar">
         <div class="sidebar-item" onclick="showNews()">
             <i class="fas fa-home"></i>
-            <span>Новости</span>
+            <span>{{ __('messages.news') }}</span>
         </div>
         <a class="sidebar-item" onclick="showPersonal()">
             <i class="fas fa-user"></i>
-            <span>Личные данные</span>
+            <span>{{ __('messages.personal_data') }}</span>
         </a>
         <div class="sidebar-item" onclick="showRequests()">
             <i class="fas fa-wrench"></i>
-            <span>Заявки</span>
+            <span>{{ __('messages.requests') }}</span>
         </div>
     </div>
 
     <!-- ===== SECTION: Новости ===== -->
     <div class="main-content" id="news-section">
-        <h2>Новости</h2>
+        <h2>{{ __('messages.news') }}</h2>
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
                     @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
+                        <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">
                     @endif
                     <h3>{{ $news->title }}</h3>
                     <p>{{ $news->content }}</p>
                     <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
                 </div>
             @empty
-                <p>Нет новостей</p>
+                <p>{{ __('messages.no_news') }}</p>
             @endforelse
         @endisset
     </div>
+
     <!-- ===== SECTION: Личные данные ===== -->
     <div class="main-content" id="personal-section">
         <div class="container">
-            <h2>Личные данные</h2>
+            <h2>{{ __('messages.personal_data') }}</h2>
             <div class="personal-card">
                 <div class="personal-content">
                     <div class="personal-photo">
                         @if(Auth::user()->photo)
-                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="User Photo">
+                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="{{ __('messages.user_photo') }}">
                         @else
-                            <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">
+                            <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="{{ __('messages.user_photo') }}">
                         @endif
                     </div>
                     <div class="personal-info">
@@ -258,43 +259,43 @@
                         <div class="personal-status">{{ Auth::user()->job_type ?? '' }}</div>
                         <div class="personal-location">
                             @if(Auth::user()->acceptedBooking)
-                                Корпус: {{ Auth::user()->acceptedBooking->building->name }}<br>
-                                Адрес: {{ Auth::user()->acceptedBooking->building->address }}<br>
-                                Этаж: {{ Auth::user()->acceptedBooking->room->floor }}<br>
-                                Комната: {{ Auth::user()->acceptedBooking->room->room_number }}
+                                {{ __('messages.building') }}: {{ Auth::user()->acceptedBooking->building->name }}<br>
+                                {{ __('messages.address') }}: {{ Auth::user()->acceptedBooking->building->address }}<br>
+                                {{ __('messages.floor') }}: {{ Auth::user()->acceptedBooking->room->floor }}<br>
+                                {{ __('messages.room') }}: {{ Auth::user()->acceptedBooking->room->room_number }}
                             @else
-                                <p>Пока не заселен</p>
+                                <p>{{ __('messages.not_assigned') }}</p>
                             @endif
                         </div>
                         <form class="personal-form" action="{{ route('employee.updateProfile') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div>
-                                <label>E-Mail</label>
+                                <label>{{ __('messages.email') }}</label>
                                 <input type="email" value="{{ Auth::user()->email }}" disabled>
                             </div>
                             <div>
-                                <label>Номер телефона</label>
+                                <label>{{ __('messages.phone_number') }}</label>
                                 <input type="text" name="phone" value="{{ old('phone', Auth::user()->phone ?? '') }}">
                             </div>
                             <div>
-                                <label for="job_type">Тип работы</label>
+                                <label for="job_type">{{ __('messages.job_type') }}</label>
                                 <input type="text" name="job_type" value="{{ old('job_type', Auth::user()->employee->job_type ?? 'Не выбран') }}">
                             </div>
                             <div>
-                                <label>Пароль</label>
+                                <label>{{ __('messages.password') }}</label>
                                 <div style="display: flex; gap: 10px;">
                                     <input type="password" value="********" disabled>
                                     <button type="button" class="btn btn-secondary" onclick="openPasswordModal()">
-                                        Изменить
+                                        {{ __('messages.change') }}
                                     </button>
                                 </div>
                             </div>
                             <div>
-                                <label>Фото</label>
+                                <label>{{ __('messages.photo') }}</label>
                                 <input type="file" name="photo">
                             </div>
                             <div class="personal-actions">
-                                <button type="submit" class="btn btn-success">Сохранить</button>
+                                <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
                             </div>
                         </form>
                     </div>
@@ -302,11 +303,12 @@
             </div>
         </div>
     </div>
+
     <!-- ===== МОДАЛЬНОЕ ОКНО: Смена пароля ===== -->
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-content">
             <button class="close-button" onclick="closePasswordModal()">&times;</button>
-            <h2>Изменить пароль</h2>
+            <h2>{{ __('messages.change_password') }}</h2>
             @if(session('password_success'))
                 <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
                     {{ session('password_success') }}
@@ -316,39 +318,40 @@
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
-                    <label for="current_password">Текущий пароль</label>
+                    <label for="current_password">{{ __('messages.current_password') }}</label>
                     <input type="password" id="current_password" name="current_password" required>
                 </div>
                 <div class="form-group">
-                    <label for="new_password">Новый пароль</label>
+                    <label for="new_password">{{ __('messages.new_password') }}</label>
                     <input type="password" id="new_password" name="new_password" required>
                 </div>
                 <div class="form-group">
-                    <label for="new_password_confirmation">Повторите новый пароль</label>
+                    <label for="new_password_confirmation">{{ __('messages.confirm_new_password') }}</label>
                     <input type="password" id="new_password_confirmation" name="new_password_confirmation" required>
                 </div>
-                <button type="submit" class="btn btn-success">Обновить</button>
+                <button type="submit" class="btn btn-success">{{ __('messages.update') }}</button>
             </form>
         </div>
     </div>
+
     <!-- ===== SECTION: Список заявок ===== -->
     <div class="main-content" id="request-section">
         <div class="container">
-            <h2>Все заявки</h2>
-            <a class="btn btn-outline-secondary" href="{{ route('employee.dashboard') }}">Назад</a>
+            <h2>{{ __('messages.all_requests') }}</h2>
+            <a class="btn btn-outline-secondary" href="{{ route('employee.dashboard') }}">{{ __('messages.back') }}</a>
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title">Заявки</h5>
+                <h5 class="card-title">{{ __('messages.requests') }}</h5>
             </div>
-            <button class="btn btn-outline-secondary btn-sm mb-3">Выбрать период</button>
+            <button class="btn btn-outline-secondary btn-sm mb-3">{{ __('messages.select_period') }}</button>
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">
                     <tr>
                         <th>№</th>
-                        <th>Запрос</th>
-                        <th>Дата</th>
-                        <th>Сотрудник</th>
-                        <th>Статус</th>
+                        <th>{{ __('messages.request') }}</th>
+                        <th>{{ __('messages.date') }}</th>
+                        <th>{{ __('messages.employee') }}</th>
+                        <th>{{ __('messages.status') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -362,16 +365,16 @@
                                 </a>
                             </td>
                             <td>{{ $req->created_at }}</td>
-                            <td>{{ $req->employee->name ?? 'Не назначен' }}</td>
+                            <td>{{ $req->employee->name ?? __('messages.not_assigned') }}</td>
                             <td>
                                 @if($req->status == 'На рассмотрении')
-                                    <span class="badge bg-warning text-dark">На рассмотрении</span>
+                                    <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
                                 @elseif($req->status == 'Принято')
-                                    <span class="badge bg-primary">Принято</span>
+                                    <span class="badge bg-primary">{{ __('messages.accept') }}</span>
                                 @elseif($req->status == 'Выполнено')
-                                    <span class="badge bg-success">Выполнено</span>
+                                    <span class="badge bg-success">{{ __('messages.completed') }}</span>
                                 @else
-                                    <span class="badge bg-secondary">Неизвестно</span>
+                                    <span class="badge bg-secondary">{{ __('messages.unknown') }}</span>
                                 @endif
                             </td>
                         </tr>
@@ -381,23 +384,24 @@
             </div>
         </div>
     </div>
+
     <!-- ===== SECTION: Детали заявки ===== -->
     <div class="main-content request-details-section" id="request-details-section">
         <div class="container">
-            <h2>Детали заявки #<span id="req-id"></span></h2>
+            <h2>{{ __('messages.request_details') }} #<span id="req-id"></span></h2>
             <div class="d-flex mb-3">
-                <a href="javascript:void(0)" class="btn btn-secondary me-2" onclick="showRequests()">Назад</a>
-                <a href="javascript:void(0)" class="btn btn-primary me-2" onclick="openEditRequest()">Поменять статус</a>
+                <a href="javascript:void(0)" class="btn btn-secondary me-2" onclick="showRequests()">{{ __('messages.back') }}</a>
+                <a href="javascript:void(0)" class="btn btn-primary me-2" onclick="openEditRequest()">{{ __('messages.change_status') }}</a>
             </div>
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                 <tr>
                     <th>№</th>
-                    <th>Запрос</th>
-                    <th>Описание</th>
-                    <th>Дата</th>
-                    <th>Сотрудник</th>
-                    <th>Статус</th>
+                    <th>{{ __('messages.request') }}</th>
+                    <th>{{ __('messages.description') }}</th>
+                    <th>{{ __('messages.date') }}</th>
+                    <th>{{ __('messages.employee') }}</th>
+                    <th>{{ __('messages.status') }}</th>
                 </tr>
                 </thead>
                 <tbody id="req-details-body">
@@ -406,39 +410,41 @@
             </table>
         </div>
     </div>
+
     <!-- ===== SECTION: Редактирование заявки ===== -->
     <div class="main-content edit-request-section" id="edit-request-section">
         <div class="container">
-            <h2>Редактирование заявки #<span id="edit-req-id"></span></h2>
-            <a href="javascript:void(0)" class="btn btn-secondary mb-3" onclick="showRequestDetails()">Назад</a>
+            <h2>{{ __('messages.edit_request') }} #<span id="edit-req-id"></span></h2>
+            <a href="javascript:void(0)" class="btn btn-secondary mb-3" onclick="showRequestDetails()">{{ __('messages.back') }}</a>
             <div class="card">
                 <div class="card-body">
                     <form id="editRequestForm" method="POST" action="">
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
-                            <label for="edit-type" class="form-label">Тип запроса</label>
+                            <label for="edit-type" class="form-label">{{ __('messages.request_type') }}</label>
                             <input type="text" id="edit-type" name="type" class="form-control" readonly>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-description" class="form-label">Описание</label>
+                            <label for="edit-description" class="form-label">{{ __('messages.description') }}</label>
                             <textarea id="edit-description" name="description" class="form-control" rows="3" required readonly></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-status" class="form-label">Статус:</label>
+                            <label for="edit-status" class="form-label">{{ __('messages.status') }}:</label>
                             <select name="status" id="edit-status" class="form-control">
-                                <option value="На рассмотрении">На рассмотрении</option>
-                                <option value="Принято">Принято</option>
-                                <option value="Выполнено">Выполнено</option>
+                                <option value="{{ __('messages.in_review') }}">{{ __('messages.in_review') }}</option>
+                                <option value="{{ __('messages.accept') }}">{{ __('messages.accept') }}</option>
+                                <option value="{{ __('messages.completed') }}">{{ __('messages.completed') }}</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                        <a href="javascript:void(0)" class="btn btn-danger" onclick="showRequestDetails()">Отмена</a>
+                        <button type="submit" class="btn btn-success">{{ __('messages.save_changes') }}</button>
+                        <a href="javascript:void(0)" class="btn btn-danger" onclick="showRequestDetails()">{{ __('messages.cancel') }}</a>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- ===== Скрипты для переключения секций и работы с заявками ===== -->
     <script>
         function hideAllSections() {

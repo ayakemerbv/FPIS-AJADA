@@ -179,168 +179,173 @@
 
    <!-- Sidebar -->
    <div class="sidebar">
-       <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-home"></i><span>Лента</span></div>
-       <div class="sidebar-item" onclick="showNews()"><i class="fas fa-newspaper"></i><span>Новости</span></div>
-       <div class="sidebar-item" onclick="showRequests()"><i class="fas fa-bars"></i><span>Заявки</span></div>
+       <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-home"></i><span>{{ __('messages.feed') }}</span></div>
+       <div class="sidebar-item" onclick="showNews()"><i class="fas fa-newspaper"></i><span>{{ __('messages.news') }}</span></div>
+       <div class="sidebar-item" onclick="showRequests()"><i class="fas fa-bars"></i><span>{{ __('messages.requests') }}</span></div>
    </div>
 
-    <!-- Блок с новостями (ЛЕНТА) -->
-    <div class="main-content" id="see-news-section" style="display: none;">
-        <h2>Новости</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>Нет новостей</p>
-            @endforelse
-        @endisset
-    </div>
-    <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
-    <div class="main-content" id="news-section" style="display: none;">
-        <div class="container">
-            <h2>Управление новостями</h2>
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+   <!-- Блок с новостями (ЛЕНТА) -->
+   <div class="main-content" id="see-news-section" style="display: none;">
+       <h2>{{ __('messages.news') }}</h2>
+       @isset($newsList)
+           @forelse($newsList as $news)
+               <div class="news-item">
+                   @if($news->image)
+                       <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">
+                   @endif
+                   <h3>{{ $news->title }}</h3>
+                   <p>{{ $news->content }}</p>
+                   <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
+               </div>
+           @empty
+               <p>{{ __('messages.no_news') }}</p>
+           @endforelse
+       @endisset
+   </div>
 
-            <!-- Кнопка для показа формы создания новости -->
-            <a href="javascript:void(0)" onclick="CreateNews()" class="btn btn-primary mb-3">Создать новость</a>
+   <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
+   <div class="main-content" id="news-section" style="display: none;">
+       <div class="container">
+           <h2>{{ __('messages.manage_news') }}</h2>
+           @if(session('success'))
+               <div class="alert alert-success">{{ session('success') }}</div>
+           @endif
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Заголовок</th>
-                    <th>Дата</th>
-                    <th>Действия</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($newsList as $news)
-                    <tr>
-                        <td>{{ $news->title }}</td>
-                        <td>{{ $news->created_at->format('d.m.Y H:i') }}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"
-                                    onclick='EditNews({{ $news->id }}, {!! json_encode($news->title) !!}, {!! json_encode(strip_tags($news->content)) !!})'>
-                                Редактировать
-                            </button>
-                            <form action="{{ route('manager.news.destroy', $news->id) }}"
-                                  method="POST" style="display:inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger btn-sm" onclick="return confirm('Точно удалить?')">Удалить</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="3">Новостей нет</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
-    <div class="main-content" id="create-news-section" style="display: none;">
-        <div class="container">
-            <h2>Создать новость</h2>
-            <div class="create-news-section">
-                <form action="{{ route('manager.news.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <label class="form-label">Заголовок</label>
-                    <input type="text" name="title" class="form-control" required>
+           <!-- Кнопка для показа формы создания новости -->
+           <a href="javascript:void(0)" onclick="CreateNews()" class="btn btn-primary mb-3">{{ __('messages.create_news') }}</a>
 
-                    <label class="form-label">Содержание</label>
-                    <textarea name="content" class="form-control" rows="5" required></textarea>
+           <table class="table">
+               <thead>
+               <tr>
+                   <th>{{ __('messages.title') }}</th>
+                   <th>{{ __('messages.date') }}</th>
+                   <th>{{ __('messages.actions') }}</th>
+               </tr>
+               </thead>
+               <tbody>
+               @forelse($newsList as $news)
+                   <tr>
+                       <td>{{ $news->title }}</td>
+                       <td>{{ $news->created_at->format('d.m.Y H:i') }}</td>
+                       <td>
+                           <button class="btn btn-warning btn-sm"
+                                   onclick='EditNews({{ $news->id }}, {!! json_encode($news->title) !!}, {!! json_encode(strip_tags($news->content)) !!})'>
+                               {{ __('messages.edit') }}
+                           </button>
+                           <form action="{{ route('manager.news.destroy', $news->id) }}"
+                                 method="POST" style="display:inline-block">
+                               @csrf
+                               @method('DELETE')
+                               <button class="btn btn-danger btn-sm" onclick="return confirm('{{ __('messages.confirm_delete') }}')">{{ __('messages.delete') }}</button>
+                           </form>
+                       </td>
+                   </tr>
+               @empty
+                   <tr><td colspan="3">{{ __('messages.no_news') }}</td></tr>
+               @endforelse
+               </tbody>
+           </table>
+       </div>
+   </div>
 
-                    <label class="form-label">Картинка (опционально)</label>
-                    <input type="file" name="image" class="form-control">
+   <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
+   <div class="main-content" id="create-news-section" style="display: none;">
+       <div class="container">
+           <h2>{{ __('messages.create_news') }}</h2>
+           <div class="create-news-section">
+               <form action="{{ route('manager.news.store') }}" method="POST" enctype="multipart/form-data">
+                   @csrf
+                   <label class="form-label">{{ __('messages.title') }}</label>
+                   <input type="text" name="title" class="form-control" required>
 
-                    <button type="submit" class="btn-success">Создать</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
-    <div class="main-content" id="edit-news-section" style="display: none;">
-        <div class="container">
-            <h2>Редактировать новость</h2>
-            <div class="create-news-section">
-                <form id="editNewsForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="_method" value="PUT">
+                   <label class="form-label">{{ __('messages.content') }}</label>
+                   <textarea name="content" class="form-control" rows="5" required></textarea>
 
-                    <label class="form-label">Заголовок</label>
-                    <input type="text" id="edit-title" name="title" class="form-control" required>
+                   <label class="form-label">{{ __('messages.image_optional') }}</label>
+                   <input type="file" name="image" class="form-control">
 
-                    <label class="form-label">Содержание</label>
-                    <textarea id="edit-content" name="content" class="form-control" rows="5" required></textarea>
+                   <button type="submit" class="btn-success">{{ __('messages.create') }}</button>
+               </form>
+           </div>
+       </div>
+   </div>
 
-                    <label class="form-label">Картинка (опционально)</label>
-                    <input type="file" name="image" class="form-control">
+   <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
+   <div class="main-content" id="edit-news-section" style="display: none;">
+       <div class="container">
+           <h2>{{ __('messages.edit_news') }}</h2>
+           <div class="create-news-section">
+               <form id="editNewsForm" method="POST" enctype="multipart/form-data">
+                   @csrf
+                   <input type="hidden" name="_method" value="PUT">
 
-                    <button type="submit" class="btn-success">Сохранить</button>
-                    <button type="button" class="plus-button" onclick="cancelEdit()">Отмена</button>
-                </form>
-            </div>
-        </div>
-    </div>
+                   <label class="form-label">{{ __('messages.title') }}</label>
+                   <input type="text" id="edit-title" name="title" class="form-control" required>
+
+                   <label class="form-label">{{ __('messages.content') }}</label>
+                   <textarea id="edit-content" name="content" class="form-control" rows="5" required></textarea>
+
+                   <label class="form-label">{{ __('messages.image_optional') }}</label>
+                   <input type="file" name="image" class="form-control">
+
+                   <button type="submit" class="btn-success">{{ __('messages.save') }}</button>
+                   <button type="button" class="plus-button" onclick="cancelEdit()">{{ __('messages.cancel') }}</button>
+               </form>
+           </div>
+       </div>
+   </div>
+
    <!-- СЕКЦИЯ заявки на заселение -->
-    <div class="main-content" id="request-section" style="display: none;">
-        <h2>Заявки на заселение</h2>
+   <div class="main-content" id="request-section" style="display: none;">
+       <h2>{{ __('messages.requests') }}</h2>
 
-        @if(session('success'))
-            <div style="background-color: #d4edda; color: #155724; padding: 10px;">
-                {{ session('success') }}
-            </div>
-        @endif
+       @if(session('success'))
+           <div style="background-color: #d4edda; color: #155724; padding: 10px;">
+               {{ session('success') }}
+           </div>
+       @endif
 
-        <table style="width:100%; border-collapse: collapse;">
-            <thead>
-            <tr>
-                <th>Студент</th>
-                <th>Корпус</th>
-                <th>Этаж</th>
-                <th>Комната</th>
-                <th>Статус</th>
-                <th>Действия</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($requests as $req)
-                <tr style="border-bottom: 1px solid #ccc;">
-                    <td>{{ $req->user->name }}</td>
-                    <td>{{ $req->building->name}}</td>
-                    <td>{{ $req->floor }}</td>
-                    <td>{{ $req->room->room_number }}</td>
-                    <td>{{ $req->status }}</td>
-                    <td>
-                        <a href="{{ route('booking.accept', $req->id) }}"
-                           style="color: green; text-decoration: none; margin-right: 10px;">
-                            Принять
-                        </a>
-                        <a href="{{ route('booking.reject', $req->id) }}"
-                           style="color: red; text-decoration: none;">
-                            Отклонить
-                        </a>
-                        <a href="{{ route('booking.reject', $req->id) }}"
-                           style="color: red; text-decoration: none;">
-                            на рассмотрении
-                        </a>
+       <table style="width:100%; border-collapse: collapse;">
+           <thead>
+           <tr>
+               <th>{{ __('messages.student') }}</th>
+               <th>{{ __('messages.building') }}</th>
+               <th>{{ __('messages.floor') }}</th>
+               <th>{{ __('messages.room') }}</th>
+               <th>{{ __('messages.status') }}</th>
+               <th>{{ __('messages.actions') }}</th>
+           </tr>
+           </thead>
+           <tbody>
+           @foreach($requests as $req)
+               <tr style="border-bottom: 1px solid #ccc;">
+                   <td>{{ $req->user->name }}</td>
+                   <td>{{ $req->building->name}}</td>
+                   <td>{{ $req->floor }}</td>
+                   <td>{{ $req->room->room_number }}</td>
+                   <td>{{ $req->status }}</td>
+                   <td>
+                       <a href="{{ route('booking.accept', $req->id) }}"
+                          style="color: green; text-decoration: none; margin-right: 10px;">
+                           {{ __('messages.accept') }}
+                       </a>
+                       <a href="{{ route('booking.reject', $req->id) }}"
+                          style="color: red; text-decoration: none;">
+                           {{ __('messages.reject') }}
+                       </a>
+{{--                       <a href="{{ route('booking.reject', $req->id) }}"--}}
+{{--                          style="color: red; text-decoration: none;">--}}
+{{--                           {{ __('messages.in_review') }}--}}
+{{--                       </a>--}}
 
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-    <script>
+                   </td>
+               </tr>
+           @endforeach
+           </tbody>
+       </table>
+   </div>
+
+   <script>
         document.addEventListener('DOMContentLoaded', function() {
             seeNews();
             @if($errors->any())

@@ -8,6 +8,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\GymBookingController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Manager\NewsManagerController;
@@ -92,3 +93,6 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
         Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
         Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
 });
+    Route::middleware(['language'])->group(function (){
+        Route::post('/language-switch', [LanguageController::class, 'languageSwitch'])->name('language.switch');
+    });

@@ -364,39 +364,39 @@
     <div class="sidebar">
         <div class="sidebar-item" onclick="showNews()">
             <i class="fas fa-home"></i>
-            <span>Главная</span>
+            <span>{{__('messages.main')}}</span>
         </div>
 
         <a class="sidebar-item" onclick="showPersonal()">
             <i class="fas fa-user"></i>
-            <span>Личная информация</span>
+            <span>{{__('messages.personal_information')}}</span>
         </a>
         @if(Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
         <div class="sidebar-item" onclick="showHousing()">
             <i class="fas fa-building"></i>
-            <span>Проживание</span>
+            <span>{{__('messages.accommodation')}}</span>
         </div>
         <div class="sidebar-item" onclick="showDocuments()">
             <i class="fa-solid fa-clipboard"></i>
-            <span>Документы</span>
+            <span>{{__('messages.documents')}}</span>
         </div>
         <div class="sidebar-item">
             <i class="fas fa-coins"></i>
-            <span>Финансовый кабинет</span>
+            <span>{{__('messages.financial_cabinet')}}</span>
         </div>
         <div class="sidebar-item" onclick = "showRequestRepair()">
             <i class="fas fa-wrench"></i>
-            <span>Запросы на ремонт</span>
+            <span>{{__('messages.repair_requests')}}</span>
         </div>
         @endif
         <div class="sidebar-item" onclick="showSportsBooking()">
             <i class="fas fa-dumbbell"></i>
-            <span>Запись на занятия физкультурой</span>
+            <span>{{__('messages.registration_for_physical_edu')}}</span>
         </div>
     </div>
     {{-- Новости --}}
     <div class="main-content" id="news-section">
-        <h2>Новости</h2>
+        <h2>{{__('messages.news')}}</h2>
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
@@ -408,13 +408,13 @@
                     <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
                 </div>
             @empty
-                <p>Нет новостей</p>
+                <p>{{__('messages.no_news')}}</p>
             @endforelse
         @endisset
     </div>
     <!-- Личная информация -->
     <div class="main-content" id="personal-section" style="display: none;">
-        <h2>Личные данные</h2>
+        <h2>{{ __('messages.personal_data') }}</h2>
         <div class="personal-card">
             <div class="personal-content">
                 <div class="personal-photo">
@@ -429,12 +429,12 @@
                     <!-- Пример локации -->
                     <div class="personal-location">
                         @if(Auth::user()->acceptedBooking)
-                            Корпус: {{ Auth::user()->acceptedBooking->building->name }}<br>
-                            Адрес: {{ Auth::user()->acceptedBooking->building->address }}<br>
-                            Этаж: {{ Auth::user()->acceptedBooking->room->floor }}<br>
-                            Комната: {{ Auth::user()->acceptedBooking->room->room_number }}
+                            {{ __('messages.building') }}: {{ Auth::user()->acceptedBooking->building->name }}<br>
+                            {{ __('messages.address') }}: {{ Auth::user()->acceptedBooking->building->address }}<br>
+                            {{ __('messages.floor') }}: {{ Auth::user()->acceptedBooking->room->floor }}<br>
+                            {{ __('messages.room') }}: {{ Auth::user()->acceptedBooking->room->room_number }}
                         @else
-                            <p>Пока не заселен</p>
+                            <p>{{ __('messages.not_settled') }}</p>
                         @endif
                     </div>
 
@@ -449,30 +449,30 @@
                             <input type="text" value="{{ Auth::user()->user_id }}" disabled>
                         </div>
                         <div>
-                            <label>Номер телефона</label>
+                            <label>{{ __('messages.phone_number') }}</label>
                             <input type="text" name="phone" value="{{ old('phone', Auth::user()->phone ?? '') }}">
                         </div>
                         <div>
-                            <label>E-Mail</label>
+                            <label>{{ __('messages.email') }}</label>
                             <input type="email" value="{{ Auth::user()->email }}" disabled>
                         </div>
                         <div>
-                            <label>Пароль</label>
+                            <label>{{ __('messages.password') }}</label>
                             <!-- Вместо реального пароля показываем звездочки -->
                             <div style="display: flex; gap: 10px;">
                                 <input type="password" value="********" disabled>
                                 <!-- Кнопка, открывающая модальное окно -->
                                 <button type="button" class="btn-change" onclick="openPasswordModal()">
-                                    Изменить
+                                    {{ __('messages.change') }}
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label>Фото</label>
+                            <label>{{ __('messages.photo') }}</label>
                             <input type="file" name="photo">
                         </div>
                         <div class="personal-actions">
-                            <button type="submit" class="btn-change">Сохранить</button>
+                            <button type="submit" class="btn-change">{{ __('messages.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -483,191 +483,197 @@
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-content">
             <button class="close-button" onclick="closePasswordModal()">&times;</button>
-            <h2>Изменить пароль</h2>
-            <!-- Если хотите выводить сообщения об успехе/ошибке -->
+            <h2>{{ __('messages.change_password') }}</h2>
+
             @if(session('password_success'))
                 <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px;">
                     {{ session('password_success') }}
                 </div>
             @endif
-            <!-- Форма для смены пароля -->
+
             <form action="{{ route('student.profile.update') }}" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
-                    <label for="current_password">Текущий пароль</label>
+                    <label for="current_password">{{ __('messages.current_password') }}</label>
                     <input type="password" id="current_password" name="current_password" required>
                 </div>
                 <div class="form-group">
-                    <label for="new_password">Новый пароль</label>
+                    <label for="new_password">{{ __('messages.new_password') }}</label>
                     <input type="password" id="new_password" name="new_password" required>
                 </div>
                 <div class="form-group">
-                    <label for="new_password_confirmation">Повторите новый пароль</label>
+                    <label for="new_password_confirmation">{{ __('messages.repeat_new_password') }}</label>
                     <input type="password" id="new_password_confirmation" name="new_password_confirmation" required>
                 </div>
-                <button type="submit" class="btn-change">Обновить</button>
+                <button type="submit" class="btn-change">{{ __('messages.update') }}</button>
             </form>
         </div>
     </div>
+
     <!-- Проживание -->
     <div class="main-content" id="housing-section">
-        <h2>Проживание</h2>
+        <h2>{{ __('messages.accommodation') }}</h2>
         <div class="housing-card">
-            <h3>Проживание</h3>
+            <h3>{{ __('messages.accommodation') }}</h3>
             @if(Auth::user()->acceptedBooking)
                 <p class="personal-location">
-                    Корпус: {{ Auth::user()->acceptedBooking->building->name }},
-                    Адрес: {{ Auth::user()->acceptedBooking->building->address }},
-                    Этаж: {{ Auth::user()->acceptedBooking->room->floor }},
-                    Комната: {{ Auth::user()->acceptedBooking->room->room_number }}
+                    {{ __('messages.building') }}: {{ Auth::user()->acceptedBooking->building->name }},
+                    {{ __('messages.address') }}: {{ Auth::user()->acceptedBooking->building->address }},
+                    {{ __('messages.floor') }}: {{ Auth::user()->acceptedBooking->room->floor }},
+                    {{ __('messages.room') }}: {{ Auth::user()->acceptedBooking->room->room_number }}
                 </p>
-
             @else
-                <p>Пока не заселен</p>
+                <p>{{ __('messages.not_yet_settled') }}</p>
             @endif
-            <button class="btn-finance" onclick="openChangeRoomModal()">Сменить комнату</button>
-            <a href="{{ route('refresh.user') }}" class="btn btn-secondary">Обновить данные</a>
-
+            <button class="btn-finance" onclick="openChangeRoomModal()">{{ __('messages.change_room') }}</button>
+            <a href="{{ route('refresh.user') }}" class="btn btn-secondary">{{ __('messages.refresh_data') }}</a>
         </div>
         <div class="housing-card">
-            <h3>Предстоящие оплаты</h3>
-            <button class="btn-finance">Проверить финансовый кабинет</button>
+            <h3>{{ __('messages.upcoming_payments') }}</h3>
+            <button class="btn-finance">{{ __('messages.check_financial_cabinet') }}</button>
         </div>
     </div>
+
+    <!-- Модальное окно для смены комнаты -->
     <!-- Модальное окно для смены комнаты -->
     <div class="modal-overlay" id="changeRoomModal" style="display: none;">
         <div class="modal-content">
             <button class="close-button" onclick="closeChangeRoomModal()">&times;</button>
-            <h2>Заявка на смену комнаты</h2>
+            <h2>{{ __('messages.room_change_request') }}</h2>
 
             <!-- Форма для смены комнаты -->
             <form action="{{ route('booking.changeRoom') }}" method="POST">
                 @csrf
-                <label for="buildingSelect">Корпус:</label>
+                <label for="buildingSelect">{{ __('messages.building') }}:</label>
                 <select id="buildingSelect" name="building_id">
-                    <option value="">Выберите корпус</option>
-                    <!-- Тут подставьте свои здания -->
+                    <option value="">{{ __('messages.select_building') }}</option>
                     @foreach($buildings as $b)
                         <option value="{{ $b->id }}">{{ $b->name }}</option>
                     @endforeach
                 </select>
 
-                <label for="floorSelect">Этаж:</label>
+                <label for="floorSelect">{{ __('messages.floor') }}:</label>
                 <select id="floorSelect" name="floor" disabled>
-                    <option value="">Сначала выберите корпус</option>
+                    <option value="">{{ __('messages.select_building_first') }}</option>
                 </select>
 
-                <label for="roomSelect">Комната:</label>
+                <label for="roomSelect">{{ __('messages.room') }}:</label>
                 <select id="roomSelect" name="room_id" disabled>
-                    <option value="">Сначала выберите этаж</option>
+                    <option value="">{{ __('messages.select_floor_first') }}</option>
                 </select>
 
-                <button type="submit" class="btn-change">Отправить заявку</button>
+                <button type="submit" class="btn-change">{{ __('messages.submit_request') }}</button>
             </form>
         </div>
     </div>
+
     <!-- Документы -->
     <div id="documents-section" class="main-content" style="display: none;">
-        <h2>Документы</h2>
+        <h2>{{ __('messages.documents') }}</h2>
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                 <tr>
-                    <th>№</th>
-                    <th>Тип</th>
-                    <th>Файл</th>
-                    <th>Годен до</th>
-                    <th>Статус</th>
+                    <th>#</th>
+                    <th>{{ __('messages.type') }}</th>
+                    <th>{{ __('messages.file') }}</th>
+                    <th>{{ __('messages.valid_until') }}</th>
+                    <th>{{ __('messages.status') }}</th>
                 </tr>
+                </thead>
                 <tbody>
                 @forelse($documents as $doc)
                     <tr>
                         <td>{{ $doc->id }}</td>
                         <td><a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank">{{ $doc->file_name }}</a></td>
                         <td>{{ $doc->created_at->format('d.m.Y') }}</td>
+                        <td>—</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="text-center">Документы не найдены</td>
+                        <td colspan="5" class="text-center">{{ __('messages.no_documents_found') }}</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
-        <button id="uploadButton" class="btn btn-primary mt-3">Загрузить новый</button>
+        <button id="uploadButton" class="btn btn-primary mt-3">{{ __('messages.upload_new') }}</button>
     </div>
+
     <!-- Форма загрузки документа (скрыта по умолчанию) -->
     <div id="uploadForm" style="display: none; margin-top: 20px;">
         <form action="{{ route('document.upload') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-2">
-                <label for="documentFile" class="form-label">Выберите файл:</label>
+                <label for="documentFile" class="form-label">{{ __('messages.select_file') }}:</label>
                 <input type="file" name="documentFile" id="documentFile" class="form-control">
             </div>
-            <button type="submit" class="btn btn-success">Загрузить</button>
-            <button type="button" id="cancelUpload" class="btn btn-secondary">Отмена</button>
+            <button type="submit" class="btn btn-success">{{ __('messages.upload') }}</button>
+            <button type="button" id="cancelUpload" class="btn btn-secondary">{{ __('messages.cancel') }}</button>
         </form>
     </div>
+
     <!-- Запросы на ремонт -->
     <div class="flex space-x-6 items-start main-content" id="repair-list" style="display: none;">
         <div class="row">
             <div class="col-sm-6 mb-3 mb-sm-0">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title"><strong>Создать запрос на ремонт</strong></h2>
-                        <p class="card-text">Заполните форму и отправьте заявку на ремонт. Мы рассмотрим ваш запрос в ближайшее время.</p>
+                        <h2 class="card-title"><strong>{{ __('messages.create_repair_request') }}</strong></h2>
+                        <p class="card-text">{{ __('messages.repair_description') }}</p>
                         <!-- Кнопка, вызывающая JS-функцию открытия модального окна -->
-                        <button type="button" class="btn btn-primary mt-3" onclick="openRepairModal()">Создать запрос</button>
+                        <button type="button" class="btn btn-primary mt-3" onclick="openRepairModal()">{{ __('messages.create_request') }}</button>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title"><strong>Мои запросы</strong></h2>
-                        <p class="card-text">Просмотрите статус ваших заявок на ремонт, отслеживайте их выполнение и получайте обновления.</p>
+                        <h2 class="card-title"><strong>{{ __('messages.my_requests') }}</strong></h2>
+                        <p class="card-text">{{ __('messages.view_requests_description') }}</p>
                         <!-- При клике показываем блок со списком запросов -->
-                        <button type="button" class="btn btn-primary mt-3" onclick="openRequestList()">Посмотреть запросы</button>
+                        <button type="button" class="btn btn-primary mt-3" onclick="openRequestList()">{{ __('messages.view_requests') }}</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Модальное окно для создания запроса на ремонт -->
-    <div id="repairModal" class="modal-overlay" >
-        <div class="modal-content ">
+    <div id="repairModal" class="modal-overlay">
+        <div class="modal-content">
             <!-- Кнопка закрытия модального окна -->
             <button class="close-button absolute top-2 right-2 text-xl" onclick="closeRepairModal()">&times;</button>
-            <h2 class="text-lg font-semibold text-gray-800 text-center">Новый запрос на ремонт</h2>
+            <h2 class="text-lg font-semibold text-gray-800 text-center">{{ __('messages.new_repair_request') }}</h2>
             <form action="{{ route('request.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mt-4">
-                    <label class="block text-sm text-gray-600">Тип проблемы</label>
+                    <label class="block text-sm text-gray-600">{{ __('messages.problem_type') }}</label>
                     <select name="type" id="type" class="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        <option selected disabled>Выберите проблему...</option>
-                        <option value="Электрика">Электрика</option>
-                        <option value="Водопровод">Водопровод</option>
-                        <option value="Другое">Другое</option>
+                        <option selected disabled>{{ __('messages.select_problem') }}</option>
+                        <option value="Электрика">{{ __('messages.electricity') }}</option>
+                        <option value="Водопровод">{{ __('messages.plumbing') }}</option>
+                        <option value="Другое">{{ __('messages.other') }}</option>
                     </select>
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-sm text-gray-600">Опишите что случилось</label>
-                    <textarea class="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" rows="3" placeholder="Введите описание..." name="description"></textarea>
+                    <label class="block text-sm text-gray-600">{{ __('messages.problem_description') }}</label>
+                    <textarea class="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" rows="3" placeholder="{{ __('messages.enter_description') }}" name="description"></textarea>
                 </div>
 
                 <div class="mt-4">
                     <input type="file" id="file-upload" class="hidden" name="file">
                     <label for="file-upload" id="file-label" class="text-sm text-gray-500 cursor-pointer block border-dashed border-2 p-2 rounded-lg text-center">
-                        📎 Прикрепить файл (не выбрано)
+                        📎 {{ __('messages.attach_file') }} ({{ __('messages.not_selected') }})
                     </label>
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-sm text-gray-600">Выбрать сотрудника</label>
+                    <label class="block text-sm text-gray-600">{{ __('messages.select_employee') }}</label>
                     <select class="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" name="employee">
-                        <option selected disabled>Выберите сотрудника по проблеме</option>
+                        <option selected disabled>{{ __('messages.select_employee_problem') }}</option>
                         @foreach($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                         @endforeach
@@ -675,32 +681,33 @@
                 </div>
 
                 <div class="flex justify-between mt-6">
-                    <button type="submit" class="bg-green-300 text-gray-800 px-4 py-2 hover:bg-green-400 rounded">Отправить</button>
-                    <button type="button" onclick="closeRepairModal()" class="bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400 rounded">Отменить</button>
+                    <button type="submit" class="bg-green-300 text-gray-800 px-4 py-2 hover:bg-green-400 rounded">{{ __('messages.submit') }}</button>
+                    <button type="button" onclick="closeRepairModal()" class="bg-gray-300 text-gray-800 px-4 py-2 hover:bg-gray-400 rounded">{{ __('messages.cancel') }}</button>
                 </div>
             </form>
         </div>
     </div>
+
     <!-- Блок со списком запросов -->
     <div class="container mt-5 main-content" id="request-list" style="display: none;">
         <div class="card shadow-sm">
             <div class="card-body">
-                <a href="javascript:void(0)" onclick="closeRequestList()">Назад</a>
+                <a href="javascript:void(0)" onclick="closeRequestList()">{{ __('messages.back') }}</a>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title">Все запросы</h5>
+                    <h5 class="card-title">{{ __('messages.all_requests') }}</h5>
                     <!-- Можно оставить кнопку для создания запроса -->
                     <button type="button" class="btn btn-primary btn-sm" onclick="openRepairModal()">➕</button>
                 </div>
-                <button class="btn btn-outline-secondary btn-sm mb-3">Выбрать период</button>
+                <button class="btn btn-outline-secondary btn-sm mb-3">{{ __('messages.select_period') }}</button>
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>№</th>
-                            <th>Запрос</th>
-                            <th>Дата</th>
-                            <th>Сотрудник</th>
-                            <th>Статус</th>
+                            <th>{{ __('messages.request') }}</th>
+                            <th>{{ __('messages.date') }}</th>
+                            <th>{{ __('messages.employee') }}</th>
+                            <th>{{ __('messages.status') }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -715,7 +722,7 @@
                                     </a>
                                 </td>
                                 <td>{{ $request->created_at }}</td>
-                                <td>{{ $request->employee->name ?? 'Не назначен' }}</td>
+                                <td>{{ $request->employee->name ?? __('messages.not_assigned') }}</td>
                                 <td>
                                     <span class="badge bg-success">{{ $request->status }}</span>
                                 </td>
@@ -731,15 +738,14 @@
     @foreach($requests as $request)
         <div id="request-details-{{ $request->id }}" class="request-details" style="display: none;">
             <div class="container">
-                <h2 class="mb-4 mt-5">Детали запроса #{{ $request->id }}</h2>
+                <h2 class="mb-4 mt-5">{{__('messages.details_request')}} #{{ $request->id }}</h2>
 
                 <!-- Кнопки действий -->
                 <div class="d-flex mb-3">
-                    <button class="btn btn-secondary me-2" onclick="closeRequestDetails({{ $request->id }})">Назад</button>
-                    <button type="button" class="btn btn-primary me-2" onclick="openEditModal({{ $request->id }})">Редактировать</button>
-{{--                    <a href="{{ route('request.edit', $request->id) }}" class="btn btn-primary me-2">Редактировать</a>--}}
+                    <button class="btn btn-secondary me-2" onclick="closeRequestDetails({{ $request->id }})">{{__('messages.back')}}</button>
+                    <button type="button" class="btn btn-primary me-2" onclick="openEditModal({{ $request->id }})">{{__('messages.edit')}}</button>
                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $request->id }}">
-                        Удалить
+                        {{__('messages.delete')}}
                     </button>
                 </div>
 
@@ -747,12 +753,12 @@
                 <table class="table table-bordered align-middle mb-4">
                     <thead class="table-light">
                     <tr>
-                        <th>№</th>
-                        <th>Запрос</th>
-                        <th>Подробнее</th>
-                        <th>Дата</th>
-                        <th>Сотрудник</th>
-                        <th>Статус</th>
+                        <th>{{__('messages.number')}}</th>
+                        <th>{{__('messages.request')}}</th>
+                        <th>{{__('messages.details')}}</th>
+                        <th>{{__('messages.date')}}</th>
+                        <th>{{__('messages.employee')}}</th>
+                        <th>{{__('messages.status')}}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -761,7 +767,7 @@
                         <td>{{ $request->type }}</td>
                         <td>{{ $request->description }}</td>
                         <td>{{ $request->created_at->format('d.m.Y H:i') }}</td>
-                        <td>{{ $request->employee->name ?? 'Не назначен' }}</td>
+                        <td>{{ $request->employee->name ?? __('messages.not_assigned') }}</td>
                         <td><span class="badge bg-success">{{ $request->status }}</span></td>
                     </tr>
                     </tbody>
@@ -773,18 +779,18 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel-{{ $request->id }}">Удалить запрос?</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            <h5 class="modal-title" id="deleteModalLabel-{{ $request->id }}">{{__('messages.delete_request')}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{__('messages.close')}}"></button>
                         </div>
                         <div class="modal-body">
-                            Вы уверены, что хотите удалить этот запрос? Это действие нельзя отменить.
+                            {{__('messages.are_you_sure_delete')}}
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('messages.cancel')}}</button>
                             <form action="{{ route('request.destroy', $request->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                <button type="submit" class="btn btn-danger">{{__('messages.delete')}}</button>
                             </form>
                         </div>
                     </div>
@@ -794,102 +800,102 @@
     @endforeach
     <!-- Модальное окно для редактирования запроса (скрыто по умолчанию) -->
     @foreach($requests as $request)
-    <div class="modal-overlay" id="edit-modal-{{ $request->id }}" style="display: none; justify-content: center; align-items: center;">
-        <div class="modal-content bg-white shadow-xl rounded-2xl p-6 w-96 relative">
-            <button class="close-button absolute top-2 right-2 text-xl" onclick="closeEditModal({{ $request->id }})">&times;</button>
-            <h2 class="mb-4 mt-5">Редактирование запроса #{{ $request->id }}</h2>
-            <a href="javascript:void(0)" onclick="closeEditModal({{ $request->id }})" class="btn btn-secondary mb-3">Назад</a>
-            <!-- Форма редактирования -->
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('request.update', $request->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <!-- Тип запроса -->
-                        <div class="mb-3">
-                            <label for="type-{{ $request->id }}" class="form-label">Тип запроса</label>
-                            <input type="text" id="type-{{ $request->id }}" name="type" class="form-control" value="{{ $request->type }}" required>
-                        </div>
-                        <!-- Описание -->
-                        <div class="mb-3">
-                            <label for="description-{{ $request->id }}" class="form-label">Описание</label>
-                            <textarea id="description-{{ $request->id }}" name="description" class="form-control" rows="3" required>{{ $request->description }}</textarea>
-                        </div>
-                        <!-- Сотрудник -->
-                        <div class="mb-3">
-                            <label for="employee_id-{{ $request->id }}" class="form-label">Сотрудник</label>
-                            <select id="employee_id-{{ $request->id }}" name="employee_id" class="form-control">
-                                <option value="">Не назначен</option>
-                                @foreach($employees as $employee)
-                                    <option value="{{ $employee->id }}" {{ $request->employee_id == $employee->id ? 'selected' : '' }}>
-                                        {{ $employee->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <!-- Кнопки действий -->
-                        <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                        <button type="button" class="btn btn-danger" onclick="closeEditModal({{ $request->id }})">Отмена</button>
-                    </form>
+        <div class="modal-overlay" id="edit-modal-{{ $request->id }}" style="display: none; justify-content: center; align-items: center;">
+            <div class="modal-content bg-white shadow-xl rounded-2xl p-6 w-96 relative">
+                <button class="close-button absolute top-2 right-2 text-xl" onclick="closeEditModal({{ $request->id }})">&times;</button>
+                <h2 class="mb-4 mt-5">{{__('messages.edit_request')}} #{{ $request->id }}</h2>
+                <a href="javascript:void(0)" onclick="closeEditModal({{ $request->id }})" class="btn btn-secondary mb-3">{{__('messages.back')}}</a>
+                <!-- Форма редактирования -->
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ route('request.update', $request->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <!-- Тип запроса -->
+                            <div class="mb-3">
+                                <label for="type-{{ $request->id }}" class="form-label">{{__('messages.request_type')}}</label>
+                                <input type="text" id="type-{{ $request->id }}" name="type" class="form-control" value="{{ $request->type }}" required>
+                            </div>
+                            <!-- Описание -->
+                            <div class="mb-3">
+                                <label for="description-{{ $request->id }}" class="form-label">{{__('messages.description')}}</label>
+                                <textarea id="description-{{ $request->id }}" name="description" class="form-control" rows="3" required>{{ $request->description }}</textarea>
+                            </div>
+                            <!-- Сотрудник -->
+                            <div class="mb-3">
+                                <label for="employee_id-{{ $request->id }}" class="form-label">{{__('messages.employee')}}</label>
+                                <select id="employee_id-{{ $request->id }}" name="employee_id" class="form-control">
+                                    <option value="">{{__('messages.not_assigned')}}</option>
+                                    @foreach($employees as $employee)
+                                        <option value="{{ $employee->id }}" {{ $request->employee_id == $employee->id ? 'selected' : '' }}>
+                                            {{ $employee->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Кнопки действий -->
+                            <button type="submit" class="btn btn-success">{{__('messages.save_changes')}}</button>
+                            <button type="button" class="btn btn-danger" onclick="closeEditModal({{ $request->id }})">{{__('messages.cancel')}}</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endforeach
     <!-- Запись на занятия физкультурой -->
     <div class="main-content" id="sports-section" style="display: none;">
-        <h2>Запись на занятия физкультурой</h2>
+        <h2>{{__('messages.sports_booking')}}</h2>
         @if($booking)
             <!-- ВАРИАНТ 2: Пользователь уже записан -->
             <div class="sports-result" id="sportsResultBlock">
-                <h3>Вы записаны на занятие</h3>
+                <h3>{{__('messages.already_booked')}}</h3>
                 <div class="sports-info">
                     <div class="info-item">
-                        <label>Вид спорта:</label>
+                        <label>{{__('messages.sport_type')}}:</label>
                         <span>{{ $booking->sport }}</span>
                     </div>
                     <div class="info-item">
-                        <label>День недели и время:</label>
+                        <label>{{__('messages.day_time')}}:</label>
                         <span>{{ $booking->day }} {{ $booking->scheduled_time }}</span>
                     </div>
                     <!-- Форма для отмены записи на занятие -->
                     <form action="{{ route('sports.cancel') }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn-change">Отменить?</button>
+                        <button type="submit" class="btn-change">{{__('messages.cancel_booking')}}</button>
                     </form>
                 </div>
 
                 <!-- Блок отработки -->
                 <div class="recovery-section">
-                    <h4>Отработка занятия</h4>
+                    <h4>{{__('messages.recovery_section')}}</h4>
                     @if($recoveries->count() > 0)
                         <div class="recovery-list">
                             @foreach($recoveries as $recovery)
                                 <div class="recovery-item">
                                     <div class="info-item">
-                                        <label>Вид спорта:</label>
+                                        <label>{{__('messages.sport_type')}}:</label>
                                         <span>{{ $recovery->sport }}</span>
                                     </div>
                                     <div class="info-item">
-                                        <label>Время:</label>
+                                        <label>{{__('messages.time')}}:</label>
                                         <span>{{ $recovery->scheduled_time }}</span>
                                     </div>
                                     <div class="info-item">
-                                        <label>Дата:</label>
+                                        <label>{{__('messages.date')}}:</label>
                                         <span>{{ $recovery->created_at->format('d.m.Y') }}</span>
                                     </div>
                                     <!-- Форма для отмены отработки -->
                                     <form action="{{ route('sports.recovery.cancel', $recovery->id) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-change">Отменить?</button>
+                                        <button type="submit" class="btn-change">{{__('messages.cancel_recovery')}}</button>
                                     </form>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <p>У вас нет запланированных отработок</p>
+                        <p>{{__('messages.no_scheduled_recovery')}}</p>
                     @endif
                     <!-- Кнопка для открытия модального окна добавления новой отработки -->
                     <button onclick="showRecoveryModal()" class="btn-change">+</button>
@@ -898,69 +904,45 @@
         @else
             <!-- ВАРИАНТ 1: Форма записи -->
             <div class="sports-form" id="sportsFormBlock">
-                <h3>Запись на занятия физкультурой</h3>
+                <h3>{{__('messages.sports_booking')}}</h3>
                 <form id="sportsForm" action="{{ route('sports.store') }}" method="POST">
                     @csrf
 
-                    <label for="sport">Вид спорта</label>
+                    <label for="sport">{{__('messages.sport_type')}}</label>
                     <select name="sport" id="sport" required>
-                        <option value="">Выберите</option>
-                        <option value="Танцы">Танцы</option>
-                        <option value="Баскетбол">Баскетбол</option>
-                        <option value="Волейбол">Волейбол</option>
-                        <option value="Футбол">Футбол</option>
+                        <option value="">{{__('messages.choose')}}</option>
+                        <option value="Танцы">{{__('messages.dance')}}</option>
+                        <option value="Баскетбол">{{__('messages.basketball')}}</option>
+                        <option value="Волейбол">{{__('messages.volleyball')}}</option>
+                        <option value="Футбол">{{__('messages.football')}}</option>
                     </select>
 
                     <!-- Блок выбора дней недели -->
-                    <label>Выберите дни недели</label>
+                    <label>{{__('messages.select_days')}}</label>
                     <div id="day-selection">
-                        <label><input type="checkbox" name="day[]" value="Понедельник"> Понедельник</label>
-                        <label><input type="checkbox" name="day[]" value="Вторник"> Вторник</label>
-                        <label><input type="checkbox" name="day[]" value="Среда"> Среда</label>
-                        <label><input type="checkbox" name="day[]" value="Четверг"> Четверг</label>
-                        <label><input type="checkbox" name="day[]" value="Пятница"> Пятница</label>
-                        <label><input type="checkbox" name="day[]" value="Суббота"> Суббота</label>
-                        <label><input type="checkbox" name="day[]" value="Воскресенье"> Воскресенье</label>
+                        <label><input type="checkbox" name="day[]" value="Понедельник">{{__('messages.monday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Вторник">{{__('messages.tuesday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Среда">{{__('messages.wednesday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Четверг">{{__('messages.thursday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Пятница">{{__('messages.friday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Суббота">{{__('messages.saturday')}}</label>
+                        <label><input type="checkbox" name="day[]" value="Воскресенье">{{__('messages.sunday')}}</label>
                     </div>
 
-                    <label for="time">Выбрать время урока</label>
+                    <label for="time">{{__('messages.select_time')}}</label>
                     <input type="time" name="time" id="time" required>
 
                     <div class="checkbox-group">
                         <input type="checkbox" id="autoEnroll">
-                        <label for="autoEnroll">Настроить автоматическую запись</label>
+                        <label for="autoEnroll">{{__('messages.auto_enroll')}}</label>
                     </div>
 
-                    <button type="submit" class="btn-primary">Записаться</button>
-                    <button type="button" class="btn-secondary" onclick="cancelSportsForm()">Отменить</button>
+                    <button type="submit" class="btn-primary">{{__('messages.book_now')}}</button>
+                    <button type="button" class="btn-secondary" onclick="cancelSportsForm()">{{__('messages.cancel')}}</button>
                 </form>
             </div>
         @endif
     </div>
-    <!-- Модальное окно для записи на отработку физкультуры -->
-    <div id="recoveryModal" class="modal">
-        <div class="modal-content">
-            <h3>Запись на отработку физкультуры</h3>
-            <form action="{{ route('sports.recovery') }}" method="POST">
-                @csrf
-                <label for="recoverySport">Вид спорта</label>
-                <select name="recoverySport" id="recoverySport" required>
-                    <option value="">Выберите</option>
-                    <option value="Танцы">Танцы</option>
-                    <option value="Баскетбол">Баскетбол</option>
-                    <option value="Волейбол">Волейбол</option>
-                    <option value="Футбол">Футбол</option>
-                </select>
-
-                <label for="recoveryTime">Выбрать время урока</label>
-                <input type="time" name="recoveryTime" id="recoveryTime" required>
-
-                <button type="submit" class="btn-primary">Записаться</button>
-                <button type="button" class="btn-secondary" onclick="closeRecoveryModal()">Удалить</button>
-            </form>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             showNews();

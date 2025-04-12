@@ -161,6 +161,18 @@
     </a>
 
     <div class="nav-icons">
+        <div class="text-message">
+            @if(session('language_switched'))
+                <p>You have switched to <span class="language">{{session('language_switched') === 'en' ? 'English' : (session('language_switched') == 'ru' ? "Russian" : "Kazakh")}} language</span></p>
+            @endif
+            <div class="text-messages">
+                <p>{{__('messages.welcome')}}</p>
+            </div>
+        </div>
+
+        <div>
+            @include('components.language-switch')
+        </div>
         <div class="icon-circle" style="background-color: #28a745;">
             <i class="fas fa-plus"></i>
         </div>
@@ -181,17 +193,18 @@
                 <div>{{ Auth::user()->name }}</div>
 
                 @if(Auth::user()->role === 'student')
-                    <a href="{{ route('student.personal') }}">Мой профиль</a>
+                    <a href="{{ route('student.personal') }}">{{ __('messages.my_profile') }}</a>
                 @endif
 
                 <form action="{{ route('logout') }}" method="POST" class="logout-form">
                     @csrf
                     <button type="submit">
-                        <i class="fas fa-sign-out-alt"></i> Выход
+                        <i class="fas fa-sign-out-alt"></i>{{ __('messages.logout') }}
                     </button>
                 </form>
             </div>
         </div>
+
     </div>
 </div>
 
