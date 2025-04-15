@@ -156,7 +156,7 @@
 {{-- Верхнее меню --}}
 <div class="top-nav">
     <a href="{{ route('student.dashboard') }}" class="logo-link">
-        <img src="{{ asset('storage/icon/dark icon.png') }}" alt="DMS Logo" class="logo-img">
+        <img src="{{ asset('dorm-management-system/storage/icon/dark_icon.png') }}" alt="DMS Logo" class="logo-img">
         <span>DMS</span>
     </a>
 

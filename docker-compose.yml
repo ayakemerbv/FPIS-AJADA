@@ -1,0 +1,29 @@
+services:
+  # PHP Service
+  php:
+    image: php:8.4.3-fpm
+    container_name: php-fpm
+    volumes:
+      - C:/Users/azama/PhpstormProjects/Laravel-Php-project/dorm-management-system:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - app-network
+
+  # Nginx Service
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/dorm-management-system
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+# Networks
+networks:
+  app-network:
+    driver: bridge
