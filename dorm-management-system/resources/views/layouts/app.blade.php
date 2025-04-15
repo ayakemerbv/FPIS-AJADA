@@ -150,13 +150,26 @@
         font-size: 0.85rem;
         opacity: 0.9;
     }
+    .logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .logo-img {
+        width: 30px;
+        height: 30px;
+        margin-right: 8px;
+    }
+
 </style>
 
 <body>
 {{-- Верхнее меню --}}
 <div class="top-nav">
     <a href="{{ route('student.dashboard') }}" class="logo-link">
-        <img src="{{ asset('dorm-management-system/storage/icon/dark_icon.png') }}" alt="DMS Logo" class="logo-img">
+        <img src="{{ asset('storage/icon/dark_icon.png') }}" alt="DMS Logo" class="logo-img">
+
         <span>DMS</span>
     </a>
 
@@ -173,9 +186,7 @@
         <div>
             @include('components.language-switch')
         </div>
-        <div class="icon-circle" style="background-color: #28a745;">
-            <i class="fas fa-plus"></i>
-        </div>
+
         <div class="icon-circle" style="background-color: #ffc107;">
             <i class="fas fa-bell"></i>
         </div>

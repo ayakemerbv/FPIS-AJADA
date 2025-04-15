@@ -122,9 +122,9 @@
     </style>
 
     <div class="sidebar">
-        <div class="sidebar-item" onclick="toggleSection('news')">
+        <div class="sidebar-item" onclick="showNews()">
             <i class="fas fa-home"></i>
-            <span>{{ __('messages.feed') }}</span>
+            <span>{{__('messages.main')}}</span>
         </div>
         @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id == null)
             <div class="sidebar-item" onclick="toggleSection('housing')">
@@ -138,8 +138,9 @@
         </div>
     </div>
 
+    {{-- Новости --}}
     <div class="main-content" id="news-section">
-        <h2>{{ __('messages.news') }}</h2>
+        <h2>{{__('messages.news')}}</h2>
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
@@ -151,7 +152,7 @@
                     <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
                 </div>
             @empty
-                <p>{{ __('messages.no_news') }}</p>
+                <p>{{__('messages.no_news')}}</p>
             @endforelse
         @endisset
     </div>
@@ -178,13 +179,18 @@
                 <select name="room_id" id="room" disabled>
                     <option value="">{{ __('messages.choose_floor_first') }}</option>
                 </select>
-
                 <button type="submit">{{ __('messages.apply') }}</button>
             </form>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            showNews();
+            @if(session('successType') === 'request_sent')
+            showNews();
+            @endif
+        });
         function toggleSection(section) {
             const newsSection = document.getElementById('news-section');
             const housingSidebar = document.getElementById('housing-sidebar');
@@ -197,7 +203,12 @@
                 newsSection.classList.remove('hidden');
             }
         }
-
+        function showNews() {
+            const newsSection = document.getElementById('news-section');
+            const housingSidebar = document.getElementById('housing-sidebar');
+            housingSidebar.classList.remove('open');
+            newsSection.classList.remove('hidden');
+        }
         document.addEventListener("DOMContentLoaded", function () {
             const buildingSelect = document.getElementById("building");
             const floorSelect = document.getElementById("floor");

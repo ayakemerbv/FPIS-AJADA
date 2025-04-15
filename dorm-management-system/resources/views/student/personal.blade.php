@@ -534,8 +534,6 @@
             <button class="btn-finance">{{ __('messages.check_financial_cabinet') }}</button>
         </div>
     </div>
-
-    <!-- Модальное окно для смены комнаты -->
     <!-- Модальное окно для смены комнаты -->
     <div class="modal-overlay" id="changeRoomModal" style="display: none;">
         <div class="modal-content">
@@ -964,6 +962,8 @@
             showHousing();
             @elseif(session('successType') === 'user_updated')
             showHousing()
+            @elseif(session('successType') === 'document_uploaded')
+            showDocuments();
             @endif
         });
         function showNews() {

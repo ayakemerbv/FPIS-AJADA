@@ -217,6 +217,4 @@ return [
     'cancel' => 'Cancel',
     'save_changes' => 'Save Changes',
     'change_status' => 'Change Status',
-
-
 ];

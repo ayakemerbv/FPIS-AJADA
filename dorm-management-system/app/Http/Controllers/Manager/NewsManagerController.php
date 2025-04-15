@@ -46,14 +46,11 @@ class NewsManagerController extends Controller
         $news = News::findOrFail($id);
         return view('manager.dashboard', compact('news'));
     }
-
-
     public function edit($id)
     {
         $news = News::findOrFail($id);
         return view('manager.news.edit', compact('news')); // Заменили на правильное представление
     }
-
     public function update(Request $request, $id)
     {
         $news = News::findOrFail($id);
@@ -73,8 +70,9 @@ class NewsManagerController extends Controller
         }
 
         $news->update($data);
-
-        return redirect()->route('manager.dashboard')->with('success', 'Новость обновлена!'); // Заменили на правильный маршрут
+        return redirect()->route('manager.dashboard')
+            ->with('successType', 'news_updated')
+            ->with('success', 'Новость обновлена!');
     }
 
 

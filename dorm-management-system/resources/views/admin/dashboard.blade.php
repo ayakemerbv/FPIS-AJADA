@@ -282,34 +282,56 @@
     </style>
 
     <div class="sidebar">
+        <div class="sidebar-item" onclick="showNews()">
+            <i class="fas fa-home"></i>
+            <span>{{__('messages.main')}}</span>
+        </div>
         <div class="sidebar-item" onclick="showUsers()">
             <i class="fas fa-user"></i>
             <span>{{ __('messages.users') }}</span>
         </div>
-        <div class="sidebar-item" onclick="showNews()">
-            <i class="fas fa-home"></i>
+        <div class="sidebar-item" onclick="addNews()">
+            <i class="fa-solid fa-newspaper"></i>
             <span>{{ __('messages.news') }}</span>
         </div>
     </div>
-
-    <!-- ========== Блок с новостями (Лента) ========== -->
-    <div class="main-content" id="see-news-section" style="display: none;">
-        <h2>{{ __('messages.news') }}</h2>
+    {{-- Новости --}}
+    <div class="main-content" id="see-news-section">
+        <h2>{{__('messages.news')}}</h2>
         @isset($newsList)
             @forelse($newsList as $news)
                 <div class="news-item">
                     @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">
+                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
                     @endif
                     <h3>{{ $news->title }}</h3>
                     <p>{{ $news->content }}</p>
                     <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
                 </div>
             @empty
-                <p>{{ __('messages.no_news') }}</p>
+                <p>{{__('messages.no_news')}}</p>
             @endforelse
         @endisset
     </div>
+
+{{--    <!-- ========== Блок с новостями (Лента) ========== -->--}}
+{{--    <div class="main-content" id="see-news-section" style="display: none;">--}}
+{{--        <h2>{{ __('messages.news') }}</h2>--}}
+{{--        @isset($newsList)--}}
+{{--            @forelse($newsList as $news)--}}
+{{--                <div class="news-item">--}}
+{{--                    @if($news->image)--}}
+{{--                        <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">--}}
+{{--                    @endif--}}
+{{--                    <h3>{{ $news->title }}</h3>--}}
+{{--                    <p>{{ $news->content }}</p>--}}
+{{--                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>--}}
+{{--                </div>--}}
+{{--            @empty--}}
+{{--                <p>{{ __('messages.no_news') }}</p>--}}
+{{--            @endforelse--}}
+{{--        @endisset--}}
+{{--    </div>--}}
 
     <!-- ========== Секция "Новости" (CRUD) ========== -->
     <div class="main-content" id="news-section" style="display: none;">
@@ -355,7 +377,6 @@
             </table>
         </div>
     </div>
-
     <!-- ========== Секция создания новости (скрыта) ========== -->
     <div class="main-content" id="create-news-section" style="display: none;">
         <div class="container">
@@ -377,7 +398,6 @@
             </div>
         </div>
     </div>
-
     <!-- ========== Секция редактирования новости (скрыта) ========== -->
     <div class="main-content" id="edit-news-section" style="display: none;">
         <div class="container">
@@ -402,7 +422,6 @@
             </div>
         </div>
     </div>
-
     <!-- ========== Секция пользователей (скрыта) ========== -->
     <div class="main-content" id="users-section" style="display: none;">
         <div class="heading-row">
@@ -448,7 +467,6 @@
             </tbody>
         </table>
     </div>
-
     <!-- ========== Секция деталей пользователя (скрыта) ========== -->
     <div class="main-content user-details-section" id="user-details-section" style="display: none;">
         <h2>{{ __('messages.user_details') }}</h2>
@@ -508,7 +526,6 @@
             </div>
         </div>
     </div>
-
     <!-- ========== Модальное окно (создание пользователя) ========== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
@@ -549,7 +566,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            showUsers();
+            showNews();
             @if($errors->any())
             openModal();
             @endif
@@ -558,12 +575,14 @@
             showUsers();
             @elseif(session('successType') === 'news_created')
             showNews();
+            @elseif(session('successType') === 'news_updated')
+            showNews();
             @endif
         });
-
         function hideAllSections() {
             document.getElementById('users-section').style.display = 'none';
             document.getElementById('news-section').style.display = 'none';
+            document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
             document.getElementById('user-details-section').style.display = 'none';
@@ -573,6 +592,10 @@
             document.getElementById('users-section').style.display = 'block';
         }
         function showNews() {
+            hideAllSections();
+            document.getElementById('see-news-section').style.display = 'block';
+        }
+        function addNews(){
             hideAllSections();
             document.getElementById('news-section').style.display = 'block';
         }

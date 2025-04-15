@@ -63,7 +63,10 @@ class BookingController extends Controller
             'status'      => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Заявка на заселение отправлена!');
+//        return redirect()->back()->with('success', 'Заявка на заселение отправлена!');
+        return redirect()->route('student.dashboard')
+            ->with('successType', 'request_sent')
+            ->with('success', 'Заявка на заселение отправлена!');
     }
 
 

@@ -14,13 +14,10 @@ use Illuminate\Support\Facades\Log;
 
 class AdminUserController extends Controller
 {
-
-
     public function create()
     {
         return view('admin.users.create');
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -94,8 +91,6 @@ class AdminUserController extends Controller
             'users' => $users,
             'newsList' => collect(), // empty collection to avoid the error
         ]);    }
-
-
     public function destroy($id)
     {
         Log::info("Deleting user with ID: $id");
@@ -106,8 +101,6 @@ class AdminUserController extends Controller
             ->with('successType', 'user_deleted')
             ->with('success', 'Пользователь удалён!');
     }
-
-
     public function getUserJson($id)
     {
         $user = User::find($id);

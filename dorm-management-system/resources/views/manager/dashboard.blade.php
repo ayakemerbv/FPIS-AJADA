@@ -352,7 +352,9 @@
             openModal();
             @endif
             @if(session('successType') === 'news_created')
-            showNews();
+            seeNews();
+            @elseif(session('successType') === 'news_updated')
+            seeNews();
             @endif
         });
         function seeNews() {

@@ -21,12 +21,19 @@ class EmployeeController extends Controller
         return view('employee.dashboard', compact('newsList', 'user','repairRequests'));
     }
     public function requests(){
-        $repairRequests = RepairRequest::where('user_id', auth()->id())->get();
-        return view('employee.requests', compact('repairRequests'));
+        $repairRequests = RepairRequest::all();
+
+        return view('employee.requests', compact('repairRequests'))
+            ->with('successType', 'view_requests')
+            ->with('success', 'Список загружен');
+
     }
     public function show($id){
         $request = RepairRequest::with('employee')->findOrFail($id);
-        return view('employee.show', compact('request'));
+        return view('employee.show', compact('request'))
+            ->with('successType', 'show_requests')
+            ->with('success', 'Список заявок');
+
 
     }
     public function edit($id){
@@ -50,7 +57,8 @@ class EmployeeController extends Controller
 
         $request->update(['status' => $httpRequest->input('status')]);
 
-        return redirect()->route('employee.requests')->with('success', 'Статус успешно обновлён.');
+        return redirect()->route('employee.dashboard')->with('success', 'Статус успешно обновлён.')->
+            with('successType', 'request_updated');
 
     }
 
@@ -80,7 +88,10 @@ class EmployeeController extends Controller
             $user->employee->save();
         }
         $user->save();
-        return redirect('employee/dashboard')->with('successType', 'profile_updated');
+
+        return redirect()->route('employee.dashboard')
+            ->with('successType', 'profile_updated')
+            ->with('success', 'Профиль обновлен!');
     }
 
     public function updatePassword(Request $request)

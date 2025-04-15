@@ -240,7 +240,6 @@
             @endforelse
         @endisset
     </div>
-
     <!-- ===== SECTION: Личные данные ===== -->
     <div class="main-content" id="personal-section">
         <div class="container">
@@ -303,7 +302,6 @@
             </div>
         </div>
     </div>
-
     <!-- ===== МОДАЛЬНОЕ ОКНО: Смена пароля ===== -->
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-content">
@@ -333,7 +331,6 @@
             </form>
         </div>
     </div>
-
     <!-- ===== SECTION: Список заявок ===== -->
     <div class="main-content" id="request-section">
         <div class="container">
@@ -367,11 +364,11 @@
                             <td>{{ $req->created_at }}</td>
                             <td>{{ $req->employee->name ?? __('messages.not_assigned') }}</td>
                             <td>
-                                @if($req->status == 'На рассмотрении')
+                                @if($req->status == 'pending')
                                     <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
-                                @elseif($req->status == 'Принято')
+                                @elseif($req->status == 'accepted')
                                     <span class="badge bg-primary">{{ __('messages.accept') }}</span>
-                                @elseif($req->status == 'Выполнено')
+                                @elseif($req->status == 'done')
                                     <span class="badge bg-success">{{ __('messages.completed') }}</span>
                                 @else
                                     <span class="badge bg-secondary">{{ __('messages.unknown') }}</span>
@@ -384,7 +381,6 @@
             </div>
         </div>
     </div>
-
     <!-- ===== SECTION: Детали заявки ===== -->
     <div class="main-content request-details-section" id="request-details-section">
         <div class="container">
@@ -410,7 +406,6 @@
             </table>
         </div>
     </div>
-
     <!-- ===== SECTION: Редактирование заявки ===== -->
     <div class="main-content edit-request-section" id="edit-request-section">
         <div class="container">
@@ -432,9 +427,9 @@
                         <div class="mb-3">
                             <label for="edit-status" class="form-label">{{ __('messages.status') }}:</label>
                             <select name="status" id="edit-status" class="form-control">
-                                <option value="{{ __('messages.in_review') }}">{{ __('messages.in_review') }}</option>
-                                <option value="{{ __('messages.accept') }}">{{ __('messages.accept') }}</option>
-                                <option value="{{ __('messages.completed') }}">{{ __('messages.completed') }}</option>
+                                <option value="pending">{{ __('messages.in_review') }}</option>
+                                <option value="accepted">{{ __('messages.accept') }}</option>
+                                <option value="done">{{ __('messages.completed') }}</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-success">{{ __('messages.save_changes') }}</button>
@@ -445,8 +440,19 @@
         </div>
     </div>
 
-    <!-- ===== Скрипты для переключения секций и работы с заявками ===== -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            showNews();
+            @if(session('successType') === 'view_requests')
+            showRequests();
+            @elseif(session('successType') === 'show_requests')
+            showRequestDetails();
+            @elseif(session('successType') === 'profile_updated')
+            showPersonal()
+            @elseif(session('successType') === 'request_updated')
+            openEditRequest()
+            @endif
+        });
         function hideAllSections() {
             document.querySelectorAll('.main-content').forEach(section => {
                 section.classList.remove('active');
@@ -487,7 +493,6 @@
                 description: 'Описание запроса по электрике',
                 status: 'На рассмотрении'
             };
-
             const detailsBody = document.getElementById('req-details-body');
             detailsBody.innerHTML = `<tr>
                                         <td>${window.currentRequest.id}</td>
@@ -497,9 +502,8 @@
                                         <td>Не назначен</td>
                                         <td><span class="badge bg-warning text-dark">${window.currentRequest.status}</span></td>
                                     </tr>`;
-            // Устанавливаем заголовок запроса
-            document.getElementById('req-id').textContent = window.currentRequest.id;
 
+            document.getElementById('req-id').textContent = window.currentRequest.id;
             showRequestDetails();
         }
         function openPasswordModal() {

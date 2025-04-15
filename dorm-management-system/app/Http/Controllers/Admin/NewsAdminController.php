@@ -15,12 +15,10 @@ class NewsAdminController extends Controller
         $newsList = News::orderBy('created_at', 'desc')->get();
         return view('admin.news.index', compact('newsList'));
     }
-
     public function create()
     {
         return view('admin.news.create');
     }
-
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -47,13 +45,11 @@ class NewsAdminController extends Controller
         return view('admin.dashboard', compact('news'));
     }
 
-
     public function edit($id)
     {
         $news = News::findOrFail($id);
         return view('admin.dashboard', compact('news'));
     }
-
 
     public function update(Request $request, $id)
     {
@@ -76,7 +72,9 @@ class NewsAdminController extends Controller
 
         $news->update($data);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Новость обновлена!');
+        return redirect()->route('admin.dashboard')
+            ->with('successType', 'news_updated')
+            ->with('success', 'Новость обновлена!');
     }
 
 

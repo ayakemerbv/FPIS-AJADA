@@ -46,6 +46,7 @@ class DocumentController extends Controller
             }
 
             return redirect()->back()->with('success', 'Документ успешно загружен!');
+
         } catch (\Exception $e) {
             \Log::error('Ошибка при загрузке документа:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Ошибка загрузки: ' . $e->getMessage());
@@ -76,7 +77,9 @@ class DocumentController extends Controller
             return back()->with('error', 'Ошибка при сохранении документа в БД!');
         }
 
-        return redirect()->back()->with('success', 'Документ успешно загружен!');
+        return redirect()->route('student.personal')
+            ->with('successType', 'document_uploaded')
+            ->with('success', 'Документ успешно загружен!');
     }
 
 }
