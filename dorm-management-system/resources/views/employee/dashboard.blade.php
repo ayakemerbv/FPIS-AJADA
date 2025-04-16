@@ -370,8 +370,20 @@
                                     <span class="badge bg-primary">{{ __('messages.accept') }}</span>
                                 @elseif($req->status == 'done')
                                     <span class="badge bg-success">{{ __('messages.completed') }}</span>
-                                @else
-                                    <span class="badge bg-secondary">{{ __('messages.unknown') }}</span>
+                                @elseif($req->status == 'In review')
+                                        <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
+                                @elseif($req->status == 'Accept')
+                                        <span class="badge bg-primary">{{ __('messages.accept') }}</span>
+                                @elseif($req->status == 'Completed')
+                                        <span class="badge bg-success">{{ __('messages.completed') }}</span>
+                                @elseif($req->status == 'Қарастырылуда')
+                                    <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
+                                @elseif($req->status == 'Қабылдау')
+                                    <span class="badge bg-primary">{{ __('messages.accept') }}</span>
+                                @elseif($req->status == 'Орындалды')
+                                    <span class="badge bg-success">{{ __('messages.completed') }}</span>
+{{--                                @else--}}
+{{--                                    <span class="badge bg-secondary">{{ __('messages.unknown') }}</span>--}}
                                 @endif
                             </td>
                         </tr>
@@ -487,6 +499,7 @@
             }
         }
         function viewRequestDetails(reqId) {
+<<<<<<< Updated upstream
             window.currentRequest = {
                 id: reqId,
                 type: 'Электрика',
@@ -505,7 +518,37 @@
 
             document.getElementById('req-id').textContent = window.currentRequest.id;
             showRequestDetails();
+=======
+            fetch(`/employee/dashboard/requests/${reqId}`)
+                .then(response => response.json())
+                .then(data => {
+                    window.currentRequest = data;
+
+                    const detailsBody = document.getElementById('req-details-body');
+                    detailsBody.innerHTML = `<tr>
+                <td>${data.id}</td>
+                <td>${data.type}</td>
+                <td>${data.description}</td>
+                <td>${new Date(data.created_at).toLocaleString()}</td>
+                <td>${data.employee ? data.employee.name : 'Не назначен'}</td>
+                <td><span class="badge ${
+                        data.status === 'На рассмотрении' ? 'bg-warning text-dark' :
+                            data.status === 'Принято' ? 'bg-primary' :
+                                data.status === 'Выполнено' ? 'bg-success' : 'bg-secondary'
+                    }">${data.status}</span></td>
+            </tr>`;
+
+                    document.getElementById('req-id').textContent = data.id;
+
+                    showRequestDetails();
+                })
+                .catch(error => {
+                    alert('Ошибка при загрузке данных');
+                    console.error(error);
+                });
+>>>>>>> Stashed changes
         }
+
         function openPasswordModal() {
             document.getElementById('passwordModal').style.display = 'flex';
         }

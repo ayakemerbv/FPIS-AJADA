@@ -92,7 +92,10 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
         Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
         Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
         Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
-});
+        Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'getRequest'])->name('employee.getRequest');
+
+    });
     Route::middleware(['language'])->group(function (){
         Route::post('/language-switch', [LanguageController::class, 'languageSwitch'])->name('language.switch');
     });
+

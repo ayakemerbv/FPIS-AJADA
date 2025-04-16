@@ -129,4 +129,12 @@ class EmployeeController extends Controller
 
         return back()->with('success', 'Данные успешно обновлены!');
     }
+    public function getRequest($id){
+        $request = RepairRequest::with('employee')->find($id);
+        if (!$request) {
+            return response()->json(['error' => 'Request not found'], 404);
+        }
+
+        return response()->json($request);
+    }
 }
