@@ -499,26 +499,6 @@
             }
         }
         function viewRequestDetails(reqId) {
-<<<<<<< Updated upstream
-            window.currentRequest = {
-                id: reqId,
-                type: 'Электрика',
-                description: 'Описание запроса по электрике',
-                status: 'На рассмотрении'
-            };
-            const detailsBody = document.getElementById('req-details-body');
-            detailsBody.innerHTML = `<tr>
-                                        <td>${window.currentRequest.id}</td>
-                                        <td>${window.currentRequest.type}</td>
-                                        <td>${window.currentRequest.description}</td>
-                                        <td>${new Date().toLocaleString()}</td>
-                                        <td>Не назначен</td>
-                                        <td><span class="badge bg-warning text-dark">${window.currentRequest.status}</span></td>
-                                    </tr>`;
-
-            document.getElementById('req-id').textContent = window.currentRequest.id;
-            showRequestDetails();
-=======
             fetch(`/employee/dashboard/requests/${reqId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -546,7 +526,6 @@
                     alert('Ошибка при загрузке данных');
                     console.error(error);
                 });
->>>>>>> Stashed changes
         }
 
         function openPasswordModal() {
