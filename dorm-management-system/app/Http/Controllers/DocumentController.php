@@ -22,7 +22,7 @@ class DocumentController extends Controller
             \Log::info('Запрос на загрузку документа', ['user_id' => Auth::id()]);
 
             $request->validate([
-                'documentFile' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+                'documentFile' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx',
             ]);
 
             if (!$request->hasFile('documentFile')) {
@@ -38,6 +38,7 @@ class DocumentController extends Controller
                 'file_name' => $file->getClientOriginalName(),
                 'file_path' => $path,
             ]);
+            dd($document);
 
             \Log::info('Документ загружен:', ['document' => $document]);
 
@@ -55,7 +56,7 @@ class DocumentController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'documentFile' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+            'documentFile' => 'required',
         ]);
 
         if (!$request->hasFile('documentFile')) {
@@ -72,6 +73,7 @@ class DocumentController extends Controller
 
         // Создаем документ через метод `upload()`
         $document = (new Document())->upload($file, $student_id);
+
 
         if (!$document) {
             return back()->with('error', 'Ошибка при сохранении документа в БД!');

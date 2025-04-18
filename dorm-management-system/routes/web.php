@@ -59,7 +59,7 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
     Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');
     Route::get('/personal/floors/{building_id}', [BookingController::class, 'getFloors'])->name('booking.getFloors');
     Route::get('/personal/rooms/{building_id}/{floor}', [BookingController::class, 'getRooms'])->name('booking.getRooms');
-    Route::post('/document/upload', [DocumentController::class, 'store'])->name('document.upload');
+//    Route::post('/document/upload', [DocumentController::class, 'store'])->name('document.upload');
     Route::post('personal/document/upload', [DocumentController::class, 'upload'])->name('document.upload');
     Route::post('/personal/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::post('/personal/booking/change-room', [BookingController::class, 'changeRoom'])->name('booking.changeRoom');
