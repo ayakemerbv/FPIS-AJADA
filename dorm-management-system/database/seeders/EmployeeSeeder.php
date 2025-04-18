@@ -29,7 +29,7 @@ class EmployeeSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'employee_id' => 3,
+                'employee_id' => 4,
                 'name' => 'Петров П. П.',
                 'job_type' => 'Сантехник',
                 'created_at' => now(),

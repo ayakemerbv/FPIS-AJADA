@@ -18,6 +18,7 @@ class EmployeeController extends Controller
         $newsList = News::all();
         $user = request()->user();
         $repairRequests = RepairRequest::all();
+
         return view('employee.dashboard', compact('newsList', 'user','repairRequests'));
     }
     public function requests(){
@@ -33,8 +34,6 @@ class EmployeeController extends Controller
         return view('employee.show', compact('request'))
             ->with('successType', 'show_requests')
             ->with('success', 'Список заявок');
-
-
     }
     public function edit($id){
         $request = RepairRequest::findOrFail($id); // Ищем по ID

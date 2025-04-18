@@ -722,7 +722,7 @@
                                 <td>{{ $request->created_at }}</td>
                                 <td>{{ $request->employee->name ?? __('messages.not_assigned') }}</td>
                                 <td>
-                                    <span class="badge bg-success">{{ $request->status }}</span>
+                                    <span class="badge bg-success">{{__('status.' . $request->status)}}</span>
                                 </td>
                             </tr>
                         @endforeach

@@ -365,26 +365,13 @@
                             <td>{{ $req->employee->name ?? __('messages.not_assigned') }}</td>
                             <td>
                                 @if($req->status == 'pending')
-                                    <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
-                                @elseif($req->status == 'accepted')
-                                    <span class="badge bg-primary">{{ __('messages.accept') }}</span>
-                                @elseif($req->status == 'done')
-                                    <span class="badge bg-success">{{ __('messages.completed') }}</span>
-                                @elseif($req->status == 'In review')
-                                        <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
-                                @elseif($req->status == 'Accept')
-                                        <span class="badge bg-primary">{{ __('messages.accept') }}</span>
-                                @elseif($req->status == 'Completed')
-                                        <span class="badge bg-success">{{ __('messages.completed') }}</span>
-                                @elseif($req->status == 'Қарастырылуда')
-                                    <span class="badge bg-warning text-dark">{{ __('messages.in_review') }}</span>
-                                @elseif($req->status == 'Қабылдау')
-                                    <span class="badge bg-primary">{{ __('messages.accept') }}</span>
-                                @elseif($req->status == 'Орындалды')
-                                    <span class="badge bg-success">{{ __('messages.completed') }}</span>
-{{--                                @else--}}
-{{--                                    <span class="badge bg-secondary">{{ __('messages.unknown') }}</span>--}}
+                                    <p class="btn btn-secondary">{{__('status.' . $req->status)}}</p>
+                                    @elseif($req->status == 'done')
+                                        <p class="btn btn-success">{{__('status.' . $req->status)}}</p>
+                                        @elseif($req->status == 'accepted')
+                                            <p class="btn btn-primary">{{__('status.' . $req->status)}}</p>
                                 @endif
+
                             </td>
                         </tr>
                     @endforeach
@@ -453,6 +440,11 @@
     </div>
 
     <script>
+        window.statusTranslations = {
+            pending: "{{ __('status.pending') }}",
+            accepted: "{{ __('status.accepted') }}",
+            done: "{{ __('status.done') }}"
+        };
         document.addEventListener('DOMContentLoaded', function() {
             showNews();
             @if(session('successType') === 'view_requests')
@@ -505,19 +497,18 @@
                     window.currentRequest = data;
 
                     const detailsBody = document.getElementById('req-details-body');
+
+                    // Найти перевод статуса
+                    const translatedStatus = window.statusTranslations[data.status] || data.status;
+
                     detailsBody.innerHTML = `<tr>
                 <td>${data.id}</td>
                 <td>${data.type}</td>
                 <td>${data.description}</td>
                 <td>${new Date(data.created_at).toLocaleString()}</td>
-                <td>${data.employee ? data.employee.name : 'Не назначен'}</td>
-                <td><span class="badge ${
-                        data.status === 'На рассмотрении' ? 'bg-warning text-dark' :
-                            data.status === 'Принято' ? 'bg-primary' :
-                                data.status === 'Выполнено' ? 'bg-success' : 'bg-secondary'
-                    }">${data.status}</span></td>
+                <td>${data.employee ? data.employee.name : '{{ __("messages.not_assigned") }}'}</td>
+                <td>${translatedStatus}</td>
             </tr>`;
-
                     document.getElementById('req-id').textContent = data.id;
 
                     showRequestDetails();

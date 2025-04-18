@@ -6,7 +6,7 @@ use App\Models\Employee;
 use App\Models\Request as RepairRequest;
 use Illuminate\Http\Request;
 
-class RequestController extends Controller{
+class   RequestController extends Controller{
     public function index(){
         $requests = RepairRequest::where('user_id', auth()->id())->get();
         return view('request.index', compact('requests'));
