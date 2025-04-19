@@ -39,7 +39,7 @@
             background-color: #EFEFEF;
         }
         .sidebar-item i {
-            font-size: 18px;
+            font-size: 20px;
             color: var(--text-color);
         }
 
@@ -286,54 +286,17 @@
             <i class="fas fa-home"></i>
             <span>{{__('messages.main')}}</span>
         </div>
-        <div class="sidebar-item" onclick="showUsers()">
-            <i class="fas fa-user"></i>
-            <span>{{ __('messages.users') }}</span>
-        </div>
         <div class="sidebar-item" onclick="addNews()">
             <i class="fa-solid fa-newspaper"></i>
             <span>{{ __('messages.news') }}</span>
         </div>
-    </div>
-    {{-- Новости --}}
-    <div class="main-content" id="see-news-section">
-        <h2>{{__('messages.news')}}</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>{{__('messages.no_news')}}</p>
-            @endforelse
-        @endisset
+        <div class="sidebar-item" onclick="showUsers()">
+            <i class="fas fa-user"></i>
+            <span>{{ __('messages.users') }}</span>
+        </div>
     </div>
 
-{{--    <!-- ========== Блок с новостями (Лента) ========== -->--}}
-{{--    <div class="main-content" id="see-news-section" style="display: none;">--}}
-{{--        <h2>{{ __('messages.news') }}</h2>--}}
-{{--        @isset($newsList)--}}
-{{--            @forelse($newsList as $news)--}}
-{{--                <div class="news-item">--}}
-{{--                    @if($news->image)--}}
-{{--                        <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">--}}
-{{--                    @endif--}}
-{{--                    <h3>{{ $news->title }}</h3>--}}
-{{--                    <p>{{ $news->content }}</p>--}}
-{{--                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>--}}
-{{--                </div>--}}
-{{--            @empty--}}
-{{--                <p>{{ __('messages.no_news') }}</p>--}}
-{{--            @endforelse--}}
-{{--        @endisset--}}
-{{--    </div>--}}
-
-    <!-- ========== Секция "Новости" (CRUD) ========== -->
+    <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
     <div class="main-content" id="news-section" style="display: none;">
         <div class="container">
             <h2>{{ __('messages.manage_news') }}</h2>
@@ -577,6 +540,8 @@
             showNews();
             @elseif(session('successType') === 'news_updated')
             showNews();
+            @elseif(session('successType') === 'user_searched')
+            showUsers();
             @endif
         });
         function hideAllSections() {
@@ -591,10 +556,7 @@
             hideAllSections();
             document.getElementById('users-section').style.display = 'block';
         }
-        function showNews() {
-            hideAllSections();
-            document.getElementById('see-news-section').style.display = 'block';
-        }
+
         function addNews(){
             hideAllSections();
             document.getElementById('news-section').style.display = 'block';

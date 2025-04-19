@@ -210,7 +210,7 @@
     <div class="sidebar">
         <div class="sidebar-item" onclick="showNews()">
             <i class="fas fa-home"></i>
-            <span>{{ __('messages.news') }}</span>
+            <span>{{ __('messages.main') }}</span>
         </div>
         <a class="sidebar-item" onclick="showPersonal()">
             <i class="fas fa-user"></i>
@@ -222,24 +222,6 @@
         </div>
     </div>
 
-    <!-- ===== SECTION: Новости ===== -->
-    <div class="main-content" id="news-section">
-        <h2>{{ __('messages.news') }}</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>{{ __('messages.no_news') }}</p>
-            @endforelse
-        @endisset
-    </div>
     <!-- ===== SECTION: Личные данные ===== -->
     <div class="main-content" id="personal-section">
         <div class="container">
@@ -461,10 +443,6 @@
             document.querySelectorAll('.main-content').forEach(section => {
                 section.classList.remove('active');
             });
-        }
-        function showNews() {
-            hideAllSections();
-            document.getElementById('news-section').classList.add('active');
         }
         function showPersonal() {
             hideAllSections();

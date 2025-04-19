@@ -126,7 +126,7 @@
             <i class="fas fa-home"></i>
             <span>{{__('messages.main')}}</span>
         </div>
-        @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id == null)
+        @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id === null)
             <div class="sidebar-item" onclick="toggleSection('housing')">
                 <i class="fas fa-bed"></i>
                 <span>{{ __('messages.housing_application') }}</span>
@@ -136,25 +136,6 @@
             <i class="fas fa-store"></i>
             <span>{{ __('messages.marketplace') }}</span>
         </div>
-    </div>
-
-    {{-- Новости --}}
-    <div class="main-content" id="news-section">
-        <h2>{{__('messages.news')}}</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>{{__('messages.no_news')}}</p>
-            @endforelse
-        @endisset
     </div>
 
     <div class="application-container" id="housing-sidebar">
@@ -174,7 +155,6 @@
                 <select name="floor" id="floor" disabled>
                     <option value="">{{ __('messages.choose_building_first') }}</option>
                 </select>
-
                 <label for="room">{{ __('messages.select_room') }}:</label>
                 <select name="room_id" id="room" disabled>
                     <option value="">{{ __('messages.choose_floor_first') }}</option>
@@ -192,7 +172,7 @@
             @endif
         });
         function toggleSection(section) {
-            const newsSection = document.getElementById('news-section');
+            const newsSection = document.getElementById('see-news-section');
             const housingSidebar = document.getElementById('housing-sidebar');
 
             if (section === 'housing') {
@@ -237,7 +217,6 @@
                     console.error("Error loading floors:", error);
                 }
             }
-
             async function loadRooms(buildingId, floor) {
                 if (!floor) {
                     roomSelect.innerHTML = '<option value="">{{ __('messages.choose_floor_first') }}</option>';
@@ -261,14 +240,12 @@
                     console.error("Error loading rooms:", error);
                 }
             }
-
             buildingSelect.addEventListener("change", function () {
                 const buildingId = this.value;
                 loadFloors(buildingId);
                 roomSelect.innerHTML = '<option value="">{{ __('messages.choose_floor_first') }}</option>';
                 roomSelect.disabled = true;
             });
-
             floorSelect.addEventListener("change", function () {
                 const buildingId = buildingSelect.value;
                 const floor = this.value;

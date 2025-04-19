@@ -9,14 +9,20 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\GymBookingController;
 use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\Manager\ManagerController;
+use App\Http\Controllers\Manager\ManagerUserController;
 use App\Http\Controllers\Manager\NewsManagerController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Models\Room;
+
+Route::get('/rooms/available', function () {
+    $rooms = Room::whereColumn('occupied_places', '<', 'capacity')->get();
+    return response()->json($rooms);
+});
 
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
@@ -42,12 +48,13 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
 // Менеджерская панель
 Route::middleware(['auth','role:manager'])->prefix('manager')->group(function () {
     Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
+    Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
+    Route::get('/users/{id}/json', [ManagerUserController::class, 'getUserJson']);
     Route::get('/dashboard/requests', [BookingController::class, 'indexForManager'])->name('manager.requests');
     Route::get('/dashboard/requests/{id}/accept', [BookingController::class, 'accept'])->name('booking.accept');
     Route::get('/dashboard/requests/{id}/reject', [BookingController::class, 'reject'])->name('booking.reject');
     Route::resource('/dashboard/news', NewsManagerController::class)->names('manager.news');
     Route::put('/dashboard/news/{news}', [NewsManagerController::class, 'update'])->name('manager.news.update');
-
 
 });
 

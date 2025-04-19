@@ -7,6 +7,7 @@
            --primary-color: #7e57c2;
            --primary-hover: #6f42c1;
            --success-color: #28a745;
+           --danger-color: #a7284a;
            --success-hover: #218838;
            --text-color: #333;
            --border-color: #DDD;
@@ -95,8 +96,18 @@
            color: #fff;
            cursor: pointer;
        }
+       .btn-danger, .btn-primary, .plus-button {
+           padding: 8px 16px;
+           border-radius: 4px;
+           border: none;
+           color: #fff;
+           cursor: pointer;
+       }
        .btn-success {
            background-color: var(--success-color);
+       }
+       .btn-danger {
+           background-color: var(--danger-color);
        }
        .btn-success:hover {
            background-color: var(--success-hover);
@@ -175,33 +186,71 @@
        }
        .close-button:hover {
            color: #666;
-       }</style>
+       }
+       /* ========== Детали пользователя ========== */
+       .user-details-section {
+           display: none;
+       }
+       .user-details-card {
+           background-color: #FFF;
+           border: 1px solid var(--border-color);
+           border-radius: 8px;
+           padding: 20px;
+           display: flex;
+           gap: 20px;
+       }
+       .user-photo {
+           width: 180px;
+           height: 180px;
+           border-radius: 8px;
+           overflow: hidden;
+       }
+       .user-photo img {
+           width: 100%;
+           height: 100%;
+           object-fit: cover;
+       }
+       .user-info {
+           flex: 1;
+       }
+       .user-info h2 {
+           margin-bottom: 10px;
+           font-size: 1.4rem;
+       }
+       .status {
+           font-size: 0.9rem;
+           color: #666;
+           margin-bottom: 10px;
+       }
+       .user-form {
+           display: grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 15px;
+       }
+       .user-form label {
+           font-size: 0.9rem;
+           margin-bottom: 4px;
+       }
+       .user-form input {
+           padding: 8px;
+           border: 1px solid #CCC;
+           border-radius: 4px;
+       }
+       .actions {
+           margin-top: 20px;
+           display: flex;
+           gap: 10px;
+       }
+   </style>
 
    <!-- Sidebar -->
    <div class="sidebar">
-       <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-home"></i><span>{{ __('messages.feed') }}</span></div>
-       <div class="sidebar-item" onclick="showNews()"><i class="fas fa-newspaper"></i><span>{{ __('messages.news') }}</span></div>
+       <div class="sidebar-item" onclick="showNews()"><i class="fas fa-home"></i><span>{{ __('messages.main') }}</span></div>
+       <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-newspaper"></i><span>{{ __('messages.news') }}</span></div>
+       <div class="sidebar-item" onclick="showUsers()"><i class="fas fa-user"></i><span>{{ __('messages.users') }}</span></div>
        <div class="sidebar-item" onclick="showRequests()"><i class="fas fa-bars"></i><span>{{ __('messages.requests') }}</span></div>
    </div>
 
-   <!-- Блок с новостями (ЛЕНТА) -->
-   <div class="main-content" id="see-news-section" style="display: none;">
-       <h2>{{ __('messages.news') }}</h2>
-       @isset($newsList)
-           @forelse($newsList as $news)
-               <div class="news-item">
-                   @if($news->image)
-                       <img src="{{ asset('storage/' . $news->image) }}" alt="{{ __('messages.news_image') }}">
-                   @endif
-                   <h3>{{ $news->title }}</h3>
-                   <p>{{ $news->content }}</p>
-                   <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-               </div>
-           @empty
-               <p>{{ __('messages.no_news') }}</p>
-           @endforelse
-       @endisset
-   </div>
 
    <!-- СЕКЦИЯ "Новости" (CRUD), по умолчанию скрыта -->
    <div class="main-content" id="news-section" style="display: none;">
@@ -210,10 +259,8 @@
            @if(session('success'))
                <div class="alert alert-success">{{ session('success') }}</div>
            @endif
-
            <!-- Кнопка для показа формы создания новости -->
            <a href="javascript:void(0)" onclick="CreateNews()" class="btn btn-primary mb-3">{{ __('messages.create_news') }}</a>
-
            <table class="table">
                <thead>
                <tr>
@@ -247,7 +294,6 @@
            </table>
        </div>
    </div>
-
    <!-- СЕКЦИЯ СОЗДАНИЯ НОВОСТИ (скрыта по умолчанию) -->
    <div class="main-content" id="create-news-section" style="display: none;">
        <div class="container">
@@ -269,7 +315,6 @@
            </div>
        </div>
    </div>
-
    <!-- СЕКЦИЯ РЕДАКТИРОВАНИЯ НОВОСТИ (скрыта) -->
    <div class="main-content" id="edit-news-section" style="display: none;">
        <div class="container">
@@ -294,17 +339,111 @@
            </div>
        </div>
    </div>
+   <!-- ========== Секция пользователей (скрыта) ========== -->
+   <div class="main-content" id="users-section" style="display: none;">
+       <!-- Фильтр / поиск -->
+       <form method="GET" action="{{ route('manager.users.index') }}" class="user-filter">
+           <input type="text" name="filter_id" placeholder="{{ __('messages.id') }}" value="{{ request('filter_id') }}">
+           <input type="text" name="filter_name" placeholder="{{ __('messages.full_name') }}" value="{{ request('filter_name') }}">
+           <input type="text" name="filter_email" placeholder="{{ __('messages.email') }}" value="{{ request('filter_email') }}">
+           <input type="text" name="filter_role" placeholder="{{ __('messages.status') }}" value="{{ request('filter_role') }}">
+           <button type="submit" class="btn-primary">{{ __('messages.search') }}</button>
+       </form>
+       <!-- Таблица пользователей -->
+       <table class="users-table">
+           <thead>
+           <tr>
+               <th>{{ __('messages.id') }}</th>
+               <th>{{ __('messages.full_name') }}</th>
+               <th>{{ __('messages.email') }}</th>
+               <th>{{ __('messages.status') }}</th>
+           </tr>
+           </thead>
+           <tbody>
+           @forelse($users as $user)
+               <tr>
+                   <td>{{ $user->user_id }}</td>
+                   <td>
+                       <a href="javascript:void(0)"
+                          style="text-decoration: none; color: var(--text-color);"
+                          onclick="viewUserDetail({{ $user->id }})">
+                           {{ $user->name }}
+                       </a>
+                   </td>
+                   <td>{{ $user->email }}</td>
+                   <td>{{ $user->role }}</td>
+               </tr>
+           @empty
+               <tr><td colspan="4">{{ __('messages.no_users') }}</td></tr>
+           @endforelse
+           </tbody>
+       </table>
+   </div>
+   <!-- ========== Секция деталей пользователя (скрыта) ========== -->
+   <div class="main-content user-details-section" id="user-details-section" style="display: none;">
+       <h2>{{ __('messages.user_details') }}</h2>
+       <div class="user-details-card">
+           <!-- Фото -->
+           <div class="user-photo" id="user-photo">
+               <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="{{ __('messages.user_photo') }}">
+           </div>
+           <!-- Информация -->
+           <div class="user-info">
+               <h2 id="detail-name">{{ __('messages.full_name') }}</h2>
+               <div class="status">{{ __('messages.status') }}: <span id="detail-role"></span></div>
+               <p>{{ __('messages.address_example') }}</p>
+               <!-- Форма обновления -->
+               <form id="userUpdateForm" class="user-form" enctype="multipart/form-data">
+                   @csrf
+                   <input type="hidden" name="_method" value="PUT">
+                   <div>
+                       <label>{{ __('messages.id') }}</label>
+                       <input type="text" name="user_id" id="detail-user_id">
+                   </div>
+                   <div>
+                       <label>{{ __('messages.phone') }}</label>
+                       <input type="text" name="phone" id="detail-phone">
+                   </div>
+                   <div>
+                       <label>{{ __('messages.email') }}</label>
+                       <input type="email" name="email" id="detail-email">
+                   </div>
+                   <div>
+                       <label>{{ __('messages.password') }}</label>
+                       <input type="password" disabled value="********">
+                   </div>
+                   <div>
+                       <label>{{ __('messages.photo') }}</label>
+                       <input type="file" name="photo">
+                   </div>
 
+                   <div class="actions" style="grid-column: 1 / span 2;">
+                       <button type="submit" class="btn-success">{{ __('messages.save_changes') }}</button>
+                   </div>
+               </form>
+
+               <!-- Кнопка "Удалить пользователя" -->
+               <form id="userDeleteForm"
+                     action="{{ route('admin.users.destroy', $user->id) }}"
+                     method="POST"
+                     style="margin-top: 10px;">
+                   @csrf
+                   @method('DELETE')
+                   <button type="submit" class="btn-danger" onclick="return confirm('{{ __('messages.confirm_delete') }}')">
+                       {{ __('messages.delete_user') }}
+                   </button>
+               </form>
+           </div>
+       </div>
+   </div>
    <!-- СЕКЦИЯ заявки на заселение -->
    <div class="main-content" id="request-section" style="display: none;">
        <h2>{{ __('messages.requests') }}</h2>
-
        @if(session('success'))
            <div style="background-color: #d4edda; color: #155724; padding: 10px;">
                {{ session('success') }}
            </div>
        @endif
-
        <table style="width:100%; border-collapse: collapse;">
            <thead>
            <tr>
@@ -347,7 +486,7 @@
 
    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            seeNews();
+            showNews();
             @if($errors->any())
             openModal();
             @endif
@@ -355,13 +494,50 @@
             seeNews();
             @elseif(session('successType') === 'news_updated')
             seeNews();
+            @elseif(session('successType') === 'user_searched')
+            showUsers();
             @endif
         });
-        function seeNews() {
+        function showUsers() {
             hideAllSections();
-            document.getElementById('see-news-section').style.display = 'block';
+            document.getElementById('users-section').style.display = 'block';
         }
-        function showNews() {
+        async function viewUserDetail(userId) {
+            hideAllSections();
+            let url = '/manager/users/' + userId + '/json';
+            try {
+                let response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке пользователя');
+                }
+                let data = await response.json();
+                document.getElementById('detail-name').textContent = data.name || '';
+                document.getElementById('detail-role').textContent = data.role || '';
+                if (data.photo) {
+                    document.getElementById('user-photo').innerHTML =
+                        `<img src="/storage/${data.photo}" alt="User Photo">`;
+                } else {
+                    document.getElementById('user-photo').innerHTML =
+                        `<img src="https://via.placeholder.com/180x180?text=No+Photo" alt="User Photo">`;
+                }
+                document.getElementById('detail-user_id').value = data.user_id || '';
+                document.getElementById('detail-phone').value = data.phone || '';
+                document.getElementById('detail-email').value = data.email || '';
+                document.getElementById('userUpdateForm').action = '/manager/dashboard/users/' + data.id;
+                document.getElementById('userDeleteForm').action = '/manager/dashboard/users/' + data.id;
+                document.getElementById('user-details-section').style.display = 'block';
+            } catch (error) {
+                alert(error.message);
+                showUsers();
+            }
+        }
+        function openModal() {
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+        function seeNews() {
             hideAllSections()
             document.getElementById('news-section').style.display = 'block';
         }
@@ -386,6 +562,8 @@
         }
         function hideAllSections() {
             document.getElementById('news-section').style.display = 'none';
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('user-details-section').style.display = 'none';
             document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';

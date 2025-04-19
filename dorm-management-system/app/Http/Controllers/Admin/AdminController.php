@@ -28,19 +28,5 @@ class AdminController extends Controller
             // Если нужно, передаем ещё что-то (newsList, requests, etc.)
         ]);
     }
-    public function show($id)
-    {
-        $user = User::findOrFail($id);
-        return view('admin.users.show', compact('user'));
-    }
-
-    public function showJson($id)
-    {
-        $user = User::findOrFail($id);
-        // Вернём JSON
-        return response()->json($user);
-    }
-
-
 
 }

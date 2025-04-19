@@ -61,8 +61,6 @@ class AdminUserController extends Controller
                 'job_type' => $request->job_type ?? 'Не указано',
             ]);
         }
-
-
         return redirect()->route('admin.dashboard')
             ->with('successType', 'user_created')
             ->with('success', 'Пользователь создан!');
@@ -86,11 +84,13 @@ class AdminUserController extends Controller
         }
 
         $users = $query->get();
-
+        session()->flash('successType', 'user_searched');
+        session()->flash('success', 'Пользователь найден!');
         return view('admin.dashboard', [
             'users' => $users,
             'newsList' => collect(), // empty collection to avoid the error
-        ]);    }
+        ]);
+    }
     public function destroy($id)
     {
         Log::info("Deleting user with ID: $id");
@@ -109,6 +109,4 @@ class AdminUserController extends Controller
         }
         return response()->json($user);
     }
-
-
 }

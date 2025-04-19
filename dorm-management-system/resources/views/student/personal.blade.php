@@ -366,11 +366,10 @@
             <i class="fas fa-home"></i>
             <span>{{__('messages.main')}}</span>
         </div>
-
-        <a class="sidebar-item" onclick="showPersonal()">
+        <div class="sidebar-item" onclick="showPersonal()">
             <i class="fas fa-user"></i>
             <span>{{__('messages.personal_information')}}</span>
-        </a>
+        </div>
         @if(Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
         <div class="sidebar-item" onclick="showHousing()">
             <i class="fas fa-building"></i>
@@ -394,24 +393,24 @@
             <span>{{__('messages.registration_for_physical_edu')}}</span>
         </div>
     </div>
-    {{-- Новости --}}
-    <div class="main-content" id="news-section">
-        <h2>{{__('messages.news')}}</h2>
-        @isset($newsList)
-            @forelse($newsList as $news)
-                <div class="news-item">
-                    @if($news->image)
-                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">
-                    @endif
-                    <h3>{{ $news->title }}</h3>
-                    <p>{{ $news->content }}</p>
-                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>
-                </div>
-            @empty
-                <p>{{__('messages.no_news')}}</p>
-            @endforelse
-        @endisset
-    </div>
+{{--    --}}{{-- Новости --}}
+{{--    <div class="main-content" id="news-section">--}}
+{{--        <h2>{{__('messages.news')}}</h2>--}}
+{{--        @isset($newsList)--}}
+{{--            @forelse($newsList as $news)--}}
+{{--                <div class="news-item">--}}
+{{--                    @if($news->image)--}}
+{{--                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">--}}
+{{--                    @endif--}}
+{{--                    <h3>{{ $news->title }}</h3>--}}
+{{--                    <p>{{ $news->content }}</p>--}}
+{{--                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>--}}
+{{--                </div>--}}
+{{--            @empty--}}
+{{--                <p>{{__('messages.no_news')}}</p>--}}
+{{--            @endforelse--}}
+{{--        @endisset--}}
+{{--    </div>--}}
     <!-- Личная информация -->
     <div class="main-content" id="personal-section" style="display: none;">
         <h2>{{ __('messages.personal_data') }}</h2>
@@ -510,7 +509,6 @@
             </form>
         </div>
     </div>
-
     <!-- Проживание -->
     <div class="main-content" id="housing-section">
         <h2>{{ __('messages.accommodation') }}</h2>
@@ -565,7 +563,6 @@
             </form>
         </div>
     </div>
-
     <!-- Документы -->
     <div id="documents-section" class="main-content" style="display: none;">
         <h2>{{ __('messages.documents') }}</h2>
@@ -598,7 +595,6 @@
         </div>
         <button id="uploadButton" class="btn btn-primary mt-3">{{ __('messages.upload_new') }}</button>
     </div>
-
     <!-- Форма загрузки документа (скрыта по умолчанию) -->
     <div id="uploadForm" style="display: none; margin-top: 20px;">
         <form action="{{ route('document.upload') }}" method="POST" enctype="multipart/form-data">
@@ -611,7 +607,6 @@
             <button type="button" id="cancelUpload" class="btn btn-secondary">{{ __('messages.cancel') }}</button>
         </form>
     </div>
-
     <!-- Запросы на ремонт -->
     <div class="flex space-x-6 items-start main-content" id="repair-list" style="display: none;">
         <div class="row">
@@ -637,7 +632,6 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно для создания запроса на ремонт -->
     <div id="repairModal" class="modal-overlay">
         <div class="modal-content">
@@ -685,7 +679,6 @@
             </form>
         </div>
     </div>
-
     <!-- Блок со списком запросов -->
     <div class="container mt-5 main-content" id="request-list" style="display: none;">
         <div class="card shadow-sm">
@@ -966,10 +959,10 @@
             showDocuments();
             @endif
         });
-        function showNews() {
-            hideAllSections()
-            document.getElementById('news-section').style.display = 'block';
-        }
+        // function showNews() {
+        //     hideAllSections()
+        //     document.getElementById('news-section').style.display = 'block';
+        // }
         function showPersonal() {
             hideAllSections()
             document.getElementById('personal-section').style.display = 'block';
@@ -1107,7 +1100,7 @@
             document.getElementById('recoveryModal').style.display = 'none';
         }
         function hideAllSections() {
-            document.getElementById('news-section').style.display = 'none';
+            document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('personal-section').style.display = 'none';
             document.getElementById('housing-section').style.display = 'none';
             document.getElementById('documents-section').style.display='none';
