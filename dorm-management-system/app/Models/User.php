@@ -73,6 +73,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+    public function ads()
+    {
+        return $this->hasMany(Ad::class, 'user_id');
+    }
+
 
 
 

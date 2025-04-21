@@ -30,15 +30,15 @@ class AuthController extends Controller
 
             switch ($user->role) {
                 case 'admin':
-                    return redirect()->route('admin.dashboard'); // маршрут для админа
+                    return redirect()->route('admin.dashboard');
                 case 'manager':
-                    return redirect()->route('manager.dashboard'); // маршрут для менеджера
+                    return redirect()->route('manager.dashboard');
                 case 'student':
-                    return redirect()->route('student.dashboard'); // маршрут для студента
+                    return redirect()->route('student.dashboard');
                 case 'employee':
                     return redirect()->route('employee.dashboard');
                 default:
-                    return redirect('/'); // или другая страница по умолчанию
+                    return redirect('/');
             }
         }
 

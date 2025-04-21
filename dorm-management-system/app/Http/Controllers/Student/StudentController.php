@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Models\Category;
 use App\Models\Document;
 use App\Models\Employee;
 use App\Models\GymBooking;
@@ -9,12 +10,12 @@ use App\Models\Recovery;
 use App\Models\Request as RepairRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use App\Models\Ad;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\News;
-use App\Models\Building; // Добавляем модель корпусов
+use App\Models\Building;
 
 class StudentController extends Controller
 {
@@ -22,7 +23,9 @@ class StudentController extends Controller
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all(); // Загружаем список корпусов
-        return view('student.dashboard', compact('newsList', 'buildings'));
+        $ads= Ad::latest()->get();
+        $categories = Category::all();
+        return view('student.dashboard', compact('newsList', 'buildings', 'ads', 'categories'));
     }
 
 

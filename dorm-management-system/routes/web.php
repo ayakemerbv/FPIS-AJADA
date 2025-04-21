@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\NewsAdminController;
@@ -61,6 +62,9 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
 // Студенческая панель
 Route::middleware(['auth','role:student'])->prefix('student')->group(function (){
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+    Route::post('dashboard/ads/store', [AdController::class, 'store'])->name('ads.store');
+    Route::put('dashboard/ads/{ad}/update', [AdController::class, 'update'])->name('ads.update');
+    Route::delete('dashboard/ads/{ad}/delete', [AdController::class, 'destroy'])->name('ads.destroy');
     Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
     Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
     Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');

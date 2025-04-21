@@ -9,10 +9,12 @@ return new class extends Migration {
     {
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('category');
+            $table->string('title');
             $table->text('description');
             $table->decimal('price', 8, 2);
+            $table->string('contact')->nullable();
             $table->timestamps();
         });
     }

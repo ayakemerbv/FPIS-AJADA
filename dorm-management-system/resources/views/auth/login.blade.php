@@ -126,7 +126,6 @@
                     value="{{ old('email') }}"
                     required
                 >
-
                 <input
                     type="password"
                     name="password"
@@ -135,7 +134,6 @@
                     placeholder="Введите пароль"
                     required
                 >
-
                 <a href="#" class="forgot-password">Забыли пароль?</a>
 
                 <button type="submit" class="btn btn-primary">Войти</button>

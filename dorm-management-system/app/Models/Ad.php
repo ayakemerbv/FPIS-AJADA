@@ -10,19 +10,25 @@ class Ad extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id',
+        'user_id',      // вместо student_id
         'category',
         'description',
         'price',
+        'title',        // если есть заголовок
+        'image_path',   // если храните путь к картинке
+        'contact'
     ];
 
-    public function student()
+    /**
+     * Владелец объявления — пользователь
+     */
+    public function user()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(User::class);
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
-    public function post()
-    {
-        $this->save();
-    }
 }

@@ -73,7 +73,7 @@ class AdminUserController extends Controller
         if ($request->filled('filter_id')) {
             $query->where('user_id', 'like', '%'.$request->filter_id.'%');
         }
-        if ($request->filled('filter_name')) {
+        if ($request->filled('filter_name'))                                                                                            {
             $query->where('name', 'like', '%'.$request->filter_name.'%');
         }
         if ($request->filled('filter_email')) {

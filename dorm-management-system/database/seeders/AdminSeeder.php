@@ -14,11 +14,11 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@kbtu.kz'], // Проверяем, есть ли уже такой админ
+            ['email' => 'admin@kbtu.kz'],
             [
                 'user_id'=>'111',
                 'name' => 'Admin',
-                'password' => Hash::make('admin123'), // Хешируем пароль
+                'password' => Hash::make('admin123'),
                 'role' => 'admin',
             ]
         );

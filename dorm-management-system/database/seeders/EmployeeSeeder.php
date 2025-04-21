@@ -15,7 +15,7 @@ class EmployeeSeeder extends Seeder
     {
         DB::table('employees')->insert([
             [
-                'employee_id' => 1, // <-- добавь сюда уникальные ID
+                'employee_id' => 1,
                 'name' => 'Козыбаев А. Б.',
                 'job_type' => 'Электрик',
                 'created_at' => now(),

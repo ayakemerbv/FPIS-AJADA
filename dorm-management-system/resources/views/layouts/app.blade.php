@@ -278,7 +278,7 @@
 
 @yield('content')
 
-<div class="main-content" id="see-news-section">
+<div class="main-content" id="see-news-section" style="display: block;">
     <h2>{{ __('messages.news') }}</h2>
     @isset($newsList)
         <div class="news-cards-container">

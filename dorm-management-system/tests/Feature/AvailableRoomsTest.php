@@ -14,19 +14,17 @@ class AvailableRoomsTest extends TestCase
     #[Test]
     public function it_shows_only_available_rooms()
     {
-        // Свободная комната (2/4 занято)
+
         $availableRoom = Room::factory()->create([
             'capacity' => 4,
             'occupied_places' => 2,
         ]);
 
-        // Полная комната (4/4 занято)
         $fullRoom = Room::factory()->create([
             'capacity' => 4,
             'occupied_places' => 4,
         ]);
 
-        // Заглушка роута (предположим, он выводит только доступные комнаты)
         $response = $this->get('/rooms/available');
 
         $response->assertStatus(200);
