@@ -63,7 +63,13 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
 Route::middleware(['auth','role:student'])->prefix('student')->group(function (){
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
     Route::post('dashboard/ads/store', [AdController::class, 'store'])->name('ads.store');
-    Route::put('dashboard/ads/{ad}/update', [AdController::class, 'update'])->name('ads.update');
+    // AJAX‑запрос для редактирования
+    Route::get('dashboard/ads/{ad}/edit', [AdController::class, 'edit'])
+        ->name('ads.edit');
+
+// Обновление
+    Route::put('dashboard/ads/{ad}/update', [AdController::class, 'update'])
+        ->name('ads.update');
     Route::delete('dashboard/ads/{ad}/delete', [AdController::class, 'destroy'])->name('ads.destroy');
     Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
     Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');

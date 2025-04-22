@@ -25,7 +25,6 @@ class AdminController extends Controller
 
         return view('admin.dashboard', [
             'users' => $users,
-            // Если нужно, передаем ещё что-то (newsList, requests, etc.)
         ]);
     }
 

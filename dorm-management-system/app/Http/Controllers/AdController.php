@@ -45,6 +45,19 @@ class AdController extends Controller
 
         return redirect()->back()->with('success', 'Объявление успешно добавлено!');
     }
+    public function edit(Ad $ad)
+    {
+        return response()->json([
+            'id'          => $ad->id,
+            'title'       => $ad->title,
+            'description' => $ad->description,
+            'price'       => $ad->price,
+            'category_id' => $ad->category,
+            'contact'     => $ad->contact,
+            'image'       => $ad->image, // если нужно
+        ]);
+    }
+
 
     // Обновление объявления
     public function update(Request $request, Ad $ad)

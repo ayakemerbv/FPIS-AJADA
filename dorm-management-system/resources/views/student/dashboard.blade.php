@@ -166,75 +166,84 @@
         </div>
     </div>
 
-    <!-- Купи-продай секция -->
+    {{-- Купи‑продай секция --}}
     <div class="application-container" id="marketplace-section" style="display: none;">
+        {{-- Фильтры --}}
         <form method="GET" action="{{ route('student.dashboard') }}" class="mb-4">
-            <!-- Поиск -->
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Поиск товара..." class="form-control mb-2" />
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Поиск товара..." class="form-control" />
 
-            <!-- Категория -->
-            <select name="category_id" class="form-control mb-2">
-                <option value="">Все категории</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
+                <select name="category_id" class="form-control">
+                    <option value="">Все категории</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
 
+                <select name="sort" class="form-control">
+                    <option value="">Сортировать по цене</option>
+                    <option value="price_asc"  {{ request('sort')=='price_asc'  ? 'selected':'' }}>От дешёвых к дорогим</option>
+                    <option value="price_desc" {{ request('sort')=='price_desc' ? 'selected':'' }}>От дорогих к дешёвым</option>
+                </select>
 
-            <!-- Сортировка -->
-            <select name="sort" class="form-control mb-2">
-                <option value="">Сортировать по цене</option>
-                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>От дешевых к дорогим</option>
-                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>От дорогих к дешевым</option>
-            </select>
-
-            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                <button type="submit" class="btn btn-primary">Применить фильтр</button>
+            </div>
         </form>
 
-        <div class="application-box">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="margin: 0;">🛍️ Купи-продай</h2>
-                <button onclick="openCreateAdModal()" class="btn btn-primary">+ Разместить объявление</button>
+        {{-- Заголовок и кнопки --}}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>🛍️ Купи‑продай</h2>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary" onclick="openCreateAdModal()">+ Разместить</button>
+                <button class="btn btn-secondary" onclick="toggleMyAds()">Посмотреть ваши объявления</button>
             </div>
+        </div>
 
-            <div style="margin-top: 20px;">
-                @foreach($ads as $ad)
-                    <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #f9f9f9;">
-                        <div style="font-weight: bold; font-size: 18px;">{{ $ad->title }}</div>
-                        <div style="margin-top: 5px;">{{ $ad->description }}</div>
-                        <div style="margin-top: 10px;">
-                            <span style="font-weight: 600;">Цена:</span> {{ $ad->price }} тг
-                        </div>
-                        <div style="margin-top: 5px;">
-                            <span style="font-weight: 600;">Категория:</span> {{ \App\Http\Controllers\AdController::getCategories()[$ad->category] ?? $ad->category }}
-                        </div>
-                        <div style="margin-top: 5px;">
-                            <span style="font-weight: 600;">Контакты:</span> {{ $ad->contact }}
-                        </div>
+        {{-- Все объявления --}}
+        <div id="all-ads" class="ads-grid">
+            @foreach($ads as $ad)
+                <div class="ad-card">
+                    @if($ad->image)
+                        <img src="{{ asset('storage/' . $ad->image) }}" alt="" />
+                    @endif
+                    <div class="content">
+                        <div class="title">{{ $ad->title }}</div>
+                        <div class="description">{{ Str::limit($ad->description, 100) }}</div>
+                        <div class="meta">Цена: {{ $ad->price }} тг • {{ \App\Http\Controllers\AdController::getCategories()[$ad->category] ?? $ad->category }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 
-                        <!-- Отображение изображения -->
+        {{-- Только ваши объявления --}}
+        <div id="my-ads" class="ads-grid" style="display: none;">
+            @php $myAds = $ads->where('user_id', Auth::id()); @endphp
+
+            @if($myAds->isEmpty())
+                <p>У вас ещё нет объявлений.</p>
+            @else
+                @foreach($myAds as $ad)
+                    <div class="ad-card">
                         @if($ad->image)
-                            <div style="margin-top: 10px;">
-                                <img src="{{ asset('storage/' . $ad->image) }}" alt="Фото" style="max-width: 100%; border-radius: 5px;">
-                            </div>
+                            <img src="{{ asset('storage/' . $ad->image) }}" alt="" />
                         @endif
-
-                        <!-- Кнопки редактирования и удаления (только для владельца объявления) -->
-                        @if($ad->user_id === Auth::id())
-                            <div style="margin-top: 10px; display: flex; justify-content: space-between;">
-                                <button onclick="openEditAdModal({{ $ad->id }})" class="btn btn-warning">Редактировать</button>
+                        <div class="content">
+                            <div class="title">{{ $ad->title }}</div>
+                            <div class="description">{{ Str::limit($ad->description, 100) }}</div>
+                            <div class="meta">Цена: {{ $ad->price }} тг • {{ \App\Http\Controllers\AdController::getCategories()[$ad->category] ?? $ad->category }}</div>
+                            <div class="actions">
+                                <button class="btn btn-warning" onclick="openEditAdModal({{ $ad->id }})">Редактировать</button>
                                 <form action="{{ route('ads.destroy', $ad->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
+                                    @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-danger">Удалить</button>
                                 </form>
                             </div>
-                        @endif
+                        </div>
                     </div>
                 @endforeach
-            </div>
+            @endif
         </div>
     </div>
 
@@ -322,6 +331,27 @@
             border-radius: 5px;
             display: block; /* Убедитесь, что изображение отображается как блок */
             margin-top: 10px; /* Можно добавить отступ сверху */
+        }
+        /* Модалки */
+        .modal {
+            display: none;
+            position: fixed; top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.4);
+            justify-content:center; align-items:center;
+            z-index:1000;
+        }
+        .modal-content {
+            background:#fff; border-radius:12px;
+            width:90%; max-width:400px; padding:24px;
+        }
+        .modal-content h3 {
+            margin:0 0 16px; font-size:1.2rem; font-weight:600;
+        }
+        .modal-content .input-field {
+            width:100%; padding:8px; margin-bottom:12px;
+            border:1px solid #ccc; border-radius:6px;
+            font-size:0.95rem;
         }
 
     </style>
@@ -424,12 +454,21 @@
 
         // Открытие модального окна для редактирования объявления
         function openEditAdModal(adId) {
-            // Загрузите данные объявления по ID, если это нужно через AJAX или иным способом.
-            // Пример простого открытия:
-            document.getElementById('editAdModal').style.display = 'flex';
-            // Можно загрузить данные с помощью fetch или передать их через атрибуты.
+            // тут ваш fetch для заполнения полей и затем показ модалки:
+            fetch(`/dashboard/ads/${adId}/edit`)
+                .then(r => r.json())
+                .then(data => {
+                    const form = document.getElementById('editAdForm');
+                    form.action = `/dashboard/ads/${adId}/update`;
+                    document.getElementById('editTitle').value    = data.title;
+                    document.getElementById('editDesc').value     = data.description;
+                    document.getElementById('editPrice').value    = data.price;
+                    document.getElementById('editCategory').value = data.category_id;
+                    document.getElementById('editContact').value  = data.contact;
+                    document.getElementById('editAdModal').style.display = 'flex';
+                })
+                .catch(() => alert('Ошибка загрузки объявления'));
         }
-
         // Закрытие модального окна для редактирования объявления
         function closeEditAdModal() {
             document.getElementById('editAdModal').style.display = 'none';
