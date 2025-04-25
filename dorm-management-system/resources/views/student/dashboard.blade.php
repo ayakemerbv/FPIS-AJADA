@@ -273,28 +273,40 @@
     <div id="editAdModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 999;">
         <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; max-width: 90%;">
             <h3 style="margin-bottom: 15px;" id="modalTitle">Редактировать объявление</h3>
-            <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data" id="editAdForm">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="ad_id" value="{{ $ad->id }}">
-                <input type="text" name="title" value="{{ old('title', $ad->title) }}" placeholder="Заголовок" required class="input-field" id="title">
-                <textarea name="description" placeholder="Описание" required class="input-field" id="description">{{ old('description', $ad->description) }}</textarea>
-                <input type="text" name="price" value="{{ old('price', $ad->price) }}" placeholder="Цена (тг)" required class="input-field" id="price">
-                <select name="category" required class="input-field" id="category">
-                    @foreach(\App\Http\Controllers\AdController::getCategories() as $key => $value)
-                        <option value="{{ $key }}" {{ $ad->category === $key ? 'selected' : '' }}>{{ $value }}</option>
-                    @endforeach
-                </select>
-                <input type="text" name="contact" value="{{ old('contact', $ad->contact) }}" placeholder="Контакты (тел./email)" required class="input-field" id="contact">
-                <input type="file" name="image" class="input-field" id="image">
-                @if ($ad->image)
-                    <img src="{{ asset('storage/' . $ad->image) }}" alt="Текущее изображение" style="max-width: 100%; margin-top: 10px;">
-                @endif
-                <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Сохранить изменения</button>
-            </form>
+            @foreach($ads as $ad)
+                <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data" id="editAdForm">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="ad_id" value="{{ $ad->id }}">
+                    <input type="text" name="title" value="{{ old('title', $ad->title) }}" placeholder="Заголовок" required class="input-field" id="title">
+                    <textarea name="description" placeholder="Описание" required class="input-field" id="description">{{ old('description', $ad->description) }}</textarea>
+                    <input type="text" name="price" value="{{ old('price', $ad->price) }}" placeholder="Цена (тг)" required class="input-field" id="price">
+                    <select name="category" required class="input-field" id="category">
+                        @foreach(\App\Http\Controllers\AdController::getCategories() as $key => $value)
+                            <option value="{{ $key }}" {{ $ad->category === $key ? 'selected' : '' }}>{{ $value }}</option>
+                        @endforeach
+                    </select>
+                    <input type="text" name="contact" value="{{ old('contact', $ad->contact) }}" placeholder="Контакты (тел./email)" required class="input-field" id="contact">
+                    <input type="file" name="image" class="input-field" id="image">
+                    @if ($ad->image)
+                        <img src="{{ asset('storage/' . $ad->image) }}" alt="Текущее изображение" style="max-width: 100%; margin-top: 10px;">
+                    @endif
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Сохранить изменения</button>
+                </form>
+            @endforeach
             <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
         </div>
     </div>
+    @auth
+        @foreach (auth()->user()->unreadNotifications as $notification)
+            <div class="alert alert-info">
+                <strong>{{ $notification->data['title'] }}</strong><br>
+                {{ $notification->data['message'] }}<br>
+                <a href="{{ $notification->data['url'] }}">Открыть</a>
+            </div>
+        @endforeach
+    @endauth
+
 
     <style>
         .input-field {

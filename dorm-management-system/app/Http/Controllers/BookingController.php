@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Room;
 use App\Models\Student;
+use App\Notifications\BookingApproved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -112,6 +113,8 @@ class BookingController extends Controller
             );
 
             $booking->user->refresh();
+            $booking->user->notify(new BookingApproved($room));
+
         });
 
         return redirect()->back()->with('success', 'Заявка принята! Все другие заявки отклонены.');
