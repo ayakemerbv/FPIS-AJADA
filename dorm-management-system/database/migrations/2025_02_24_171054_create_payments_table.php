@@ -7,10 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
+        // Должно быть так:
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 8, 2);
+            $table->foreignId('user_id')->constrained();
+            $table->decimal('amount', 10, 2);
+            $table->string('status');
+            $table->string('payment_method');
+            $table->string('external_id')->nullable();
+            $table->string('description')->nullable();
             $table->date('date');
             $table->timestamps();
         });

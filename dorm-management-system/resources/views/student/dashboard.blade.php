@@ -119,6 +119,62 @@
         #housing-sidebar.open {
             display: block;
         }
+         .input-field {
+             width: 100%;
+             padding: 8px 12px;
+             margin-top: 10px;
+             border: 1px solid #ccc;
+             border-radius: 6px;
+             font-size: 14px;
+         }
+
+        .btn-primary {
+            background-color: #7e57c2;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background-color: #eee;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #marketplace-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            display: block; /* Убедитесь, что изображение отображается как блок */
+            margin-top: 10px; /* Можно добавить отступ сверху */
+        }
+        /* Модалки */
+        .modal {
+            display: none;
+            position: fixed; top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.4);
+            justify-content:center; align-items:center;
+            z-index:1000;
+        }
+        .modal-content {
+            background:#fff; border-radius:12px;
+            width:90%; max-width:400px; padding:24px;
+        }
+        .modal-content h3 {
+            margin:0 0 16px; font-size:1.2rem; font-weight:600;
+        }
+        .modal-content .input-field {
+            width:100%; padding:8px; margin-bottom:12px;
+            border:1px solid #ccc; border-radius:6px;
+            font-size:0.95rem;
+        }
     </style>
 
     <div class="sidebar">
@@ -297,66 +353,6 @@
             <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
         </div>
     </div>
-
-    <style>
-        .input-field {
-            width: 100%;
-            padding: 8px 12px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background-color: #7e57c2;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-secondary {
-            background-color: #eee;
-            color: #333;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        #marketplace-section img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            display: block; /* Убедитесь, что изображение отображается как блок */
-            margin-top: 10px; /* Можно добавить отступ сверху */
-        }
-        /* Модалки */
-        .modal {
-            display: none;
-            position: fixed; top:0; left:0;
-            width:100%; height:100%;
-            background:rgba(0,0,0,0.4);
-            justify-content:center; align-items:center;
-            z-index:1000;
-        }
-        .modal-content {
-            background:#fff; border-radius:12px;
-            width:90%; max-width:400px; padding:24px;
-        }
-        .modal-content h3 {
-            margin:0 0 16px; font-size:1.2rem; font-weight:600;
-        }
-        .modal-content .input-field {
-            width:100%; padding:8px; margin-bottom:12px;
-            border:1px solid #ccc; border-radius:6px;
-            font-size:0.95rem;
-        }
-
-    </style>
 
     <script>
 
