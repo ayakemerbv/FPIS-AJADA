@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('student_id')->unique();
-            $table->foreignId('room_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('room_id')->nullable()->constrained('rooms')->onDelete('set null');
             $table->timestamps();
         });
     }

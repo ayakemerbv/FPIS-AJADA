@@ -37,8 +37,7 @@ class NewsManagerController extends Controller
         News::create($data);
 
         return redirect()->route('manager.dashboard')
-            ->with('successType', 'news_created')
-            ->with('success', 'Новость создана!');
+            ->with('successType', 'news_created');
     }
 
     public function show($id)
@@ -49,7 +48,7 @@ class NewsManagerController extends Controller
     public function edit($id)
     {
         $news = News::findOrFail($id);
-        return view('manager.news.edit', compact('news')); // Заменили на правильное представление
+        return view('manager.news.edit', compact('news'));
     }
     public function update(Request $request, $id)
     {
@@ -71,23 +70,19 @@ class NewsManagerController extends Controller
 
         $news->update($data);
         return redirect()->route('manager.dashboard')
-            ->with('successType', 'news_updated')
-            ->with('success', 'Новость обновлена!');
+            ->with('successType', 'news_updated');
     }
-
-
 
     public function destroy($id)
     {
         $news = News::findOrFail($id);
 
-        // Удалим картинку, если есть
         if ($news->image) {
             Storage::disk('public')->delete($news->image);
         }
 
         $news->delete();
 
-        return redirect()->route('manager.dashboard')->with('success', 'Новость удалена!');
+        return redirect()->route('manager.dashboard')->with('successType', 'news_deleted');
     }
 }

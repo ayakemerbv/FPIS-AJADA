@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('type');
             $table->text('description');
             $table->string('file')->nullable();
-            $table->enum('status', ['На рассмотрении', 'Принято', 'Выполнено'])->default('На рассмотрении');
+            $table->string('status')->default('pending'); // Убираем ->checkIn()
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

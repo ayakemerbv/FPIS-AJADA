@@ -35,8 +35,7 @@ class NewsAdminController extends Controller
         News::create($data);
 
         return redirect()->route('admin.dashboard')
-            ->with('successType', 'news_created')
-            ->with('success', 'Новость создана!');
+            ->with('successType', 'news_created');
     }
 
     public function show($id)
@@ -73,10 +72,8 @@ class NewsAdminController extends Controller
         $news->update($data);
 
         return redirect()->route('admin.dashboard')
-            ->with('successType', 'news_updated')
-            ->with('success', 'Новость обновлена!');
+            ->with('successType', 'news_updated');
     }
-
 
     public function destroy($id)
     {
@@ -89,6 +86,6 @@ class NewsAdminController extends Controller
 
         $news->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Новость удалена!');
+        return redirect()->route('admin.dashboard')->with('successType', 'news_deleted');
     }
 }

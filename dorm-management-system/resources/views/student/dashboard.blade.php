@@ -297,16 +297,6 @@
             <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
         </div>
     </div>
-    @auth
-        @foreach (auth()->user()->unreadNotifications as $notification)
-            <div class="alert alert-info">
-                <strong>{{ $notification->data['title'] }}</strong><br>
-                {{ $notification->data['message'] }}<br>
-                <a href="{{ $notification->data['url'] }}">Открыть</a>
-            </div>
-        @endforeach
-    @endauth
-
 
     <style>
         .input-field {

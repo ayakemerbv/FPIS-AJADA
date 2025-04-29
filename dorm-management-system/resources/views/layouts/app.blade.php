@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>@yield('title', 'DMS')</title>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -94,9 +94,6 @@
         text-align: center;
     }
 
-    .avatar-wrapper:hover .avatar-dropdown {
-        display: block;
-    }
 
     .avatar-dropdown a {
         display: block;
@@ -217,6 +214,64 @@
         font-weight: bold;
         cursor: pointer;
     }
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+    }
+
+    #notifications-panel {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 300px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        z-index: 1000;
+        display: none;
+        margin-top: 10px;
+    }
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .notification-item.unread {
+        background-color: #f0f7ff;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .notification-wrapper {
+        position: relative;
+        z-index: 1000;
+    }
+
+    .notification-message {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .notification-time {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+    }
+
 
 </style>
 
@@ -241,11 +296,19 @@
         <div>
             @include('components.language-switch')
         </div>
-        <div class="icon-circle" style="background-color: #ffc107;">
-            <i class="fas fa-bell"></i>
+        <div class="notification-wrapper">
+            <div class="icon-circle" style="background-color: #ffc107;">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;"></span>
+            </div>
+            <div id="notifications-panel">
+                <div class="notifications-list">
+                    <!-- Уведомления будут добавлены через JavaScript -->
+                </div>
+            </div>
         </div>
         <div class="avatar-wrapper">
-            <div class="avatar-circle">
+            <div class="icon-circle">
                 {{ mb_substr(Auth::user()->name ?? 'A', 0, 1) }}
             </div>
             <div class="avatar-dropdown">
@@ -266,6 +329,8 @@
         </div>
     </div>
 </div>
+
+
 
 {{-- Боковая панель --}}
 <div class="sidebar">
@@ -310,6 +375,99 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationIcon = document.querySelector('.icon-circle');
+        const notificationsPanel = document.getElementById('notifications-panel');
+        const notificationsList = document.querySelector('.notifications-list');
+        const notificationBadge = document.querySelector('.notification-badge');
+
+        async function loadNotifications() {
+            try {
+                console.log('Начало загрузки уведомлений');
+
+                const response = await fetch('/notifications');
+                console.log('Ответ получен:', response);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const notifications = await response.json();
+                console.log('Полученные уведомления:', notifications);
+
+                notificationsList.innerHTML = '';
+                let unreadCount = 0;
+                if (notifications.length === 0) {
+                    notificationsList.innerHTML = '<div class="notification-item">Нет уведомлений</div>';
+                    return;
+                }
+
+
+                notifications.forEach(notification => {
+                    if (!notification.read_at) {
+                        unreadCount++;
+                    }
+
+                    const notificationElement = document.createElement('div');
+                    notificationElement.className = `notification-item ${!notification.read_at ? 'unread' : ''}`;
+                    notificationElement.innerHTML = `
+                    <div class="notification-title">${notification.data.title}</div>
+                    <div class="notification-message">${notification.data.message}</div>
+                    <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
+                `;
+
+                    notificationElement.addEventListener('click', async () => {
+                        if (!notification.read_at) {
+                            await fetch(`/notifications/${notification.id}/read`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                }
+                            });
+                            notificationElement.classList.remove('unread');
+                            updateNotificationBadge(--unreadCount);
+                        }
+                        if (notification.data.url) {
+                            window.location.href = notification.data.url;
+                        }
+                    });
+
+                    notificationsList.appendChild(notificationElement);
+                });
+
+                updateNotificationBadge(unreadCount);
+            } catch (error) {
+                console.error('Ошибка загрузки уведомлений:', error);
+            }
+        }
+
+        function updateNotificationBadge(count) {
+            if (count > 0) {
+                notificationBadge.style.display = 'block';
+                notificationBadge.textContent = count;
+            } else {
+                notificationBadge.style.display = 'none';
+            }
+        }
+
+        notificationIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isVisible = notificationsPanel.style.display === 'block';
+            notificationsPanel.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                loadNotifications();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!notificationsPanel.contains(e.target) && !notificationIcon.contains(e.target)) {
+                notificationsPanel.style.display = 'none';
+            }
+        });
+
+        // Загрузка уведомлений при загрузке страницы
+        loadNotifications();
+    });
+
     // Открытие модального окна
     function openNewsModal(newsId) {
         const news = @json($newsList);
@@ -331,6 +489,20 @@
         hideAllSections();
         document.getElementById('see-news-section').style.display = 'block';
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        const avatarWrapper = document.querySelector('.avatar-wrapper');
+        const avatarDropdown = document.querySelector('.avatar-dropdown');
+        const avatarIcon = avatarWrapper.querySelector('.icon-circle');
+
+        avatarIcon.addEventListener('click', function(e) {
+            e.stopPropagation(); // Чтобы клик по аватару не всплывал
+            avatarDropdown.style.display = avatarDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function() {
+            avatarDropdown.style.display = 'none';
+        });
+    });
 
 </script>
 </body>

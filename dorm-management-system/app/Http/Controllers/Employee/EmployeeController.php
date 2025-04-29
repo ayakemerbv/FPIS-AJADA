@@ -25,15 +25,13 @@ class EmployeeController extends Controller
         $repairRequests = RepairRequest::all();
 
         return view('employee.requests', compact('repairRequests'))
-            ->with('successType', 'view_requests')
-            ->with('success', 'Список загружен');
+            ->with('successType', 'view_requests');
 
     }
     public function show($id){
         $request = RepairRequest::with('employee')->findOrFail($id);
         return view('employee.show', compact('request'))
-            ->with('successType', 'show_requests')
-            ->with('success', 'Список заявок');
+            ->with('successType', 'show_requests');
     }
     public function edit($id){
         $request = RepairRequest::findOrFail($id); // Ищем по ID
@@ -56,7 +54,7 @@ class EmployeeController extends Controller
 
         $request->update(['status' => $httpRequest->input('status')]);
 
-        return redirect()->route('employee.dashboard')->with('success', 'Статус успешно обновлён.')->
+        return redirect()->route('employee.dashboard')->
             with('successType', 'request_updated');
 
     }
@@ -89,8 +87,7 @@ class EmployeeController extends Controller
         $user->save();
 
         return redirect()->route('employee.dashboard')
-            ->with('successType', 'profile_updated')
-            ->with('success', 'Профиль обновлен!');
+            ->with('successType', 'profile_updated');
     }
 
     public function updatePassword(Request $request)

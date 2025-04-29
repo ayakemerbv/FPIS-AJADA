@@ -10,7 +10,6 @@ class Complaint extends Model
 {
     use HasFactory;
 
-    // Константы для статусов
     public const STATUS_PENDING = 'pending';
     public const STATUS_SUBMITTED = 'submitted';
     public const STATUS_RESOLVED = 'resolved';

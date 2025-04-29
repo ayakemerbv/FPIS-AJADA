@@ -5,6 +5,7 @@ use App\Models\Booking;
 use App\Models\Room;
 use App\Models\Student;
 use App\Notifications\BookingApproved;
+use App\Notifications\BookingChangeRequested;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,6 @@ class BookingController extends Controller
         return response()->json($floors);
     }
 
-    // Получение списка свободных комнат на этаже
     public function getRooms($building_id, $floor) {
         $rooms = Room::where('building_id', $building_id)
             ->where('floor', $floor)
@@ -36,7 +36,6 @@ class BookingController extends Controller
         return response()->json($rooms);
     }
 
-    // Сохранение заявки (студент отправляет форму)
     public function store(Request $request)
     {
         try {
@@ -70,8 +69,6 @@ class BookingController extends Controller
             ->with('success', 'Заявка на заселение отправлена!');
     }
 
-
-    // Менеджер видит все заявки в своём общежитии
     public function indexForManager()
     {
         $requests = Booking::with(['user','building','room'])->whereIn('status', ['pending','pending_change'])
@@ -79,8 +76,6 @@ class BookingController extends Controller
 
         return view('manager.requests', compact('requests'));
     }
-
-    // Принять заявку
     public function accept($id)
     {
         $booking = Booking::findOrFail($id);
@@ -91,42 +86,53 @@ class BookingController extends Controller
         }
 
         DB::transaction(function () use ($booking, $room) {
-            if ($booking->status === 'pending') {
-                $booking->update(['status' => 'accepted']);
-            } elseif ($booking->status === 'pending_change') {
+            // Проверяем статус и выполняем соответствующие действия
+            if ($booking->status === 'pending_change') {
                 $booking->update(['status' => 'accepted_change']);
+
+                // Обновляем запись студента
+                Student::where('user_id', $booking->user_id)
+                    ->update(['room_id' => $room->id]);
+
+                // Увеличиваем количество занятых мест в новой комнате
+                $room->increment('occupied_places');
+
+                // Уменьшаем количество занятых мест в старой комнате
+                if ($oldRoom = Room::whereHas('students', function($query) use ($booking) {
+                    $query->where('user_id', $booking->user_id);
+                })->first()) {
+                    $oldRoom->decrement('occupied_places');
+                }
+
+                $booking->user->notify(new BookingApproved($room));
+            } else if ($booking->status === 'pending') {
+                $booking->update(['status' => 'accepted']);
+                $room->increment('occupied_places');
+
+                Student::updateOrCreate(
+                    ['user_id' => $booking->user_id],
+                    ['room_id' => $room->id]
+                );
+
+                $booking->user->notify(new BookingApproved($room));
             }
 
-            // Увеличиваем количество занятых мест
-            $room->increment('occupied_places');
-
-            // Отклоняем другие заявки пользователя
+            // Отклоняем все остальные заявки пользователя
             Booking::where('user_id', $booking->user_id)
-                ->where('status', 'pending')
+                ->whereIn('status', ['pending', 'pending_change'])
                 ->where('id', '!=', $booking->id)
                 ->update(['status' => 'rejected']);
-
-            // Обновляем или создаем студента с назначением комнаты
-            Student::updateOrCreate(
-                ['user_id' => $booking->user_id], // Поиск по user_id
-                ['room_id' => $room->id] // Обновление room_id
-            );
-
-            $booking->user->refresh();
-            $booking->user->notify(new BookingApproved($room));
-
         });
 
-        return redirect()->back()->with('success', 'Заявка принята! Все другие заявки отклонены.');
+        return redirect()->back()->with('successType', 'request_accepted');
     }
 
-    // Отклонить заявку
     public function reject($id)
     {
         $booking = Booking::findOrFail($id);
         $booking->update(['status' => 'rejected']);
 
-        return redirect()->back()->with('success', 'Заявка отклонена!');
+        return redirect()->back()->with('successType', 'request_rejected');
     }
     public function changeRoom(Request $request)
     {
@@ -136,7 +142,9 @@ class BookingController extends Controller
             'room_id'     => 'required|exists:rooms,id',
         ]);
 
-        Booking::create([
+        $room = Room::findOrFail($request->room_id);
+
+        $booking = Booking::create([
             'user_id'     => Auth::id(),
             'building_id' => $request->building_id,
             'floor'       => $request->floor,
@@ -144,9 +152,11 @@ class BookingController extends Controller
             'status'      => 'pending',
         ]);
 
+        $user = Auth::user();
+        $user->notify(new BookingChangeRequested($room));
+
         return redirect()->route('student.personal')
-            ->with('successType', 'change_room_created')
-            ->with('success', 'Заявка на смену комнаты отправлена!');
+            ->with('successType', 'change_room_created');
     }
 }
 

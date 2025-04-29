@@ -8,10 +8,12 @@ use App\Models\Employee;
 use App\Models\Manager;
 use App\Models\Student;
 use App\Models\User;
+use App\Notifications\UserCredentials;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Mail\Message;
 class AdminUserController extends Controller
 {
     public function create()
@@ -28,6 +30,7 @@ class AdminUserController extends Controller
             'role' => 'required|in:student,manager,admin,employee',
             'job_type' => 'nullable|string|max:255',
         ]);
+        $plainPassword = $request->password;
 
         $user = User::create([
             'name' => $request->name,
@@ -37,33 +40,62 @@ class AdminUserController extends Controller
             'role' => $request->role
         ]);
 
-        if ($user->role === 'student') {
-            Student::create([
-                'user_id' => $user->id,
-                'student_id' => $user->id, // Если student_id = user_id
-                'room_id' => null, // Пока нет комнаты, обновится позже
+        switch ($user->role) {
+            case 'student':
+                Student::create([
+                    'user_id' => $user->id,
+                    'student_id' => $user->id,
+                    'room_id' => null,
+                ]);
+                break;
+            case 'manager':
+                Manager::create([
+                    'user_id' => $user->id,
+                    'manager_id' => $user->id,
+                ]);
+                break;
+            case 'admin':
+                Admin::create([
+                    'user_id' => $user->id,
+                    'admin_id' => $user->id,
+                ]);
+                break;
+            case 'employee':
+                Employee::create([
+                    'user_id' => $user->id,
+                    'employee_id' => $user->id,
+                    'name' => $user->name,
+                    'job_type' => $request->job_type ?? 'Не указано',
+                ]);
+                break;
+        }
+        try {
+            Mail::raw(
+            "Здравствуйте!\n\n" .
+            "Вы были зарегистрированы в системе DMS.\n\n" .
+            "Ваши учетные данные для входа:\n" .
+            "ID пользователя: {$request->user_id}\n" .
+            "Email: {$request->email}\n" .
+            "Пароль: {$plainPassword}\n\n" .
+            "Рекомендуем сменить пароль после первого входа.",
+            function (Message $message) use ($request) {
+                $message->to($request->email)
+                    ->subject('Ваши учетные данные для входа в DMS');
+            }
+        );
+            \Log::info('Email sent successfully', [
+                'to' => $request->email
             ]);
-        } elseif ($user->role === 'manager') {
-            Manager::create([
-                'user_id' => $user->id,
-                'manager_id' => $user->id,
-            ]);
-        } elseif ($user->role === 'admin') {
-            Admin::create([
-                'user_id' => $user->id,
-                'admin_id' => $user->id,
-            ]);
-        } elseif ($user->role === 'employee') {
-            Employee::create([
-                'user_id' => $user->id,
-                'employee_id' => $user->id,
-                'name' => $user->name,
-                'job_type' => $request->job_type ?? 'Не указано',
+        } catch (\Exception $e) {
+            \Log::error('Failed to send email', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
+
+
         return redirect()->route('admin.dashboard')
-            ->with('successType', 'user_created')
-            ->with('success', 'Пользователь создан!');
+            ->with('successType', 'user_created');
     }
 
     public function index(Request $request)
@@ -88,7 +120,7 @@ class AdminUserController extends Controller
         session()->flash('success', 'Пользователь найден!');
         return view('admin.dashboard', [
             'users' => $users,
-            'newsList' => collect(), // empty collection to avoid the error
+            'newsList' => collect(),
         ]);
     }
     public function destroy($id)
@@ -98,8 +130,7 @@ class AdminUserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.dashboard')
-            ->with('successType', 'user_deleted')
-            ->with('success', 'Пользователь удалён!');
+            ->with('successType', 'user_deleted');
     }
     public function getUserJson($id)
     {

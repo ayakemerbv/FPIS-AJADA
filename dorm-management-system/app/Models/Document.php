@@ -15,7 +15,6 @@ class Document extends Model
         'file_path',
     ];
 
-    // Связь с моделью студента
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id');

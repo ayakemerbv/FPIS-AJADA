@@ -11,7 +11,6 @@ class DocumentController extends Controller
 {
     public function index()
     {
-        // Исправлено: ищем по `student_id`, а не `user_id`
         $documents = Document::where('student_id', auth()->id())->get();
         return view('student.documents', compact('documents'));
     }
@@ -32,7 +31,6 @@ class DocumentController extends Controller
             $file = $request->file('documentFile');
             $path = $file->store('documents');
 
-            // Записываем в базу
             $document = Document::create([
                 'student_id' => Auth::id(),
                 'file_name' => $file->getClientOriginalName(),
@@ -64,14 +62,11 @@ class DocumentController extends Controller
         }
 
         $file = $request->file('documentFile');
-
-        // Проверяем, есть ли `student_id`
         $student_id = auth()->id();
         if (!$student_id) {
             return back()->with('error', 'Ошибка: студент не найден!');
         }
 
-        // Создаем документ через метод `upload()`
         $document = (new Document())->upload($file, $student_id);
 
 

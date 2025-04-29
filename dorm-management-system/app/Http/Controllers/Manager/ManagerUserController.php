@@ -33,8 +33,7 @@ class ManagerUserController extends Controller
 
 
         return redirect()->route('manager.dashboard')
-            ->with('successType', 'user_created')
-            ->with('success', 'Пользователь создан!');
+            ->with('successType', 'user_created');
     }
 
     public function index(Request $request)

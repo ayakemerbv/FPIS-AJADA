@@ -286,7 +286,7 @@
             <i class="fas fa-home"></i>
             <span>{{__('messages.main')}}</span>
         </div>
-        <div class="sidebar-item" onclick="addNews()">
+        <div class="sidebar-item" onclick="seeNews()">
             <i class="fa-solid fa-newspaper"></i>
             <span>{{ __('messages.news') }}</span>
         </div>
@@ -540,6 +540,8 @@
             showNews();
             @elseif(session('successType') === 'news_updated')
             showNews();
+            @elseif(session('successType') === 'news_deleted')
+            showNews();
             @elseif(session('successType') === 'user_searched')
             showUsers();
             @endif
@@ -557,7 +559,7 @@
             document.getElementById('users-section').style.display = 'block';
         }
 
-        function addNews(){
+        function seeNews(){
             hideAllSections();
             document.getElementById('news-section').style.display = 'block';
         }

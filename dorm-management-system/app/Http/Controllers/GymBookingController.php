@@ -27,7 +27,7 @@ class GymBookingController extends Controller
 
     public function store(Request $request)
     {
-        // Валидация данных: требуем хотя бы один выбранный день
+
         $validated = $request->validate([
             'sport' => 'required|string',
             'day'   => 'required|array|min:1',
@@ -35,16 +35,12 @@ class GymBookingController extends Controller
             'time'  => 'required|date_format:H:i',
         ]);
 
-        // Проверяем, есть ли уже запись для текущего пользователя
         $existingBooking = GymBooking::where('user_id', Auth::id())->first();
         if ($existingBooking) {
             return redirect()->back()->with('error', 'Вы уже записаны на занятие.');
         }
-
-        // Объединяем выбранные дни в строку (например, "Понедельник, Вторник")
         $daysString = implode(', ', $validated['day']);
 
-        // Создаем новую запись
         $booking = GymBooking::create([
             'user_id' => Auth::id(),
             'sport'   => $validated['sport'],
@@ -89,8 +85,6 @@ class GymBookingController extends Controller
             'recoveryTime' => 'required|date_format:H:i',
         ]);
 
-        // Логика записи на отработку (например, сохранить в таблицу recoveries)
-        // Пример:
         Recovery::create([
             'user_id' => auth()->id(),
             'sport' => $request->recoverySport,

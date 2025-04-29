@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('employee_id')->unique();
-            $table->string('name');
             $table->string('job_type');
             $table->timestamps();
         });

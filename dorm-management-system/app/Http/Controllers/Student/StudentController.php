@@ -22,13 +22,11 @@ class StudentController extends Controller
     public function dashboard()
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
-        $buildings = Building::all(); // Загружаем список корпусов
+        $buildings = Building::all();
         $ads= Ad::latest()->get();
         $categories = Category::all();
         return view('student.dashboard', compact('newsList', 'buildings', 'ads', 'categories'));
     }
-
-
     public function personal()
     {
         $employees = Employee::all();
@@ -76,8 +74,6 @@ class StudentController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-
-        // Правила валидации зависят от того, что вы хотите обновлять
         $request->validate([
             'phone'                 => 'nullable|string|max:255',
             'photo'                 => 'nullable|image|max:2048',
@@ -85,32 +81,22 @@ class StudentController extends Controller
             'new_password'          => 'nullable|confirmed|min:6',
         ]);
 
-        // Обновляем телефон
         if ($request->filled('phone')) {
             $user->phone = $request->phone;
         }
-
-        // Обновляем пароль, если передан new_password
         if ($request->filled('new_password')) {
-            // Проверяем текущий пароль
             if (!Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors(['current_password' => 'Текущий пароль введён неверно.']);
             }
-            // Записываем новый
             $user->password = Hash::make($request->new_password);
         }
-
-        // Обновляем фото
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('photos', 'public');
             $user->photo = $path;
         }
-
         $user->save();
 
         return back()->with('success', 'Данные успешно обновлены!');
     }
-
-
 
 }

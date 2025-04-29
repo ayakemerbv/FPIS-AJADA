@@ -494,8 +494,12 @@
             seeNews();
             @elseif(session('successType') === 'news_updated')
             seeNews();
+            @elseif(session('successType') === 'news_deleted')
+            seeNews();
             @elseif(session('successType') === 'user_searched')
             showUsers();
+            @elseif(session('successType') === 'request_accepted')
+            showRequests();
             @endif
         });
         function showUsers() {

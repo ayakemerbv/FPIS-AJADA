@@ -48,7 +48,6 @@ class UserSeeder extends Seeder
             'manager_id' => $managerUser->id, // manager_id равен user_id
             // другие поля для менеджера
         ]);
-
         // Employee
         $employeeUser = User::create([
             'user_id' => Str::upper(Str::random(8)),
@@ -57,15 +56,10 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'employee',
         ]);
-
-        // Generate a unique employee_id (for example, using Str::uuid() or another method)
-        $employeeId = 'EMP' . Str::upper(Str::random(6)); // Генерация уникального employee_id
-
         // Create employee record
         Employee::create([
-            'user_id' => $employeeUser->id,
-            'employee_id' => $employeeId, // Уникальное значение для employee_id
-            'name' => $employeeUser->name,
+            'user_id' =>   $employeeUser->id,
+            'employee_id' => $employeeUser->id, // Уникальное значение для employee_id
             'job_type' => 'Не указано', // Или другое значение, если необходимо
             // другие поля для работника
         ]);

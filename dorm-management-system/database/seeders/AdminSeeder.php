@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
+use App\Models\Student;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +15,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
+        $adminUser = User::updateOrCreate(
             ['email' => 'admin@kbtu.kz'],
             [
                 'user_id'=>'111',
@@ -22,5 +24,10 @@ class AdminSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
+        Admin::create([
+            'user_id' => $adminUser->id,
+            'admin_id' => $adminUser->id, // student_id равен user_id
+
+        ]);
     }
 }

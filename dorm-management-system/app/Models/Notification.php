@@ -13,12 +13,7 @@ class Notification extends Model
     public const STATUS_UNREAD = 'unread';
     public const STATUS_READ = 'read';
 
-    protected $fillable = [
-        'recipient_id',
-        'message',
-        'type',
-        'status',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime',

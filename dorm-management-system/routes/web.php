@@ -13,6 +13,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Manager\ManagerUserController;
 use App\Http\Controllers\Manager\NewsManagerController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Student\StudentController;
@@ -62,12 +63,10 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
 // Студенческая панель
 Route::middleware(['auth','role:student'])->prefix('student')->group(function (){
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+
     Route::post('dashboard/ads/store', [AdController::class, 'store'])->name('ads.store');
-    // AJAX‑запрос для редактирования
     Route::get('dashboard/ads/{ad}/edit', [AdController::class, 'edit'])
         ->name('ads.edit');
-
-// Обновление
     Route::put('dashboard/ads/{ad}/update', [AdController::class, 'update'])
         ->name('ads.update');
     Route::delete('dashboard/ads/{ad}/delete', [AdController::class, 'destroy'])->name('ads.destroy');
@@ -109,10 +108,16 @@ Route::middleware(['auth','role:student'])->prefix('student')->group(function ()
         Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'show'])->name('employee.request.show');
         Route::get('/dashboard/requests/{id}/edit', [EmployeeController::class, 'edit'])->name('employee.request.edit');
         Route::put('/dashboard/requests/{id}', [EmployeeController::class, 'update'])->name('employee.request.update');
-        Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'getRequest'])->name('employee.getRequest');
+        Route::get('/dashboard/requests/{id}', [EmployeeController::class, 'getRequest'])->name('employee.getRequest');});
 
-    });
+
     Route::middleware(['language'])->group(function (){
         Route::post('/language-switch', [LanguageController::class, 'languageSwitch'])->name('language.switch');
     });
+    Route::middleware('auth')->group(function () {
+        Route::get('/notifications', [NotificationController::class, 'getNotifications']);
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    });
+
+
 

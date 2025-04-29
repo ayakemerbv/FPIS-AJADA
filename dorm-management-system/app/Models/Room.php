@@ -9,7 +9,6 @@ class Room extends Model
 {
     use HasFactory;
 
-    // Предположим, что в миграции поля: building_id, floor, room_number, capacity, occupied_places
     protected $fillable = [
         'building_id',
         'floor',

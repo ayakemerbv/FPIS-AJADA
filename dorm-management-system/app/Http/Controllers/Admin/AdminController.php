@@ -20,9 +20,7 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         $query = User::query();
-
         $users = $query->get();
-
         return view('admin.dashboard', [
             'users' => $users,
         ]);

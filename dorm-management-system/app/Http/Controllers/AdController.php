@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class AdController extends Controller
 {
-    // Показ всех объявлений
+
     public function index()
     {
         $ads = Ad::latest()->get();
         return view('student.dashboard', compact('ads'));
     }
-
-    // Сохранение нового объявления
     public function store(Request $request)
     {
         $request->validate([
@@ -58,11 +56,8 @@ class AdController extends Controller
         ]);
     }
 
-
-    // Обновление объявления
     public function update(Request $request, Ad $ad)
     {
-        // Только владелец может обновлять
         if ($ad->user_id !== Auth::id()) {
             abort(403);
         }
@@ -76,7 +71,6 @@ class AdController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
-        // Заменяем изображение, если загружено
         if ($request->hasFile('image')) {
             if ($ad->image) {
                 Storage::disk('public')->delete($ad->image);
@@ -94,8 +88,6 @@ class AdController extends Controller
 
         return redirect()->back()->with('success', 'Объявление обновлено!');
     }
-
-    // Удаление объявления
     public function destroy(Ad $ad)
     {
         if ($ad->user_id !== Auth::id()) {
@@ -110,8 +102,6 @@ class AdController extends Controller
 
         return redirect()->back()->with('success', 'Объявление удалено.');
     }
-
-    // Категории (для дропа)
     public static function getCategories(): array
     {
         return [
