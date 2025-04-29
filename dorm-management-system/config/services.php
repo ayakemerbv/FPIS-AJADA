@@ -34,5 +34,13 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'kaspi' => [
+        'token' => env('KASPI_TOKEN'),
+        'merchant_id' => env('KASPI_MERCHANT_ID'),
+        'test_mode' => env('KASPI_TEST_MODE', true),
+        'base_url' => env('KASPI_TEST_MODE', true)
+            ? 'https://test-epay.kaspi.kz/api/payments'
+            : 'https://kaspi.kz/shop/api/payments',
+    ],
 
 ];

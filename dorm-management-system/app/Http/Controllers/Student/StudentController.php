@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Document;
 use App\Models\Employee;
 use App\Models\GymBooking;
+use App\Models\Payment;
 use App\Models\Recovery;
 use App\Models\Request as RepairRequest;
 use Illuminate\Http\Request;
@@ -35,8 +36,18 @@ class StudentController extends Controller
         $buildings = Building::all();
         $recoveries = Recovery::where('user_id', auth()->id())->get();
         $documents = Document::all();
+        $user = auth()->user();
+        $payments = Payment::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        $balance = Payment::where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->sum('amount');
+
         $booking = GymBooking::where('user_id', Auth::id())->first();
-        return view('student.personal', compact('newsList','buildings', 'booking', 'employees', 'requests','documents','recoveries'));
+        return view('student.personal', compact('newsList','buildings', 'booking', 'employees', 'requests','documents','recoveries', 'payments', 'balance'));
     }
 
     public function updateProfile(Request $request)

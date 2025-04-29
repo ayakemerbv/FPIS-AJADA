@@ -238,25 +238,26 @@
 
         /* ===== МОДАЛЬНЫЕ ОКНА ===== */
         .modal-overlay {
-            display: none; /* скрыто по умолчанию */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* затемненный фон */
-            z-index: 9999;
+            background: rgba(0,0,0,0.5);
+            display: none;
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+
         }
         .modal-content {
             background: #fff;
-            width: 400px;
-            max-width: 90%;
             padding: 20px;
             border-radius: 8px;
             position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 500px;
+            max-width: 90%;
+
         }
         .close-button {
             position: absolute;
@@ -359,6 +360,94 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+        /* ===== ФИНАНСОВЫЙ РАЗДЕЛ ===== */
+        .finance-dashboard {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .finance-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #7e57c2 0%, #6f42c1 100%);
+            color: white;
+        }
+
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .payment-history-card {
+            grid-column: 1 / -1;
+        }
+
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-form input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .payment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .kaspi-button {
+            background-color: #7e57c2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .kaspi-button:hover {
+            background-color: #6f42c1;
+        }
+
+        .kaspi-button:disabled {
+            background-color: #b39ddb;
+            cursor: not-allowed;
+        }
     </style>
 {{--     ЛЕВАЯ ПАНЕЛЬ--}}
     <div class="sidebar">
@@ -379,8 +468,8 @@
             <i class="fa-solid fa-clipboard"></i>
             <span>{{__('messages.documents')}}</span>
         </div>
-        <div class="sidebar-item">
-            <i class="fas fa-coins"></i>
+        <div class="sidebar-item" onclick="showFinance()">
+            <i class="fas fa-wallet"></i>
             <span>{{__('messages.financial_cabinet')}}</span>
         </div>
         <div class="sidebar-item" onclick = "showRequestRepair()">
@@ -393,24 +482,6 @@
             <span>{{__('messages.registration_for_physical_edu')}}</span>
         </div>
     </div>
-{{--    --}}{{-- Новости --}}
-{{--    <div class="main-content" id="news-section">--}}
-{{--        <h2>{{__('messages.news')}}</h2>--}}
-{{--        @isset($newsList)--}}
-{{--            @forelse($newsList as $news)--}}
-{{--                <div class="news-item">--}}
-{{--                    @if($news->image)--}}
-{{--                        <img src="{{ asset('storage/' . $news->image) }}" alt="News Image">--}}
-{{--                    @endif--}}
-{{--                    <h3>{{ $news->title }}</h3>--}}
-{{--                    <p>{{ $news->content }}</p>--}}
-{{--                    <small>{{ $news->created_at->format('d.m.Y H:i') }}</small>--}}
-{{--                </div>--}}
-{{--            @empty--}}
-{{--                <p>{{__('messages.no_news')}}</p>--}}
-{{--            @endforelse--}}
-{{--        @endisset--}}
-{{--    </div>--}}
     <!-- Личная информация -->
     <div class="main-content" id="personal-section" style="display: none;">
         <h2>{{ __('messages.personal_data') }}</h2>
@@ -594,6 +665,71 @@
             </table>
         </div>
         <button id="uploadButton" class="btn btn-primary mt-3">{{ __('messages.upload_new') }}</button>
+    </div>
+    <div id="financeSection" class="main-content" style="display: none;">
+        <h2>Финансовый кабинет</h2>
+
+        <div class="finance-dashboard">
+            <!-- Карточка баланса -->
+            <div class="finance-card balance-card">
+                <h3>Текущий баланс</h3>
+                <div class="balance-amount">{{ number_format($balance ?? 0, 0, ',', ' ') }} ₸</div>
+                <p>Последнее обновление: {{ now()->format('d.m.Y H:i') }}</p>
+            </div>
+
+            <!-- Карточка оплаты -->
+            <div class="finance-card">
+                <h3>Тестовая оплата</h3>
+                <div class="alert alert-info">
+                    Тестовый режим: реальные платежи не проводятся
+                </div>
+                <form id="kaspiPaymentForm" class="mt-4">
+                    @csrf
+                    <div class="form-group">
+                        <label for="amount">Сумма оплаты (₸)</label>
+                        <input type="number"
+                               id="amount"
+                               name="amount"
+                               min="100"
+                               step="100"
+                               required
+                               class="form-control"
+                               placeholder="Введите сумму">
+                    </div>
+                    <button type="submit" class="btn-finance mt-3">
+                        <i class="fas fa-credit-card"></i> Тестовая оплата
+                    </button>
+                </form>
+            </div>
+            <!-- История платежей -->
+            <div class="finance-card payment-history-card">
+                <h3>История платежей</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Способ оплаты</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($payments ?? [] as $payment)
+                        <tr>
+                            <td>{{ $payment->created_at->format('d.m.Y H:i') }}</td>
+                            <td>{{ number_format($payment->amount, 0, ',', ' ') }} ₸</td>
+                            <td>
+                            <span class="payment-status status-{{ $payment->status }}">
+                                {{ __('messages.payment_status_' . $payment->status) }}
+                            </span>
+                            </td>
+                            <td>{{ $payment->payment_method }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <!-- Форма загрузки документа (скрыта по умолчанию) -->
     <div id="uploadForm" style="display: none; margin-top: 20px;">
@@ -959,10 +1095,6 @@
             showDocuments();
             @endif
         });
-        // function showNews() {
-        //     hideAllSections()
-        //     document.getElementById('news-section').style.display = 'block';
-        // }
         function showPersonal() {
             hideAllSections()
             document.getElementById('personal-section').style.display = 'block';
@@ -1040,6 +1172,41 @@
             hideAllSections();
             document.getElementById('documents-section').style.display = 'block';
         }
+
+        // Добавьте функцию показа финансового раздела
+        function showFinance() {
+            hideAllSections();
+            document.getElementById('financeSection').style.display = 'block';
+        }
+
+        document.getElementById('kaspiPaymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            try {
+                const response = await fetch('/student/payment/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        amount: document.getElementById('amount').value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.payment_url) {
+                    window.location.href = result.payment_url;
+                } else {
+                    alert(result.message || 'Ошибка при создании платежа');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Произошла ошибка при обработке платежа');
+            }
+        });
+
         document.getElementById('uploadButton').addEventListener('click', function () {
             document.getElementById('uploadForm').style.display = 'block';
         });
@@ -1104,6 +1271,7 @@
             document.getElementById('personal-section').style.display = 'none';
             document.getElementById('housing-section').style.display = 'none';
             document.getElementById('documents-section').style.display='none';
+            document.getElementById('financeSection').style.display = 'none';
             document.getElementById('repair-list').style.display = 'none';
             document.getElementById('request-list').style.display = 'none';
             document.getElementById('repairModal').style.display = 'none';

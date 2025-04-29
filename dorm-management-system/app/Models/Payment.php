@@ -16,12 +16,15 @@ class Payment extends Model
     public const STATUS_REFUNDED = 'refunded';
 
     protected $fillable = [
-        'student_id',
+        'user_id', // Изменено с student_id на user_id
         'amount',
-        'date',
         'status',
         'payment_method',
+        'external_id',
+        'description',
+        'date'
     ];
+
 
     protected $casts = [
         'date' => 'datetime',
