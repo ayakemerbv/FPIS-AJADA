@@ -241,12 +241,70 @@
            display: flex;
            gap: 10px;
        }
+       /* Карточка «Личные данные» */
+       .personal-card {
+           background-color: #FFF;
+           border: 1px solid #DDD;
+           border-radius: 8px;
+           padding: 20px;
+       }
+       .personal-content {
+           display: flex;
+           gap: 20px;
+       }
+       .personal-photo {
+           width: 180px;
+           height: 180px;
+           border-radius: 8px;
+           overflow: hidden;
+       }
+       .personal-photo img {
+           width: 100%;
+           height: 100%;
+           object-fit: cover;
+       }
+       .personal-info {
+           flex: 1;
+       }
+       .personal-name {
+           font-size: 1.1rem;
+           font-weight: bold;
+           margin-bottom: 4px;
+       }
+       .personal-status,
+       .personal-location {
+           font-size: 0.9rem;
+           color: #666;
+           margin-bottom: 8px;
+       }
+       /* Форма личных данных */
+       .personal-form {
+           display: grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 15px;
+       }
+       .personal-form label {
+           font-size: 0.9rem;
+           color: #333;
+           margin-bottom: 4px;
+           display: block;
+       }
+       .personal-form input {
+           width: 100%;
+           padding: 8px;
+           border: 1px solid #CCC;
+           border-radius: 4px;
+       }
+       .personal-actions {
+           margin-top: 20px;
+       }
    </style>
 
    <!-- Sidebar -->
    <div class="sidebar">
        <div class="sidebar-item" onclick="showNews()"><i class="fas fa-home"></i><span>{{ __('messages.main') }}</span></div>
        <div class="sidebar-item" onclick="seeNews()"><i class="fas fa-newspaper"></i><span>{{ __('messages.news') }}</span></div>
+       <div class="sidebar-item" onclick="showPersonal()"><i class="fas fa-user"></i><span>{{ __('messages.personal_data') }}</span></div>
        <div class="sidebar-item" onclick="showUsers()"><i class="fas fa-user"></i><span>{{ __('messages.users') }}</span></div>
        <div class="sidebar-item" onclick="showRequests()"><i class="fas fa-bars"></i><span>{{ __('messages.requests') }}</span></div>
    </div>
@@ -336,6 +394,56 @@
                    <button type="submit" class="btn-success">{{ __('messages.save') }}</button>
                    <button type="button" class="plus-button" onclick="cancelEdit()">{{ __('messages.cancel') }}</button>
                </form>
+           </div>
+       </div>
+   </div>
+   <!-- ===== SECTION: Личные данные ===== -->
+   <div class="main-content" id="personal-section">
+       <div class="container">
+           <h2>{{ __('messages.personal_data') }}</h2>
+           <div class="personal-card">
+               <div class="personal-content">
+                   <div class="personal-photo">
+                       @if(Auth::user()->photo)
+                           <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="{{ __('messages.user_photo') }}">
+                       @else
+                           <img src="https://via.placeholder.com/180x180?text=No+Photo" alt="{{ __('messages.user_photo') }}">
+                       @endif
+                   </div>
+                   <div class="personal-info">
+                       <div class="personal-name">{{ Auth::user()->name }}</div>
+                       <div class="personal-status">{{ Auth::user()->job_type ?? '' }}</div>
+
+                       <form class="personal-form" action="{{ route('manager.updateProfile') }}" method="POST" enctype="multipart/form-data">
+                           @csrf
+                           <div>
+                               <label>{{ __('messages.email') }}</label>
+                               <input type="email" value="{{ Auth::user()->email }}" disabled>
+                           </div>
+                           <div>
+                               <label>{{ __('messages.phone_number') }}</label>
+                               <input type="text" name="phone" value="{{ old('phone', Auth::user()->phone ?? '') }}">
+                           </div>
+                           <div>
+                               <label>{{ __('messages.photo') }}</label>
+                               <input type="file" name="photo">
+                           </div>
+                           <div>
+                               <label>{{ __('messages.password') }}</label>
+                               <div style="display: flex; gap: 10px;">
+                                   <input type="password" value="********" disabled>
+                                   <button type="button" class="btn btn-secondary" onclick="openPasswordModal()">
+                                       {{ __('messages.change') }}
+                                   </button>
+                               </div>
+                           </div>
+
+                           <div class="personal-actions">
+                               <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
+                           </div>
+                       </form>
+                   </div>
+               </div>
            </div>
        </div>
    </div>
@@ -502,6 +610,10 @@
             showRequests();
             @endif
         });
+        function showPersonal() {
+            hideAllSections();
+            document.getElementById('personal-section').style.display = 'block';
+        }
         function showUsers() {
             hideAllSections();
             document.getElementById('users-section').style.display = 'block';
@@ -570,6 +682,7 @@
             document.getElementById('user-details-section').style.display = 'none';
             document.getElementById('see-news-section').style.display = 'none';
             document.getElementById('create-news-section').style.display = 'none';
+            document.getElementById('personal-section').style.display = 'none';
             document.getElementById('edit-news-section').style.display = 'none';
             document.getElementById('request-section').style.display = 'none';
         }

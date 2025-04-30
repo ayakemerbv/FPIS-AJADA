@@ -50,6 +50,9 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
 // Менеджерская панель
 Route::middleware(['auth','role:manager'])->prefix('manager')->group(function () {
     Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
+    Route::post('/updateProfile', [ManagerController::class, 'updateProfile'])->name('manager.updateProfile');
+    Route::patch('/updatePassword', [ManagerController::class, 'updatePassword'])->name('manager.updatePassword');
+
     Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
     Route::get('/users/{id}/json', [ManagerUserController::class, 'getUserJson']);
     Route::get('/dashboard/requests', [BookingController::class, 'indexForManager'])->name('manager.requests');

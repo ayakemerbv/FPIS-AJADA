@@ -238,16 +238,6 @@
                     <div class="personal-info">
                         <div class="personal-name">{{ Auth::user()->name }}</div>
                         <div class="personal-status">{{ Auth::user()->job_type ?? '' }}</div>
-                        <div class="personal-location">
-                            @if(Auth::user()->acceptedBooking)
-                                {{ __('messages.building') }}: {{ Auth::user()->acceptedBooking->building->name }}<br>
-                                {{ __('messages.address') }}: {{ Auth::user()->acceptedBooking->building->address }}<br>
-                                {{ __('messages.floor') }}: {{ Auth::user()->acceptedBooking->room->floor }}<br>
-                                {{ __('messages.room') }}: {{ Auth::user()->acceptedBooking->room->room_number }}
-                            @else
-                                <p>{{ __('messages.not_assigned') }}</p>
-                            @endif
-                        </div>
                         <form class="personal-form" action="{{ route('employee.updateProfile') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div>
