@@ -1,10 +1,37 @@
+# Laravel
 /vendor
 /node_modules
 /.env
 .phpunit.result.cache
-/storage/*.key
+.php-cs-fixer.cache
+Homestead.yaml
+Homestead.json
 /public/storage
-/storage/logs/*
-/storage/framework/*
-/bootstrap/cache/*
+/storage/*.key
+/storage/app/public
+/storage/debugbar
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/testing
+/storage/framework/views
+/storage/logs
+/bootstrap/cache/*.php
 .env.backup
+
+# Laravel Sail / Docker
+docker-compose.override.yml
+.env.sail
+.sail
+
+# Laravel Telescope (если используешь)
+storage/telescope
+
+# IDEs
+.idea
+*.sublime-project
+*.sublime-workspace
+.vscode
+
+# OS
+.DS_Store
+Thumbs.db
