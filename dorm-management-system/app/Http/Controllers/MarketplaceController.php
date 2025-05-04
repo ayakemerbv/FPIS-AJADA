@@ -4,68 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\Ad;
 use App\Models\Category;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MarketplaceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ad::with('category');
+        $query = Ad::with(['category', 'user']);
 
-        // Фильтрация по категории
-        if ($request->has('category_id') && $request->category_id !== null) {
+        if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Сортировка по цене
-        if ($request->has('sort') && $request->sort == 'price_asc') {
-            $query->orderBy('price', 'asc');
-        } elseif ($request->sort == 'price_desc') {
-            $query->orderBy('price', 'desc');
-        }
-        // Поиск по заголовку и описанию
-        if ($request->has('search') && $request->search !== null) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
+        if ($request->filled('sort')) {
+            $query->orderBy('price', $request->sort === 'price_asc' ? 'asc' : 'desc');
+        } else {
+            $query->latest(); // По умолчанию сортируем по дате создания
+        }
 
-        $ads = $query->get();
+        $ads = $query->paginate(12);
         $categories = Category::all();
+        $buildings = \App\Models\Building::all();
+        $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
 
-        return view('student.dashboard', compact('ads', 'categories'));
+        session()->flash('successType', 'ads_searched');
+        return view('student.dashboard', compact('ads', 'categories','buildings','newsList'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'contact' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'contact' => 'required|string',
+            'image' => 'nullable|image|max:2048'
         ]);
 
-        $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('ads', 'public');
+            $validated['image_path'] = $request->file('image')->store('ads', 'public');
         }
 
-        Ad::create([
-            'user_id' => Auth::id(),
-            'category_id' => $request->category_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
-            'contact' => $request->contact,
-            'image_path' => $imagePath,
-        ]);
+        $validated['user_id'] = Auth::id();
 
-        return back()->with('success', 'Объявление добавлено!');
+        Ad::create($validated);
+
+        return back()->with('success', 'Объявление успешно создано!')->with('successType', 'ad_created');
+    }
+
+    public function edit(Ad $ad)
+    {
+        if ($ad->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return response()->json($ad);
     }
 
     public function update(Request $request, Ad $ad)
@@ -74,22 +79,26 @@ class MarketplaceController extends Controller
             abort(403);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'contact' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'contact' => 'required|string',
+            'image' => 'nullable|image|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
-            $ad->image_path = $request->file('image')->store('ads', 'public');
+            // Удаляем старое изображение
+            if ($ad->image_path) {
+                Storage::disk('public')->delete($ad->image_path);
+            }
+            $validated['image_path'] = $request->file('image')->store('ads', 'public');
         }
 
-        $ad->update($request->only(['title', 'category_id', 'description', 'price', 'contact']));
+        $ad->update($validated);
 
-        return back()->with('success', 'Объявление обновлено!');
+        return back()->with('success', 'Объявление обновлено!')->with('successType', 'ad_updated');
     }
 
     public function destroy(Ad $ad)
@@ -98,7 +107,12 @@ class MarketplaceController extends Controller
             abort(403);
         }
 
+        if ($ad->image_path) {
+            Storage::disk('public')->delete($ad->image_path);
+        }
+
         $ad->delete();
-        return back()->with('success', 'Объявление удалено!');
+
+        return back()->with('success', 'Объявление удалено!')->with('successType', 'ad_deleted');
     }
 }

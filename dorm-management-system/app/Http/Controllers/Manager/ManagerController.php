@@ -19,7 +19,7 @@ class ManagerController extends Controller
     {
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all();
-        $users = User::all();
+        $users = User::whereIn('role', ['student', 'employee'])->get();
         $requests = Booking::where('status', 'pending')->get();
         return view('manager.dashboard', compact('users', 'newsList', 'requests','buildings'));
     }

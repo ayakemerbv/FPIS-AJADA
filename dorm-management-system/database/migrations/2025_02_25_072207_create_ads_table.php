@@ -10,11 +10,12 @@ return new class extends Migration {
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('category');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade'); // Изменено
             $table->string('title');
             $table->text('description');
-            $table->decimal('price', 8, 2);
+            $table->decimal('price', 10, 2);
             $table->string('contact')->nullable();
+            $table->string('image_path')->nullable(); // Добавлено
             $table->timestamps();
         });
     }

@@ -33,7 +33,10 @@
         /* Main Content */
         .main-content {
             margin-left: 200px;
-            padding: 80px 20px 20px;
+            padding: 20px;
+            padding-top: 80px;
+            background-color: #F5F5F5;
+            min-height: calc(100vh - 60px);
         }
         .main-content h2 {
             margin-bottom: 20px;
@@ -78,10 +81,11 @@
         }
 
         .application-container {
-            margin-left: 280px;
-            margin-top: 50px;
-            height: 100vh;
-            background-color: #f8f9fa;
+            margin-left: 200px;
+            padding: 20px;
+            padding-top: 80px;
+            background-color: #F5F5F5;
+            min-height: calc(100vh - 60px);
         }
         .application-box {
             background: white;
@@ -175,6 +179,86 @@
             border:1px solid #ccc; border-radius:6px;
             font-size:0.95rem;
         }
+        /* Стили для формы фильтрации */
+        .filter-form {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .filter-form .form-control {
+            padding: 6px 10px;
+            height: 32px;
+            font-size: 13px;
+            width: auto;
+        }
+
+        .filter-form .btn {
+            padding: 6px 12px;
+            height: 32px;
+            font-size: 13px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Стили для сетки объявлений */
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .ad-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ad-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .ad-card .content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ad-card .title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .ad-card .description {
+            color: #666;
+            margin-bottom: 12px;
+            flex-grow: 1;
+        }
+
+        .ad-card .meta {
+            color: #888;
+            font-size: 0.9em;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
     </style>
 
     <div class="sidebar">
@@ -182,7 +266,7 @@
             <i class="fas fa-home"></i>
             <span>{{__('messages.main')}}</span>
         </div>
-        @if(Auth::check() && Auth::user()->role === 'student' && optional(Auth::user()->student)->room_id == null)
+        @if(Auth::check() && Auth::user()->role === 'student' && !Auth::user()->student?->room_id)
             <div class="sidebar-item" onclick="showHousing()">
                 <i class="fas fa-bed"></i>
                 <span>{{ __('messages.housing_application') }}</span>
@@ -193,7 +277,6 @@
             <span>{{ __('messages.marketplace') }}</span>
         </div>
     </div>
-
 
     <div class="application-container" id="housing-sidebar">
         <div class="application-box">
@@ -225,49 +308,65 @@
     {{-- Купи‑продай секция --}}
     <div class="application-container" id="marketplace-section" style="display: none;">
         {{-- Фильтры --}}
-        <form method="GET" action="{{ route('student.dashboard') }}" class="mb-4">
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Поиск товара..." class="form-control" />
+        <form method="GET" action="{{ route('marketplace.index') }}" class="filter-form">
+            <div class="filter-controls">
+                <input type="text"
+                       name="search"
+                       value="{{ request('search') }}"
+                       placeholder="Поиск товара..."
+                       class="form-control" />
 
                 <select name="category_id" class="form-control">
                     <option value="">Все категории</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                        <option value="{{ $category->id }}"
+                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
                         </option>
                     @endforeach
                 </select>
-
                 <select name="sort" class="form-control">
-                    <option value="">Сортировать по цене</option>
-                    <option value="price_asc"  {{ request('sort')=='price_asc'  ? 'selected':'' }}>От дешёвых к дорогим</option>
-                    <option value="price_desc" {{ request('sort')=='price_desc' ? 'selected':'' }}>От дорогих к дешёвым</option>
+                    <option value="">По цене</option>
+                    <option value="price_asc" {{ request('sort')=='price_asc' ? 'selected':'' }}>
+                        От дешёвых
+                    </option>
+                    <option value="price_desc" {{ request('sort')=='price_desc' ? 'selected':'' }}>
+                        От дорогих
+                    </option>
                 </select>
-
-                <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                <button type="submit" class="btn btn-primary">
+                    Найти
+                </button>
             </div>
         </form>
 
         {{-- Заголовок и кнопки --}}
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2>🛍️ Купи‑продай</h2>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn btn-primary" onclick="openCreateAdModal()">+ Разместить</button>
-                <button class="btn btn-secondary" onclick="toggleMyAds()">Посмотреть ваши объявления</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-primary" onclick="openCreateAdModal()" style="height: 32px; padding: 6px 12px; font-size: 13px;margin-top: -105px">
+                    +
+                </button>
+                <button class="btn btn-secondary" onclick="toggleMyAds()" style="height: 32px; padding: 6px 12px; font-size: 13px;margin-top: -105px">
+                    Мои объявления
+                </button>
             </div>
+
         </div>
 
         {{-- Все объявления --}}
         <div id="all-ads" class="ads-grid">
             @foreach($ads as $ad)
                 <div class="ad-card">
-                    @if($ad->image)
-                        <img src="{{ asset('storage/' . $ad->image) }}" alt="" />
+                    @if($ad->image_path)
+                        <img src="{{ asset('storage/' . $ad->image_path) }}" alt="{{ $ad->title }}" />
                     @endif
                     <div class="content">
                         <div class="title">{{ $ad->title }}</div>
                         <div class="description">{{ Str::limit($ad->description, 100) }}</div>
-                        <div class="meta">Цена: {{ $ad->price }} тг • {{ \App\Http\Controllers\AdController::getCategories()[$ad->category] ?? $ad->category }}</div>
+                        <div class="meta">
+                            Цена: {{ $ad->price }} тг • {{ $ad->category->name }}
+                        </div>
                     </div>
                 </div>
             @endforeach
@@ -275,6 +374,12 @@
 
         {{-- Только ваши объявления --}}
         <div id="my-ads" class="ads-grid" style="display: none;">
+            <div style="grid-column: 1/-1; margin-bottom: 15px;">
+                <button class="btn btn-secondary" onclick="toggleMyAds()" style="height: 32px; padding: 6px 12px; font-size: 13px;">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+            </div>
+
             @php $myAds = $ads->where('user_id', Auth::id()); @endphp
 
             @if($myAds->isEmpty())
@@ -288,10 +393,12 @@
                         <div class="content">
                             <div class="title">{{ $ad->title }}</div>
                             <div class="description">{{ Str::limit($ad->description, 100) }}</div>
-                            <div class="meta">Цена: {{ $ad->price }} тг • {{ \App\Http\Controllers\AdController::getCategories()[$ad->category] ?? $ad->category }}</div>
+                            <div class="meta">
+                                Цена: {{ $ad->price }} тг • {{ $ad->category->name }}
+                            </div>
                             <div class="actions">
                                 <button class="btn btn-warning" onclick="openEditAdModal({{ $ad->id }})">Редактировать</button>
-                                <form action="{{ route('ads.destroy', $ad->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('ads.destroy', ['ad' => $ad->id]) }}" method="POST" style="display:inline;">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-danger">Удалить</button>
                                 </form>
@@ -311,10 +418,10 @@
                 @csrf
                 <input type="text" name="title" placeholder="Заголовок" required class="input-field">
                 <textarea name="description" placeholder="Описание" required class="input-field"></textarea>
-                <input type="text" name="price" placeholder="Цена (тг)" required class="input-field">
-                <select name="category" required class="input-field">
-                    @foreach(\App\Http\Controllers\AdController::getCategories() as $key => $value)
-                        <option value="{{ $key }}">{{ $value }}</option>
+                <input type="number" name="price" placeholder="Цена (тг)" required class="input-field">
+                <select name="category_id" required class="input-field">
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
                 <input type="text" name="contact" placeholder="Контакты (тел./email)" required class="input-field">
@@ -329,39 +436,39 @@
     <div id="editAdModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 999;">
         <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; max-width: 90%;">
             <h3 style="margin-bottom: 15px;" id="modalTitle">Редактировать объявление</h3>
-            @foreach($ads as $ad)
-                <form action="{{ route('ads.update', $ad->id) }}" method="POST" enctype="multipart/form-data" id="editAdForm">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="ad_id" value="{{ $ad->id }}">
-                    <input type="text" name="title" value="{{ old('title', $ad->title) }}" placeholder="Заголовок" required class="input-field" id="title">
-                    <textarea name="description" placeholder="Описание" required class="input-field" id="description">{{ old('description', $ad->description) }}</textarea>
-                    <input type="text" name="price" value="{{ old('price', $ad->price) }}" placeholder="Цена (тг)" required class="input-field" id="price">
-                    <select name="category" required class="input-field" id="category">
-                        @foreach(\App\Http\Controllers\AdController::getCategories() as $key => $value)
-                            <option value="{{ $key }}" {{ $ad->category === $key ? 'selected' : '' }}>{{ $value }}</option>
-                        @endforeach
-                    </select>
-                    <input type="text" name="contact" value="{{ old('contact', $ad->contact) }}" placeholder="Контакты (тел./email)" required class="input-field" id="contact">
-                    <input type="file" name="image" class="input-field" id="image">
-                    @if ($ad->image)
-                        <img src="{{ asset('storage/' . $ad->image) }}" alt="Текущее изображение" style="max-width: 100%; margin-top: 10px;">
-                    @endif
-                    <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Сохранить изменения</button>
-                </form>
-            @endforeach
+            <form action="" method="POST" enctype="multipart/form-data" id="editAdForm">
+                @csrf
+                @method('PUT')
+                <input type="text" name="title" placeholder="Заголовок" required class="input-field" id="title">
+                <textarea name="description" placeholder="Описание" required class="input-field" id="description"></textarea>
+                <input type="number" name="price" placeholder="Цена (тг)" required class="input-field" id="price">
+                <select name="category_id" required class="input-field" id="category_id">
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <input type="text" name="contact" placeholder="Контакты (тел./email)" required class="input-field" id="contact">
+                <input type="file" name="image" class="input-field">
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Сохранить изменения</button>
+            </form>
             <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
         </div>
     </div>
 
     <script>
 
-
-
         document.addEventListener('DOMContentLoaded', function() {
             showNews();
             @if(session('successType') === 'request_sent')
             showNews();
+            @elseif(session('successType') === 'ad_updated')
+            showMarketplace();
+            @elseif(session('successType') === 'ad_deleted')
+            showMarketplace();
+            @elseif(session('successType') === 'ad_created')
+            showMarketplace();
+            @elseif(session('successType') === 'ads_searched')
+            showMarketplace();
             @endif
         });
         function hideAllSections() {
@@ -444,33 +551,48 @@
         function openCreateAdModal() {
             document.getElementById('createAdModal').style.display = 'flex';
         }
-
         // Закрытие модального окна для нового объявления
         function closeCreateAdModal() {
             document.getElementById('createAdModal').style.display = 'none';
         }
-
-        // Открытие модального окна для редактирования объявления
         function openEditAdModal(adId) {
-            // тут ваш fetch для заполнения полей и затем показ модалки:
-            fetch(`/dashboard/ads/${adId}/edit`)
-                .then(r => r.json())
+            fetch(`/student/ads/${adId}/edit`)
+                .then(response => response.json())
                 .then(data => {
                     const form = document.getElementById('editAdForm');
-                    form.action = `/dashboard/ads/${adId}/update`;
-                    document.getElementById('editTitle').value    = data.title;
-                    document.getElementById('editDesc').value     = data.description;
-                    document.getElementById('editPrice').value    = data.price;
-                    document.getElementById('editCategory').value = data.category_id;
-                    document.getElementById('editContact').value  = data.contact;
+                    form.action = `/student/ads/${adId}`;
+
+                    // Заполняем поля формы
+                    document.getElementById('title').value = data.title;
+                    document.getElementById('description').value = data.description;
+                    document.getElementById('price').value = data.price;
+                    document.getElementById('category_id').value = data.category_id;
+                    document.getElementById('contact').value = data.contact;
+
+                    // Показываем модальное окно
                     document.getElementById('editAdModal').style.display = 'flex';
                 })
-                .catch(() => alert('Ошибка загрузки объявления'));
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка при загрузке объявления');
+                });
+        }
+
+        function toggleMyAds() {
+            const allAds = document.getElementById('all-ads');
+            const myAds = document.getElementById('my-ads');
+
+            if (myAds.style.display === 'none') {
+                allAds.style.display = 'none';
+                myAds.style.display = 'grid';
+            } else {
+                myAds.style.display = 'none'; // исправлено с 'nonegh'
+                allAds.style.display = 'grid';
+            }
         }
         // Закрытие модального окна для редактирования объявления
         function closeEditAdModal() {
             document.getElementById('editAdModal').style.display = 'none';
         }
-
     </script>
 @endsection

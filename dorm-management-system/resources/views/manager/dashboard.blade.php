@@ -531,16 +531,15 @@
                </form>
 
                <!-- Кнопка "Удалить пользователя" -->
-               <form id="userDeleteForm"
-                     action="{{ route('admin.users.destroy', $user->id) }}"
-                     method="POST"
-                     style="margin-top: 10px;">
-                   @csrf
-                   @method('DELETE')
-                   <button type="submit" class="btn-danger" onclick="return confirm('{{ __('messages.confirm_delete') }}')">
-                       {{ __('messages.delete_user') }}
-                   </button>
-               </form>
+               <div class="mt-3">
+                   <form id="userDeleteForm" action="" method="POST" style="display: inline;">
+                       @csrf
+                       @method('DELETE')
+                       <button type="submit" class="btn-danger" id="deleteButton">
+                           {{ __('messages.delete_user') }}
+                       </button>
+                   </form>
+               </div>
            </div>
        </div>
    </div>
@@ -640,7 +639,13 @@
                 document.getElementById('detail-phone').value = data.phone || '';
                 document.getElementById('detail-email').value = data.email || '';
                 document.getElementById('userUpdateForm').action = '/manager/dashboard/users/' + data.id;
-                document.getElementById('userDeleteForm').action = '/manager/dashboard/users/' + data.id;
+                const deleteButton = document.getElementById('userDeleteForm').action = '/manager/dashboard/users/' + data.id;
+                if (data.role === 'student') {
+                    deleteButton.textContent = '{{ __("messages.expel_student") }}';
+                } else {
+                    deleteButton.textContent = '{{ __("messages.delete_user") }}';
+                }
+
                 document.getElementById('user-details-section').style.display = 'block';
             } catch (error) {
                 alert(error.message);

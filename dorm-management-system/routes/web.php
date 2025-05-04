@@ -13,6 +13,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Manager\ManagerController;
 use App\Http\Controllers\Manager\ManagerUserController;
 use App\Http\Controllers\Manager\NewsManagerController;
+use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\KaspiPaymentController;
 use App\Http\Controllers\RequestController;
@@ -52,8 +53,9 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
     Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
     Route::post('/updateProfile', [ManagerController::class, 'updateProfile'])->name('manager.updateProfile');
     Route::patch('/updatePassword', [ManagerController::class, 'updatePassword'])->name('manager.updatePassword');
-
     Route::get('/dashboard/users', [ManagerUserController::class, 'index'])->name('manager.users.index');
+    Route::delete('/dashboard/users/{id}', [ManagerUserController::class, 'destroy'])->name('manager.users.destroy');
+    Route::put('/dashboard/users/{id}', [ManagerUserController::class, 'update'])->name('manager.users.update');
     Route::get('/users/{id}/json', [ManagerUserController::class, 'getUserJson']);
     Route::get('/dashboard/requests', [BookingController::class, 'indexForManager'])->name('manager.requests');
     Route::get('/dashboard/requests/{id}/accept', [BookingController::class, 'accept'])->name('booking.accept');
@@ -66,13 +68,11 @@ Route::middleware(['auth','role:manager'])->prefix('manager')->group(function ()
 // Студенческая панель
 Route::middleware(['auth','role:student'])->prefix('student')->group(function (){
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
-
-    Route::post('dashboard/ads/store', [AdController::class, 'store'])->name('ads.store');
-    Route::get('dashboard/ads/{ad}/edit', [AdController::class, 'edit'])
-        ->name('ads.edit');
-    Route::put('dashboard/ads/{ad}/update', [AdController::class, 'update'])
-        ->name('ads.update');
-    Route::delete('dashboard/ads/{ad}/delete', [AdController::class, 'destroy'])->name('ads.destroy');
+    Route::get('/ads', [MarketplaceController::class, 'index'])->name('marketplace.index');
+    Route::post('/ads', [MarketplaceController::class, 'store'])->name('ads.store');
+    Route::get('/ads/{ad}/edit', [MarketplaceController::class, 'edit'])->name('ads.edit');
+    Route::put('/ads/{ad}', [MarketplaceController::class, 'update'])->name('ads.update');
+    Route::delete('/ads/{ad}', [MarketplaceController::class, 'destroy'])->name('ads.destroy');
     Route::get('/personal', [StudentController::class, 'personal'])->name('student.personal');
     Route::post('/personal/profile/update', [StudentController::class, 'updateProfile', 'update'])->name('student.profile.update');
     Route::patch('/personal/profile/update', [StudentController::class, 'update'])->name('student.profile.update');

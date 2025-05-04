@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Building;
 use App\Models\News;
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ManagerUserController extends Controller
 {
@@ -38,7 +40,7 @@ class ManagerUserController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::query()
+        $users = User::query()->whereIn('role', ['student', 'employee'])
             ->when($request->filled('filter_id'), fn($q) => $q->where('user_id', 'like', '%' . $request->filter_id . '%'))
             ->when($request->filled('filter_name'), fn($q) => $q->where('name', 'like', '%' . $request->filter_name . '%'))
             ->when($request->filled('filter_email'), fn($q) => $q->where('email', 'like', '%' . $request->filter_email . '%'))
@@ -55,6 +57,61 @@ class ManagerUserController extends Controller
         return view('manager.dashboard', compact('users','newsList','requests','buildings'));
 
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role === 'student') {
+            // Для студента просто очищаем комнату
+            if ($student = $user->student) {
+                $room = Room::find($student->room_id);
+                if ($room) {
+                    $room->decrement('occupied_places');
+                }
+                $student->room_id = null;
+                $student->save();
+            }
+            return redirect()->route('manager.dashboard')
+                ->with('successType', 'student_expelled')
+                ->with('success', 'Студент был отчислен из общежития');
+        } else {
+            // Для остальных пользователей - полное удаление
+            $user->delete();
+            return redirect()->route('manager.dashboard')
+                ->with('successType', 'user_deleted')
+                ->with('success', 'Пользователь был удален');
+        }
+    }
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'user_id' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'photo' => 'nullable|image|max:2048'
+        ]);
+
+        $user->user_id = $request->user_id;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+
+        if ($request->hasFile('photo')) {
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            $path = $request->file('photo')->store('avatars', 'public');
+            $user->photo = $path;
+        }
+
+        $user->save();
+
+        return redirect()->route('manager.dashboard')
+            ->with('successType', 'user_updated')
+            ->with('success', 'Данные пользователя обновлены!');
+    }
+
 
     public function getUserJson($id)
     {
