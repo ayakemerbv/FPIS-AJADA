@@ -12,30 +12,6 @@
             background-color: #F5F5F5;
         }
 
-        /* ===== ВЕРХНЯЯ ПАНЕЛЬ ===== */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            padding: 0 20px;
-            background-color: #FFF;
-            border-bottom: 1px solid #DDD;
-        }
-        .top-nav .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #4A4A4A;
-        }
-        .top-nav .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
         /* ===== АВАТАР И ДРОПДАУН МЕНЮ ===== */
         .avatar-wrapper {
             position: relative;
@@ -675,6 +651,15 @@
                 <h3>Текущий баланс</h3>
                 <div class="balance-amount">{{ number_format($balance ?? 0, 0, ',', ' ') }} ₸</div>
                 <p>Последнее обновление: {{ now()->format('d.m.Y H:i') }}</p>
+            </div>
+            <div class="finance-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
+                <div class="qr-container" style="text-align: center; width: 100%; max-width: 300px;">
+                    <h3 style="margin-bottom: 20px;">Оплата через Kaspi</h3>
+                    <img src="{{ asset('storage/images/kaspi-qr.jpg') }}"
+                         alt="Kaspi QR"
+                         style="width: 70%; height: auto; border: 1px solid #ddd; border-radius: 4px; display: block; margin: 0 auto;">
+                    <p style="margin-top: 15px; color: #666;">Отсканируйте QR-код для оплаты через Kaspi</p>
+                </div>
             </div>
 
             <!-- Карточка оплаты -->
