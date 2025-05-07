@@ -643,14 +643,14 @@
         <button id="uploadButton" class="btn btn-primary mt-3">{{ __('messages.upload_new') }}</button>
     </div>
     <div id="financeSection" class="main-content" style="display: none;">
-        <h2>Финансовый кабинет</h2>
+        <h2>{{ __('messages.finance_section_title') }}</h2>
 
         <div class="finance-dashboard">
             <!-- Карточка баланса -->
             <div class="finance-card balance-card">
-                <h3>Текущий баланс</h3>
+                <h3>{{ __('messages.current_balance') }}</h3>
                 <div class="balance-amount">{{ number_format($balance ?? 0, 0, ',', ' ') }} ₸</div>
-                <p>Последнее обновление: {{ now()->format('d.m.Y H:i') }}</p>
+                <p>{{ __('messages.last_updated') }}: {{ now()->format('d.m.Y H:i') }}</p>
             </div>
             <div class="finance-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; ">
                 <div class="qr-container" style="text-align: center; width: 100%; max-width: 300px;">
@@ -664,14 +664,14 @@
 
             <!-- Карточка оплаты -->
             <div class="finance-card">
-                <h3>Тестовая оплата</h3>
+                <h3>{{ __('messages.test_payment_title') }}</h3>
                 <div class="alert alert-info">
-                    Тестовый режим: реальные платежи не проводятся
+                    {{ __('messages.test_mode_notice') }}
                 </div>
                 <form id="kaspiPaymentForm" class="mt-4">
                     @csrf
                     <div class="form-group">
-                        <label for="amount">Сумма оплаты (₸)</label>
+                        <label for="amount">{{ __('messages.payment_amount_label') }}</label>
                         <input type="number"
                                id="amount"
                                name="amount"
@@ -679,23 +679,24 @@
                                step="100"
                                required
                                class="form-control"
-                               placeholder="Введите сумму">
+                               placeholder="{{ __('messages.payment_amount_label') }}">
                     </div>
                     <button type="submit" class="btn-finance mt-3">
-                        <i class="fas fa-credit-card"></i> Тестовая оплата
+                        <i class="fas fa-credit-card"></i> {{ __('messages.test_payment_button') }}
                     </button>
                 </form>
             </div>
+
             <!-- История платежей -->
             <div class="finance-card payment-history-card">
-                <h3>История платежей</h3>
+                <h3>{{ __('messages.payment_history_title') }}</h3>
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Дата</th>
-                        <th>Сумма</th>
-                        <th>Статус</th>
-                        <th>Способ оплаты</th>
+                        <th>{{ __('messages.date') }}</th>
+                        <th>{{ __('messages.amount') }}</th>
+                        <th>{{ __('messages.status') }}</th>
+                        <th>{{ __('messages.payment_method') }}</th>
                     </tr>
                     </thead>
                     <tbody>

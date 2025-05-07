@@ -313,11 +313,11 @@
                 <input type="text"
                        name="search"
                        value="{{ request('search') }}"
-                       placeholder="Поиск товара..."
+                       placeholder="{{ __('messages.search_placeholder') }}"
                        class="form-control" />
 
                 <select name="category_id" class="form-control">
-                    <option value="">Все категории</option>
+                    <option value="">{{ __('messages.all_categories') }}</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}"
                             {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -325,30 +325,33 @@
                         </option>
                     @endforeach
                 </select>
+
                 <select name="sort" class="form-control">
-                    <option value="">По цене</option>
+                    <option value="">{{ __('messages.sort_by_price') }}</option>
                     <option value="price_asc" {{ request('sort')=='price_asc' ? 'selected':'' }}>
-                        От дешёвых
+                        {{ __('messages.price_low_to_high') }}
                     </option>
                     <option value="price_desc" {{ request('sort')=='price_desc' ? 'selected':'' }}>
-                        От дорогих
+                        {{ __('messages.price_high_to_low') }}
                     </option>
                 </select>
+
                 <button type="submit" class="btn btn-primary">
-                    Найти
+                    {{ __('messages.search') }}
                 </button>
             </div>
         </form>
 
+
         {{-- Заголовок и кнопки --}}
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>🛍️ Купи‑продай</h2>
+            <h2>🛍️{{__('messages.marketplace')}}</h2>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <button class="btn btn-primary" onclick="openCreateAdModal()" style="height: 32px; padding: 6px 12px; font-size: 13px;margin-top: -105px">
                     +
                 </button>
                 <button class="btn btn-secondary" onclick="toggleMyAds()" style="height: 32px; padding: 6px 12px; font-size: 13px;margin-top: -105px">
-                    Мои объявления
+                    {{__('messages.my_ads')}}
                 </button>
             </div>
 
@@ -365,7 +368,7 @@
                         <div class="title">{{ $ad->title }}</div>
                         <div class="description">{{ Str::limit($ad->description, 100) }}</div>
                         <div class="meta">
-                            Цена: {{ $ad->price }} тг • {{ $ad->category->name }}
+                            {{__('messages.price')}}: {{ $ad->price }} тг • {{ $ad->category->name }}
                         </div>
                     </div>
                 </div>
@@ -383,7 +386,7 @@
             @php $myAds = $ads->where('user_id', Auth::id()); @endphp
 
             @if($myAds->isEmpty())
-                <p>У вас ещё нет объявлений.</p>
+                <p>{{__('messages.no_ads_yet')}}.</p>
             @else
                 @foreach($myAds as $ad)
                     <div class="ad-card">
@@ -394,13 +397,13 @@
                             <div class="title">{{ $ad->title }}</div>
                             <div class="description">{{ Str::limit($ad->description, 100) }}</div>
                             <div class="meta">
-                                Цена: {{ $ad->price }} тг • {{ $ad->category->name }}
+                                {{__('messages.price')}}: {{ $ad->price }} тг • {{ $ad->category->name }}
                             </div>
                             <div class="actions">
-                                <button class="btn btn-warning" onclick="openEditAdModal({{ $ad->id }})">Редактировать</button>
+                                <button class="btn btn-warning" onclick="openEditAdModal({{ $ad->id }})">{{__('messages.edit_ad')}}</button>
                                 <form action="{{ route('ads.destroy', ['ad' => $ad->id]) }}" method="POST" style="display:inline;">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                    <button type="submit" class="btn btn-danger">{{__('messages.delete_ad')}}</button>
                                 </form>
                             </div>
                         </div>
@@ -413,45 +416,54 @@
     <!-- Модальное окно для создания нового объявления -->
     <div id="createAdModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 999;">
         <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; max-width: 90%;">
-            <h3 style="margin-bottom: 15px;">Новое объявление</h3>
+            <h3 style="margin-bottom: 15px;">{{__('messages.new_ad')}}</h3>
             <form action="{{ route('ads.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="text" name="title" placeholder="Заголовок" required class="input-field">
-                <textarea name="description" placeholder="Описание" required class="input-field"></textarea>
-                <input type="number" name="price" placeholder="Цена (тг)" required class="input-field">
+                @if ($errors->any())
+                    <div style="color: red; margin-bottom: 10px;">
+                        <ul style="padding-left: 20px; margin: 0;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <input type="text" name="title" placeholder="{{__('messages.title')}}" required class="input-field"  value="{{ old('title') }}">
+                <textarea name="description" placeholder="{{__('messages.description')}}" required class="input-field"></textarea>
+                <input type="number" name="price" placeholder="{{__('messages.price_placeholder')}}" required class="input-field">
                 <select name="category_id" required class="input-field">
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
-                <input type="text" name="contact" placeholder="Контакты (тел./email)" required class="input-field">
+                <input type="text" name="contact" placeholder="{{__('messages.contact')}}" required class="input-field">
                 <input type="file" name="image" class="input-field">
-                <button type="submit" class="btn-primary" style="margin-top: 10px; width: 100%;">Разместить</button>
+                <button type="submit" class="btn-primary" style="margin-top: 10px; width: 100%;">{{__('messages.create_ad')}}</button>
             </form>
-            <button onclick="closeCreateAdModal()" class="btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
+            <button onclick="closeCreateAdModal()" class="btn-secondary" style="margin-top: 10px; width: 100%;">{{__('messages.cancel')}}</button>
         </div>
     </div>
 
     <!-- Модальное окно для редактирования объявления -->
     <div id="editAdModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 999;">
         <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; max-width: 90%;">
-            <h3 style="margin-bottom: 15px;" id="modalTitle">Редактировать объявление</h3>
+            <h3 style="margin-bottom: 15px;" id="modalTitle">{{ __('messages.edit_ad_title') }}</h3>
             <form action="" method="POST" enctype="multipart/form-data" id="editAdForm">
                 @csrf
                 @method('PUT')
-                <input type="text" name="title" placeholder="Заголовок" required class="input-field" id="title">
-                <textarea name="description" placeholder="Описание" required class="input-field" id="description"></textarea>
-                <input type="number" name="price" placeholder="Цена (тг)" required class="input-field" id="price">
+                <input type="text" name="title" placeholder="{{__('messages.title')}}" required class="input-field" id="title">
+                <textarea name="description" placeholder="{{__('messages.description')}}" required class="input-field" id="description"></textarea>
+                <input type="number" name="price" placeholder="{{__('messages.price_placeholder')}}" required class="input-field" id="price">
                 <select name="category_id" required class="input-field" id="category_id">
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
-                <input type="text" name="contact" placeholder="Контакты (тел./email)" required class="input-field" id="contact">
+                <input type="text" name="contact" placeholder="{{__('messages.contact')}}" required class="input-field" id="contact">
                 <input type="file" name="image" class="input-field">
-                <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">Сохранить изменения</button>
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 100%;">{{__('messages.save_changes')}}</button>
             </form>
-            <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Отмена</button>
+            <button onclick="closeEditAdModal()" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">{{__('messages.cancel')}}</button>
         </div>
     </div>
 
