@@ -435,23 +435,23 @@
             <i class="fas fa-user"></i>
             <span>{{__('messages.personal_information')}}</span>
         </div>
-        @if(Auth::user()->bookings->where('status', 'accepted')->isNotEmpty())
-        <div class="sidebar-item" onclick="showHousing()">
-            <i class="fas fa-building"></i>
-            <span>{{__('messages.accommodation')}}</span>
-        </div>
-        <div class="sidebar-item" onclick="showDocuments()">
-            <i class="fa-solid fa-clipboard"></i>
-            <span>{{__('messages.documents')}}</span>
-        </div>
-        <div class="sidebar-item" onclick="showFinance()">
-            <i class="fas fa-wallet"></i>
-            <span>{{__('messages.financial_cabinet')}}</span>
-        </div>
-        <div class="sidebar-item" onclick = "showRequestRepair()">
-            <i class="fas fa-wrench"></i>
-            <span>{{__('messages.repair_requests')}}</span>
-        </div>
+        @if(Auth::user()->student && Auth::user()->student->room_id)
+            <div class="sidebar-item" onclick="showHousing()">
+                <i class="fas fa-building"></i>
+                <span>{{__('messages.accommodation')}}</span>
+            </div>
+            <div class="sidebar-item" onclick="showDocuments()">
+                <i class="fa-solid fa-clipboard"></i>
+                <span>{{__('messages.documents')}}</span>
+            </div>
+            <div class="sidebar-item" onclick="showFinance()">
+                <i class="fas fa-wallet"></i>
+                <span>{{__('messages.financial_cabinet')}}</span>
+            </div>
+            <div class="sidebar-item" onclick = "showRequestRepair()">
+                <i class="fas fa-wrench"></i>
+                <span>{{__('messages.repair_requests')}}</span>
+            </div>
         @endif
         <div class="sidebar-item" onclick="showSportsBooking()">
             <i class="fas fa-dumbbell"></i>

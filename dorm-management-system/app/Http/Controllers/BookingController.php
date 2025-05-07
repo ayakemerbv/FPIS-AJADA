@@ -91,8 +91,13 @@ class BookingController extends Controller
                 $booking->update(['status' => 'accepted_change']);
 
                 // Обновляем запись студента
-                Student::where('user_id', $booking->user_id)
-                    ->update(['room_id' => $room->id]);
+                Student::updateOrCreate(
+                    ['user_id' => $booking->user_id],
+                    [
+                        'room_id' => $room->id,
+                        'student_id' => $booking->user_id
+                    ]
+                );
 
                 // Увеличиваем количество занятых мест в новой комнате
                 $room->increment('occupied_places');
@@ -111,9 +116,11 @@ class BookingController extends Controller
 
                 Student::updateOrCreate(
                     ['user_id' => $booking->user_id],
-                    ['room_id' => $room->id]
+                    [
+                        'room_id' => $room->id,
+                        'student_id' => $booking->user_id
+                    ]
                 );
-
                 $booking->user->notify(new BookingApproved($room));
             }
 

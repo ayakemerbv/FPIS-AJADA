@@ -489,6 +489,10 @@
    </div>
    <!-- ========== Секция деталей пользователя (скрыта) ========== -->
    <div class="main-content user-details-section" id="user-details-section" style="display: none;">
+       <button onclick="showUsers()" class="btn-primary" style="margin-bottom: 20px;">
+           <i class="fas fa-arrow-left"></i> {{ __('messages.back') }}
+       </button>
+
        <h2>{{ __('messages.user_details') }}</h2>
        <div class="user-details-card">
            <!-- Фото -->
@@ -607,8 +611,18 @@
             showUsers();
             @elseif(session('successType') === 'request_accepted')
             showRequests();
+
             @endif
         });
+        // В функции viewUserDetail, после установки action для формы обновления:
+        // В функции viewUserDetail, добавьте эту логику:
+        const deleteForm = document.getElementById('userDeleteForm');
+        if (data.role === 'student' && '{{ auth()->user()->isAdmin() }}' === '1') {
+            deleteForm.style.display = 'block';
+            document.getElementById('deleteButton').textContent = '{{ __("messages.expel_student") }}';
+        } else {
+            deleteForm.style.display = 'none';
+        }
         function showPersonal() {
             hideAllSections();
             document.getElementById('personal-section').style.display = 'block';
@@ -639,11 +653,15 @@
                 document.getElementById('detail-phone').value = data.phone || '';
                 document.getElementById('detail-email').value = data.email || '';
                 document.getElementById('userUpdateForm').action = '/manager/dashboard/users/' + data.id;
-                const deleteButton = document.getElementById('userDeleteForm').action = '/manager/dashboard/users/' + data.id;
-                if (data.role === 'student') {
-                    deleteButton.textContent = '{{ __("messages.expel_student") }}';
+                document.getElementById('userDeleteForm').action = '/manager/dashboard/users/' + data.id;
+
+                // Показываем/скрываем кнопку удаления
+                const deleteForm = document.getElementById('userDeleteForm');
+                if (data.role === 'student' && {{ auth()->user()->isAdmin() ? 'true' : 'false' }}) {
+                    deleteForm.style.display = 'block';
+                    document.getElementById('deleteButton').textContent = '{{ __("messages.delete_user") }}';
                 } else {
-                    deleteButton.textContent = '{{ __("messages.delete_user") }}';
+                    deleteForm.style.display = 'none';
                 }
 
                 document.getElementById('user-details-section').style.display = 'block';

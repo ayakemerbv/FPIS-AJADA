@@ -59,27 +59,43 @@ class ManagerUserController extends Controller
     }
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        try {
+            $user = User::findOrFail($id);
 
-        if ($user->role === 'student') {
-            // Для студента просто очищаем комнату
-            if ($student = $user->student) {
-                $room = Room::find($student->room_id);
-                if ($room) {
-                    $room->decrement('occupied_places');
+            if ($user->role === 'student') {
+                // Находим данные студента
+                if ($student = $user->student) {
+                    // Находим комнату
+                    $room = Room::find($student->room_id);
+                    if ($room) {
+                        // Если студент последний в комнате
+                        if ($room->occupied_places <= 1) {
+                            // Удаляем комнату
+                            $room->delete();
+                        } else {
+                            // Иначе просто уменьшаем количество занятых мест
+                            $room->decrement('occupied_places');
+                        }
+                    }
+                    // Удаляем студента
+                    $student->delete();
                 }
-                $student->room_id = null;
-                $student->save();
+                // Удаляем пользователя
+                $user->delete();
+
+                return redirect()->route('manager.dashboard')
+                    ->with('successType', 'student_expelled')
+                    ->with('success', 'Студент был отчислен из общежития, и его комната была удалена');
+            } else {
+                // Для остальных пользователей - просто удаляем
+                $user->delete();
+                return redirect()->route('manager.dashboard')
+                    ->with('successType', 'user_deleted')
+                    ->with('success', 'Пользователь был удален');
             }
+        } catch (\Exception $e) {
             return redirect()->route('manager.dashboard')
-                ->with('successType', 'student_expelled')
-                ->with('success', 'Студент был отчислен из общежития');
-        } else {
-            // Для остальных пользователей - полное удаление
-            $user->delete();
-            return redirect()->route('manager.dashboard')
-                ->with('successType', 'user_deleted')
-                ->with('success', 'Пользователь был удален');
+                ->with('error', 'Произошла ошибка при удалении: ' . $e->getMessage());
         }
     }
     public function update(Request $request, $id)
