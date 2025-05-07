@@ -27,7 +27,7 @@ services:
     pgsql:
         image: 'postgres:17'
         ports:
-            - '${FORWARD_DB_PORT:-5432}:5432'
+            - '${FORWARD_DB_PORT:-5435}:5432'
         environment:
             PGPASSWORD: '${DB_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
@@ -51,6 +51,7 @@ services:
             timeout: 5s
     mailhog:
         image: 'mailhog/mailhog:latest'
+        platform: linux/amd64
         ports:
             - '${FORWARD_MAILHOG_PORT:-1025}:1025'
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
