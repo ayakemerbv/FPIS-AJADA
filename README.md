@@ -1,7 +1,8 @@
 
 # Dorm Management System (DMS)
 
-Full documentation for the **Dorm Management System** project. Paste this into your `README.md` and adjust as needed.
+A web‑based application to streamline student housing operations: from room bookings and maintenance requests to payments, a peer‑to‑peer marketplace and campus news.
+
 
 ---
 ## Team Members
