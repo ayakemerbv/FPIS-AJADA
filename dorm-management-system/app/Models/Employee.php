@@ -11,6 +11,10 @@ class Employee extends Model
 
     protected $fillable = ['user_id', 'employee_id',  'job_type'];
 
+    public function getNameAttribute()
+    {
+        return $this->user->name;
+    }
 
     public function requests()
     {

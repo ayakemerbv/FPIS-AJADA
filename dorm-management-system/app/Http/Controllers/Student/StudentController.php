@@ -30,7 +30,7 @@ class StudentController extends Controller
     }
     public function personal()
     {
-        $employees = Employee::all();
+        $employees = Employee::with('user')->get();
         $requests = RepairRequest::where('user_id', auth()->id())->get();
         $newsList = News::orderBy('created_at', 'desc')->take(5)->get();
         $buildings = Building::all();
