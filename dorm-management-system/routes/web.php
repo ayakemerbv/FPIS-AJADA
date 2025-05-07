@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GymBookingController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Manager\ManagerController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\KaspiPaymentController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +29,11 @@ Route::get('/rooms/available', function () {
     return response()->json($rooms);
 });
 
+Route::get('password/forgot', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/', [AuthController::class, 'login']);

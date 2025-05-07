@@ -134,7 +134,7 @@
                     placeholder="Введите пароль"
                     required
                 >
-                <a href="#" class="forgot-password">Забыли пароль?</a>
+                <a href="{{ route('password.request') }}" class="forgot-password">Забыли пароль?</a>
 
                 <button type="submit" class="btn btn-primary">Войти</button>
             </form>
