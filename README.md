@@ -1,7 +1,8 @@
 
 # Dorm Management System (DMS)
 
-Full documentation for the **Dorm Management System** project. Paste this into your `README.md` and adjust as needed.
+A web‑based application to streamline student housing operations: from room bookings and maintenance requests to payments, a peer‑to‑peer marketplace and campus news.
+
 
 ---
 ## Team Members
@@ -11,7 +12,7 @@ Full documentation for the **Dorm Management System** project. Paste this into y
 | Suleimenova Zhasmin    | 22B030444   |
 | Temirgali Rustem       | 22B030451   |
 | Taubayev Azamat        | 22B030450   |
-| Tulepbergen Nurkhan    | 22B030445   |
+| Tulepbergen Nurkhan    | 22B030455   |
 
 ## Table of Contents
 
@@ -37,17 +38,6 @@ Full documentation for the **Dorm Management System** project. Paste this into y
 ## Project Overview
 
 The **Dorm Management System (DMS)** is a Laravel web application designed to manage dormitory buildings, rooms, students, staff, and a campus‑wide marketplace. It uses [Laravel Sail](https://laravel.com/docs/sail) and Docker for seamless local development and deployment.
-
----
-
-## Key Features
-
-- User registration & authentication (students, managers, admins)  
-- Room booking applications for students  
-- “Buy & Sell” marketplace with create, edit, delete capabilities  
-- Real‑time notifications and private messaging  
-- Maintenance and repair request tracking  
-- News feed and events calendar  
 
 ---
 
@@ -179,13 +169,13 @@ SELECT * FROM students;
 ├── app/
 │   ├── Http/
 │   ├── Models/
-│   ├── Services/         # e.g. KaspiPaymentService
+│   ├── Services/         
 │   └── ...
 ├── database/
 │   ├── migrations/
 │   ├── seeders/
 │   └── factories/
-├── docker-compose.yml    # Docker Compose config
+├── docker-compose.yml    
 ├── .env
 ├── README.md
 └── vendor/
@@ -295,6 +285,84 @@ If tests are available:
 - **GET /notifications** - Get notifications
 - **POST /notifications/{id}/read** - Mark notification as read
 
-## Response Format
 
-### Success Response
+
+## Dependencies & Versions
+
+- PHP: `8.1.x`  
+- Laravel: `10.x`  
+- PostgreSQL: `17.x`  
+- Redis: `7.x`  
+- Composer: `2.x`  
+
+---
+
+## Configuration & Environment Variables
+
+| Key                | Type      | Default                     | Description                                    |
+|--------------------|-----------|-----------------------------|------------------------------------------------|
+| `DB_CONNECTION`    | string    | `pgsql`                     | Database driver                                |
+| `DB_HOST`          | string    | `pgsql`                     | DB host (service name in Docker)               |
+| `DB_PORT`          | integer   | `5432`                      | DB port                                        |
+| `DB_DATABASE`      | string    | `laravel`                   | Database name                                  |
+| `DB_USERNAME`      | string    | `sail`                      | DB user                                        |
+| `DB_PASSWORD`      | string    | `password`                  | DB password                                    |
+| `REDIS_HOST`       | string    | `redis`                     | Redis host                                     |
+| `CACHE_DRIVER`     | string    | `database`                  | Cache driver                                   |
+| `QUEUE_CONNECTION` | string    | `database`                  | Queue driver                                   |
+| `MAIL_MAILER`      | string    | `log`                       | Mail transport (use `smtp` in production)      |
+
+
+---
+
+## Architecture Overview
+
+1. **Web Layer**: Nginx → PHP-FPM (Laravel Sail)  
+2. **Database**: PostgreSQL container  
+3. **Cache & Queue**: Redis container  
+4. **Job Workers**: `php artisan queue:work`  
+5. **Mail**: MailHog in dev, SMTP in prod  
+
+---
+
+## Contribution Guide
+
+1. Fork the repo  
+2. Create a feature branch (`git checkout -b feature/XYZ`)  
+3. Commit changes with clear messages  
+4. Push and open a Pull Request  
+5. Someone will review and merge  
+
+Please adhere to PSR‑12 and write unit tests for new features.
+
+---
+
+## Troubleshooting & FAQ
+
+- **“Host pgsql not found”** — run `sail up -d` after editing `.env`.  
+- **Permission denied on sockets** — add your user to the `docker` group or prefix with `sudo`.  
+- **Migrations failing** — ensure containers are healthy: `sail ps`, then re-run `sail artisan migrate:fresh`.  
+- **Mail not sending in dev** — check `MAIL_MAILER=log` or use MailHog.  
+
+---
+
+## Changelog
+
+### v1.0.0 (2025‑04‑23)
+- Initial release: user auth, room booking, marketplace, notifications  
+
+### v1.1.0 (2025‑05‑10)
+- Added Redis queues for email & notifications  
+- Improved test coverage  
+
+---
+
+## Security Considerations
+
+- Never commit `.env` to version control  
+- Use strong, unique passwords for DB and services  
+- Keep dependencies up to date (`composer audit`)  
+- Rate‑limit sensitive endpoints (login, bookings)  
+
+---
+
