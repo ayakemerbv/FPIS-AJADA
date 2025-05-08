@@ -12,7 +12,7 @@ A web‑based application to streamline student housing operations: from room bo
 | Suleimenova Zhasmin    | 22B030444   |
 | Temirgali Rustem       | 22B030451   |
 | Taubayev Azamat        | 22B030450   |
-| Tulepbergen Nurkhan    | 22B030445   |
+| Tulepbergen Nurkhan    | 22B030455   |
 
 ## Table of Contents
 
