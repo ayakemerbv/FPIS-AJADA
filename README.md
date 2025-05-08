@@ -41,17 +41,6 @@ The **Dorm Management System (DMS)** is a Laravel web application designed to ma
 
 ---
 
-## Key Features
-
-- User registration & authentication (students, managers, admins)  
-- Room booking applications for students  
-- “Buy & Sell” marketplace with create, edit, delete capabilities  
-- Real‑time notifications and private messaging  
-- Maintenance and repair request tracking  
-- News feed and events calendar  
-
----
-
 ## Requirements
 
 - Docker & Docker Desktop (WSL2 integration on Windows)  
