@@ -6,14 +6,6 @@
 .php-cs-fixer.cache
 Homestead.yaml
 Homestead.json
-/public/storage
-/storage/*.key
-/storage/debugbar
-/storage/framework/cache
-/storage/framework/sessions
-/storage/framework/testing
-/storage/framework/views
-/storage/logs
 /bootstrap/cache/*.php
 .env.backup
 
