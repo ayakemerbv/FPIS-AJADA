@@ -1,0 +1,257 @@
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 200px;
+    height: calc(100vh - 60px);
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    padding-top: 20px;
+}
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+}
+.sidebar-item:hover {
+    background-color: #efefef;
+    cursor: pointer;
+}
+.sidebar-item i {
+    font-size: 18px;
+    color: #4a4a4a;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 200px;
+    padding: 20px;
+    padding-top: 80px;
+    background-color: #F5F5F5;
+    min-height: calc(100vh - 60px);
+}
+.main-content h2 {
+    margin-bottom: 20px;
+    color: #4a4a4a;
+}
+
+/* Avatar Circle */
+.avatar-circle-big {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 11px;
+}
+
+/* Logout */
+.logout-form button {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 0.9rem;
+    cursor: pointer;
+    gap: 6px;
+}
+.logout-form button:hover {
+    text-decoration: underline;
+}
+
+/* Application Form */
+.housing-form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.housing-form select,
+.housing-form button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.application-container {
+    margin-left: 200px;
+    padding: 20px;
+    padding-top: 80px;
+    background-color: #F5F5F5;
+    min-height: calc(100vh - 60px);
+}
+.application-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+.application-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+}
+.application-box select,
+.application-box button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.application-box button {
+    background: #7e57c2;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.application-box button:hover {
+    background: #6f42c1;
+}
+
+#housing-sidebar {
+    display: none;
+}
+#housing-sidebar.open {
+    display: block;
+}
+.input-field {
+    width: 100%;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #7e57c2;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background-color: #eee;
+    color: #333;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+#marketplace-section img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block; /* Убедитесь, что изображение отображается как блок */
+    margin-top: 10px; /* Можно добавить отступ сверху */
+}
+/* Модалки */
+.modal {
+    display: none;
+    position: fixed; top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center; align-items:center;
+    z-index:1000;
+}
+.modal-content {
+    background:#fff; border-radius:12px;
+    width:90%; max-width:400px; padding:24px;
+}
+.modal-content h3 {
+    margin:0 0 16px; font-size:1.2rem; font-weight:600;
+}
+.modal-content .input-field {
+    width:100%; padding:8px; margin-bottom:12px;
+    border:1px solid #ccc; border-radius:6px;
+    font-size:0.95rem;
+}
+/* Стили для формы фильтрации */
+.filter-form {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.filter-form .form-control {
+    padding: 6px 10px;
+    height: 32px;
+    font-size: 13px;
+    width: auto;
+}
+
+.filter-form .btn {
+    padding: 6px 12px;
+    height: 32px;
+    font-size: 13px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Стили для сетки объявлений */
+.ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.ad-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.ad-card .content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-card .title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.ad-card .description {
+    color: #666;
+    margin-bottom: 12px;
+    flex-grow: 1;
+}
+
+.ad-card .meta {
+    color: #888;
+    font-size: 0.9em;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}

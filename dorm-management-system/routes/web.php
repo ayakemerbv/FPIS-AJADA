@@ -41,10 +41,6 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-//    // Оплата
-//    Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
-//
-
 Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');

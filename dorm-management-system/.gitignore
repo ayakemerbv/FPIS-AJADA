@@ -8,7 +8,6 @@ Homestead.yaml
 Homestead.json
 /public/storage
 /storage/*.key
-/storage/app/public
 /storage/debugbar
 /storage/framework/cache
 /storage/framework/sessions
