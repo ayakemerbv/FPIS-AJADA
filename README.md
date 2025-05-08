@@ -366,7 +366,3 @@ Please adhere to PSR‑12 and write unit tests for new features.
 
 ---
 
-## Support & Contact
-
-For any issues or questions, please open an issue on GitHub or contact `support@your-org.com`.
-  
