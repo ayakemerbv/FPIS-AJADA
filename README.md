@@ -169,13 +169,13 @@ SELECT * FROM students;
 ├── app/
 │   ├── Http/
 │   ├── Models/
-│   ├── Services/         # e.g. KaspiPaymentService
+│   ├── Services/         
 │   └── ...
 ├── database/
 │   ├── migrations/
 │   ├── seeders/
 │   └── factories/
-├── docker-compose.yml    # Docker Compose config
+├── docker-compose.yml    
 ├── .env
 ├── README.md
 └── vendor/
@@ -284,7 +284,3 @@ If tests are available:
 - **POST /language-switch** - Switch language
 - **GET /notifications** - Get notifications
 - **POST /notifications/{id}/read** - Mark notification as read
-
-## Response Format
-
-### Success Response
