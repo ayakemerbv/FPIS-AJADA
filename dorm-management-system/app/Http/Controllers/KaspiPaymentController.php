@@ -93,7 +93,7 @@ class KaspiPaymentController extends Controller
             ]);
 
             return redirect()->route('student.personal')
-                ->with('success', 'Тестовый платёж успешно выполнен!');
+                ->with('success', 'Тестовый платёж успешно выполнен!')->with('successType', 'payment_success');
 
         } catch (\Exception $e) {
             Log::error('Callback error', [

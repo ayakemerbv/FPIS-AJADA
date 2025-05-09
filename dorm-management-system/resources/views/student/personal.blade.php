@@ -427,7 +427,7 @@
     </div>
     <!-- Детали запросов-->
     @foreach($requests as $request)
-        <div id="request-details-{{ $request->id }}" class="request-details" style="display: none;">
+        <div id="request-details-{{ $request->id }}" class="container mt-5 main-content" style="display: none;">
             <div class="container">
                 <h2 class="mb-4 mt-5">{{__('messages.details_request')}} #{{ $request->id }}</h2>
 
@@ -657,6 +657,8 @@
             showHousing()
             @elseif(session('successType') === 'document_uploaded')
             showDocuments();
+            @elseif(session('successType') === 'payment_success')
+            showFinance();
             @endif
         });
         function showPersonal() {
@@ -841,6 +843,7 @@
             document.getElementById('sports-section').style.display = 'none';
             @foreach($requests as $request)
             document.getElementById('edit-modal-{{ $request->id }}').style.display = 'none';
+            document.getElementById('request-details-{{ $request->id }}').style.display = 'none';
             @endforeach
         }
     </script>

@@ -222,29 +222,33 @@
             @elseif(session('successType') === 'profile_updated')
             showPersonal()
             @elseif(session('successType') === 'request_updated')
-            openEditRequest()
+            showRequests();
             @endif
         });
         function hideAllSections() {
             document.querySelectorAll('.main-content').forEach(section => {
-                section.classList.remove('active');
+                section.style.display = 'none';
             });
         }
         function showPersonal() {
             hideAllSections();
-            document.getElementById('personal-section').classList.add('active');
+            document.getElementById('personal-section').style.display = 'block';
         }
+
         function showRequests() {
             hideAllSections();
-            document.getElementById('request-section').classList.add('active');
+            document.getElementById('request-section').style.display = 'block';
+
         }
         function showRequestDetails() {
             hideAllSections();
-            document.getElementById('request-details-section').classList.add('active');
+            document.getElementById('request-details-section').style.display = 'block';
+
         }
         function openEditRequest() {
             hideAllSections();
-            document.getElementById('edit-request-section').classList.add('active');
+            document.getElementById('edit-request-section').style.display = 'block';
+
             // Если данные выбранного запроса уже сохранены в глобальной переменной window.currentRequest, заполняем форму
             if (window.currentRequest) {
                 document.getElementById('edit-req-id').textContent = window.currentRequest.id;
@@ -289,8 +293,6 @@
         function closePasswordModal() {
             document.getElementById('passwordModal').style.display = 'none';
         }
-        document.addEventListener('DOMContentLoaded', function () {
-            showNews();
-        });
+
     </script>
 @endsection

@@ -11,6 +11,18 @@
     --bg-light: #F9F9F9;
     --bg-main: #F5F5F5;
 }
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
 
 /* ========== Сайдбар ========== */
 .sidebar {

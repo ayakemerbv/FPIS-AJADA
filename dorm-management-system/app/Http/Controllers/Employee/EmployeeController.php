@@ -34,7 +34,7 @@ class EmployeeController extends Controller
             ->with('successType', 'show_requests');
     }
     public function edit($id){
-        $request = RepairRequest::findOrFail($id); // Ищем по ID
+        $request = RepairRequest::findOrFail($id);
 
         return view('employee.edit', compact('request'));
     }

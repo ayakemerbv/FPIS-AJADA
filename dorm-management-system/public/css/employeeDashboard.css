@@ -4,6 +4,13 @@
     padding: 0;
     box-sizing: border-box;
 }
+.main-content {
+    display: none;
+}
+
+.main-content.active {
+    display: block;
+}
 body {
     font-family: Arial, sans-serif;
     background-color: #F5F5F5;
