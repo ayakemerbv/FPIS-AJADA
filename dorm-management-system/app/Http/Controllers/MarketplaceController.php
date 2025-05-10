@@ -60,7 +60,7 @@ class MarketplaceController extends Controller
         $validated['user_id'] = Auth::id();
 
         Ad::create($validated);
-
+        session()->flash('successType', 'ad_created');
         return back()->with('success', 'Объявление успешно создано!')->with('successType', 'ad_created');
     }
 

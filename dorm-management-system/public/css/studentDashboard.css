@@ -255,3 +255,117 @@
     padding-top: 10px;
     border-top: 1px solid #eee;
 }
+/* Общие стили для карточек */
+.sports-card {
+    background: var(--background-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для информации о записи */
+.sports-info {
+    margin: 15px 0;
+}
+
+.info-item {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.info-item label {
+    font-weight: 600;
+    min-width: 120px;
+    margin-right: 10px;
+}
+
+/* Стили для форм */
+.sports-form, #recovery-form {
+    background: var(--background-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-background);
+}
+
+/* Стили для списка отработок */
+.recovery-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.recovery-list {
+    margin-top: 15px;
+}
+
+.recovery-item {
+    background: var(--background-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки */
+.btn-change, .btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-change {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Анимация для форм */
+#recovery-form, .sports-form {
+    transition: all 0.3s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .info-item label {
+        margin-bottom: 5px;
+    }
+}

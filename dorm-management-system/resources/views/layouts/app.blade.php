@@ -17,6 +17,12 @@
         padding: 0;
         box-sizing: border-box;
     }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #F5F5F5;
+    }
+
     .top-nav {
         position: fixed;
         top: 0;
@@ -30,11 +36,6 @@
         padding: 0 20px;
         background-color: #fff;
         border-bottom: 1px solid #ddd;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #F5F5F5;
     }
 
     .icon-circle,
@@ -58,16 +59,6 @@
         margin: 0 auto 8px;
     }
 
-    .top-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 60px;
-        padding: 0 20px;
-        background-color: #fff;
-        border-bottom: 1px solid #ddd;
-    }
-
     .logo-link {
         display: flex;
         align-items: center;
@@ -88,6 +79,7 @@
         gap: 15px;
     }
 
+    /* Стили для аватара и дропдауна */
     .avatar-wrapper {
         position: relative;
         display: inline-block;
@@ -108,7 +100,6 @@
         text-align: center;
     }
 
-
     .avatar-dropdown a {
         display: block;
         margin: 8px 0;
@@ -121,47 +112,7 @@
         text-decoration: underline;
     }
 
-    .logout-form button {
-        background: none;
-        border: none;
-        color: #dc3545;
-        font-size: 14px;
-        cursor: pointer;
-        padding: 0;
-        margin-top: 8px;
-    }
-
-    .logout-form button i {
-        margin-right: 5px;
-    }
-
-    .news-item {
-        background-color: #B0A5D7;
-        padding: 15px;
-        color: #fff;
-        max-width: 1500px;
-        height: 240px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-
-    .news-item img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-
-    .news-item h3 {
-        margin-bottom: 10px;
-    }
-
-    .news-item small {
-        font-size: 0.85rem;
-        opacity: 0.9;
-    }
-    /* News Styles */
+    /* Стили для новостей */
     .news-item {
         background-color: #B0A5D7;
         padding: 15px;
@@ -190,44 +141,94 @@
         opacity: 0.9;
     }
 
-    /* Modal Styles */
+    /* Стили модального окна */
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 1000;
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
         justify-content: center;
         align-items: center;
+        transition: opacity 0.3s ease;
     }
 
     .modal-content {
         background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 600px;
-        width: 100%;
+        padding: 30px;
+        border-radius: 16px;
+        max-width: 2000px;
+        width: 90%;
         position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: modalFadeIn 0.3s ease-out;
+        max-height: 90vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #B0A5D7 #f1f1f1;
     }
 
     .modal-image {
         width: 100%;
-        height: 300px;
+        height: 400px;
         object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #modalTitle {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
         margin-bottom: 20px;
+        line-height: 1.3;
+    }
+
+    #modalContent {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 20px;
+        white-space: pre-line;
+    }
+
+    #modalDate {
+        display: block;
+        font-size: 14px;
+        color: #888;
+        margin-top: 15px;
     }
 
     .close-btn {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 25px;
+        top: 15px;
+        right: 15px;
+        font-size: 28px;
         font-weight: bold;
+        color: #666;
         cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
     }
+
+    .close-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+        color: #333;
+        transform: rotate(90deg);
+    }
+
+    /* Стили для уведомлений */
     .notification-badge {
         position: absolute;
         top: -5px;
@@ -237,6 +238,11 @@
         border-radius: 50%;
         padding: 2px 6px;
         font-size: 12px;
+    }
+
+    .notification-wrapper {
+        position: relative;
+        z-index: 1000;
     }
 
     #notifications-panel {
@@ -251,41 +257,58 @@
         display: none;
         margin-top: 10px;
     }
-    .notification-item {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-        transition: background-color 0.2s;
+
+    /* Анимации */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    .notification-item.unread {
-        background-color: #f0f7ff;
+    /* Стили скроллбара */
+    .modal-content::-webkit-scrollbar {
+        width: 8px;
     }
 
-    .notification-item:hover {
-        background-color: #f8f9fa;
+    .modal-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
     }
 
-    .notification-title {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .notification-wrapper {
-        position: relative;
-        z-index: 1000;
+    .modal-content::-webkit-scrollbar-thumb {
+        background: #B0A5D7;
+        border-radius: 4px;
     }
 
-    .notification-message {
-        color: #666;
-        font-size: 14px;
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        background: #9285c7;
     }
 
-    .notification-time {
-        font-size: 12px;
-        color: #999;
-        margin-top: 5px;
-    }
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .modal-content {
+            width: 95%;
+            padding: 20px;
+            margin: 20px;
+        }
 
+        .modal-image {
+            height: 250px;
+        }
+
+        #modalTitle {
+            font-size: 20px;
+        }
+
+        #modalContent {
+            font-size: 14px;
+        }
+    }
 
 </style>
 
@@ -343,8 +366,6 @@
         </div>
     </div>
 </div>
-
-
 
 {{-- Боковая панель --}}
 <div class="sidebar">
@@ -480,23 +501,51 @@
         loadNotifications();
     });
 
-    // Открытие модального окна
     function openNewsModal(newsId) {
         const news = @json($newsList);
         const selectedNews = news.find(item => item.id === newsId);
+        const modal = document.getElementById('newsModal');
 
         document.getElementById('modalTitle').innerText = selectedNews.title;
         const modalImage = document.getElementById('modalImage');
         modalImage.src = selectedNews.image ? '/storage/' + selectedNews.image : '';
+        modalImage.style.display = selectedNews.image ? 'block' : 'none';
 
         document.getElementById('modalContent').innerText = selectedNews.content;
-        document.getElementById('modalDate').innerText = selectedNews.created_at;
+        document.getElementById('modalDate').innerText = new Date(selectedNews.created_at).toLocaleString('ru-RU');
 
-        document.getElementById('newsModal').style.display = 'flex';
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Запретить прокрутку фона
+
+        // Плавное появление
+        requestAnimationFrame(() => {
+            modal.style.opacity = '1';
+        });
     }
+
     function closeNewsModal() {
-        document.getElementById('newsModal').style.display = 'none';
+        const modal = document.getElementById('newsModal');
+        modal.style.opacity = '0';
+
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = ''; // Восстановить прокрутку
+        }, 300);
     }
+
+    // Закрытие по клику вне модального окна
+    document.getElementById('newsModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeNewsModal();
+        }
+    });
+
+    // Закрытие по нажатию Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeNewsModal();
+        }
+    });
     function showNews() {
         hideAllSections();
         document.getElementById('see-news-section').style.display = 'block';

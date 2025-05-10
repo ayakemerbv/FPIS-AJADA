@@ -121,7 +121,7 @@
         <div id="my-ads" class="ads-grid" style="display: none;">
             <div style="grid-column: 1/-1; margin-bottom: 15px;">
                 <button class="btn btn-secondary" onclick="toggleMyAds()" style="height: 32px; padding: 6px 12px; font-size: 13px;">
-                    <i class="fas fa-arrow-left"></i> Назад
+                    <i class="fas fa-arrow-left"></i> {{ __('messages.back') }}
                 </button>
             </div>
 
@@ -132,8 +132,8 @@
             @else
                 @foreach($myAds as $ad)
                     <div class="ad-card">
-                        @if($ad->image)
-                            <img src="{{ asset('storage/' . $ad->image) }}" alt="" />
+                        @if($ad->image_path)
+                            <img src="{{ asset('storage/' . $ad->image_path) }}" alt="{{ $ad->title }}" />
                         @endif
                         <div class="content">
                             <div class="title">{{ $ad->title }}</div>

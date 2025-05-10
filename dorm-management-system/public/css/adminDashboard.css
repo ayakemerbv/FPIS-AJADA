@@ -195,7 +195,11 @@ a.my-span-style:hover {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
-    margin-right: 1000px;
+    /*display: flex;*/
+    gap: 8px;
+    margin-bottom: -118px;
+    margin-right: 350px;
+
 }
 .plus-button:hover {
     background-color: var(--primary-hover);

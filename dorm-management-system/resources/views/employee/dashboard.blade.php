@@ -103,11 +103,9 @@
     <div class="main-content" id="request-section">
         <div class="container">
             <h2>{{ __('messages.all_requests') }}</h2>
-            <a class="btn btn-outline-secondary" href="{{ route('employee.dashboard') }}">{{ __('messages.back') }}</a>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="card-title">{{ __('messages.requests') }}</h5>
             </div>
-            <button class="btn btn-outline-secondary btn-sm mb-3">{{ __('messages.select_period') }}</button>
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">

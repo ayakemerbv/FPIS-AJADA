@@ -206,7 +206,16 @@
            <div class="user-info">
                <h2 id="detail-name">{{ __('messages.full_name') }}</h2>
                <div class="status">{{ __('messages.status') }}: <span id="detail-role"></span></div>
-               <p>{{ __('messages.address_example') }}</p>
+               <div class="personal-location">
+                   @if($user->acceptedBooking)
+                       {{ __('messages.building') }}: {{ $user->acceptedBooking->building->name }}<br>
+                       {{ __('messages.address') }}: {{ $user->acceptedBooking->building->address }}<br>
+                       {{ __('messages.floor') }}: {{ $user->acceptedBooking->room->floor }}<br>
+                       {{ __('messages.room') }}: {{ $user->acceptedBooking->room->room_number }}
+                   @else
+                       <p>{{ __('messages.not_settled') }}</p>
+                   @endif
+               </div>
                <!-- Форма обновления -->
                <form id="userUpdateForm" class="user-form" enctype="multipart/form-data">
                    @csrf

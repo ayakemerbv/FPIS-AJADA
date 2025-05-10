@@ -383,13 +383,14 @@
     <div class="container mt-5 main-content" id="request-list" style="display: none;">
         <div class="card shadow-sm">
             <div class="card-body">
-                <a href="javascript:void(0)" onclick="closeRequestList()">{{ __('messages.back') }}</a>
+                <div style="grid-column: 1/-1; margin-bottom: 15px;">
+                    <button class="btn btn-secondary" onclick="closeRequestList()" style="height: 32px; padding: 6px 12px; font-size: 13px;">
+                        <i class="fas fa-arrow-left"></i> {{ __('messages.back') }}
+                    </button>
+                </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title">{{ __('messages.all_requests') }}</h5>
-                    <!-- Можно оставить кнопку для создания запроса -->
                     <button type="button" class="btn btn-primary btn-sm" onclick="openRepairModal()">➕</button>
                 </div>
-                <button class="btn btn-outline-secondary btn-sm mb-3">{{ __('messages.select_period') }}</button>
                 <div class="table-responsive">
                     <table class="table table-bordered align-middle">
                         <thead class="table-light">
@@ -429,7 +430,6 @@
     @foreach($requests as $request)
         <div id="request-details-{{ $request->id }}" class="container mt-5 main-content" style="display: none;">
             <div class="container">
-                <h2 class="mb-4 mt-5">{{__('messages.details_request')}} #{{ $request->id }}</h2>
 
                 <!-- Кнопки действий -->
                 <div class="d-flex mb-3">
@@ -585,11 +585,49 @@
                                 </div>
                             @endforeach
                         </div>
-                    @else
-                        <p>{{__('messages.no_scheduled_recovery')}}</p>
                     @endif
-                    <!-- Кнопка для открытия модального окна добавления новой отработки -->
-                    <button onclick="showRecoveryModal()" class="btn-change">+</button>
+
+                    <!-- Форма добавления отработки (изначально скрыта) -->
+                    <div class="sports-form" id="recovery-form" style="display: none;">
+                        <form action="{{ route('sports.recovery') }}" method="POST">
+                            @csrf
+                            <label for="sport">{{__('messages.sport_type')}}</label>
+                            <select name="sport" id="sport" required>
+                                <option value="">{{__('messages.choose')}}</option>
+                                <option value="Танцы">{{__('messages.dance')}}</option>
+                                <option value="Баскетбол">{{__('messages.basketball')}}</option>
+                                <option value="Волейбол">{{__('messages.volleyball')}}</option>
+                                <option value="Футбол">{{__('messages.football')}}</option>
+                            </select>
+
+                            <!-- Блок выбора дней недели -->
+                            <label>{{__('messages.select_days')}}</label>
+                            <div id="day-selection">
+                                <label><input type="checkbox" name="day[]" value="Понедельник">{{__('messages.monday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Вторник">{{__('messages.tuesday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Среда">{{__('messages.wednesday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Четверг">{{__('messages.thursday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Пятница">{{__('messages.friday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Суббота">{{__('messages.saturday')}}</label>
+                                <label><input type="checkbox" name="day[]" value="Воскресенье">{{__('messages.sunday')}}</label>
+                            </div>
+
+                            <label for="time">{{__('messages.select_time')}}</label>
+                            <input type="time" name="time" id="time" required>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="autoEnroll">
+                                <label for="autoEnroll">{{__('messages.auto_enroll')}}</label>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">{{__('messages.save')}}</button>
+                                <button type="button" class="btn-secondary" onclick="toggleRecoveryForm()">{{__('messages.cancel')}}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Кнопка для показа формы отработки -->
+                    <button onclick="toggleRecoveryForm()" class="btn-change" id="add-recovery-btn">+</button>
                 </div>
             </div>
         @else
@@ -660,6 +698,25 @@
             @elseif(session('successType') === 'payment_success')
             showFinance();
             @endif
+        });
+        function toggleRecoveryForm() {
+            const form = document.getElementById('recovery-form');
+            const btn = document.getElementById('add-recovery-btn');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                btn.style.display = 'none';
+            } else {
+                form.style.display = 'none';
+                btn.style.display = 'block';
+            }
+        }
+
+        // При загрузке страницы убедимся, что форма скрыта
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('recovery-form');
+            if (form) {
+                form.style.display = 'none';
+            }
         });
         function showPersonal() {
             hideAllSections()
