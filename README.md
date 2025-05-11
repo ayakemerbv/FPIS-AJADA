@@ -1,10 +1,9 @@
-
 # Dorm Management System (DMS)
 
 A web‑based application to streamline student housing operations: from room bookings and maintenance requests to payments, a peer‑to‑peer marketplace and campus news.
 
-
 ---
+
 ## Team Members
 
 | Student Name           | Student ID  |
@@ -22,23 +21,43 @@ A web‑based application to streamline student housing operations: from room bo
 - [Requirements](#requirements)  
 - [Installation](#installation)  
 - [Environment Setup](#environment-setup)  
+- [Backend Setup (Laravel, Sanctum)](#backend-setup-laravel-sanctum)  
+- [Frontend Setup (React, Vite)](#frontend-setup-react-vite)  
 - [Running the Project](#running-the-project)  
   - [With Docker / Sail](#with-docker--sail)  
   - [Without Docker](#without-docker)  
 - [Database](#database)  
   - [Migrations & Seeders](#migrations--seeders)  
   - [Viewing Data](#viewing-data)  
+- [API Documentation](#api-documentation)  
 - [Project Structure](#project-structure)  
 - [Artisan Commands](#artisan-commands)  
 - [Testing](#testing)  
 - [Tips & Tricks](#tips--tricks)  
-- [Support & Contact](#support--contact)
+- [Support & Contact](#support--contact)  
+- [Changelog](#changelog)  
+- [Security Considerations](#security-considerations)  
 
 ---
 
 ## Project Overview
 
-The **Dorm Management System (DMS)** is a Laravel web application designed to manage dormitory buildings, rooms, students, staff, and a campus‑wide marketplace. It uses [Laravel Sail](https://laravel.com/docs/sail) and Docker for seamless local development and deployment.
+The **Dorm Management System (DMS)** is a Laravel web application with a React frontend designed to manage dormitory buildings, rooms, students, staff, and a campus‑wide marketplace. The backend is a RESTful API secured by Laravel Sanctum, and the frontend is built with React and Vite for a seamless SPA experience.
+
+---
+
+## Key Features
+
+- Role‑based authentication (student, manager, employee, admin) via Laravel Sanctum  
+- RESTful JSON API backend  
+- React SPA frontend with Vite and Tailwind CSS  
+- Room booking and assignment workflow  
+- Maintenance/repair request tracking  
+- Document upload and management  
+- Campus news publication  
+- Peer‑to‑peer marketplace (ads)  
+- Real‑time notifications  
+- Payment integration (e.g., Kaspi)  
 
 ---
 
@@ -46,8 +65,10 @@ The **Dorm Management System (DMS)** is a Laravel web application designed to ma
 
 - Docker & Docker Desktop (WSL2 integration on Windows)  
 - Git  
-- PHP ≥ 8.0  
+- PHP ≥ 8.1  
 - Composer  
+- Node.js ≥ 16  
+- npm or Yarn  
 
 ---
 
@@ -59,27 +80,25 @@ The **Dorm Management System (DMS)** is a Laravel web application designed to ma
    cd dorm-management-system
    ```
 
-2. **Install PHP dependencies**  
+2. **Backend dependencies**  
    ```bash
    composer install
-   ```
-
-3. *(Optional)* **Install frontend dependencies**  
-   ```bash
-   npm install
-   ```
-
-4. **Copy environment file & generate key**  
-   ```bash
    cp .env.example .env
    php artisan key:generate
+   ```
+
+3. **Frontend dependencies**  
+   ```bash
+   cd dms-frontend
+   npm install   # or yarn install
+   cp .env.example .env
    ```
 
 ---
 
 ## Environment Setup
 
-Edit your `.env` file to configure your environment:
+Edit your **backend** `.env`:
 
 ```dotenv
 APP_NAME="DMS"
@@ -92,7 +111,9 @@ DB_PORT=5432
 DB_DATABASE=laravel
 DB_USERNAME=sail
 DB_PASSWORD=password
-FORWARD_DB_PORT=5432
+
+SANCTUM_STATEFUL_DOMAINS=localhost,127.0.0.1,localhost:5173
+SESSION_DOMAIN=127.0.0.1
 
 REDIS_HOST=redis
 REDIS_PASSWORD=null
@@ -100,9 +121,95 @@ REDIS_PORT=6379
 
 CACHE_DRIVER=database
 SESSION_DRIVER=database
+QUEUE_CONNECTION=redis
+
+MAIL_MAILER=log
 ```
 
-> **Tip**: On Windows, use WSL2 with Docker Desktop and enable integration for your Ubuntu distro.
+Edit your **frontend** `.env`:  
+```env
+VITE_API_BASE_URL=http://localhost/api
+```
+
+---
+
+## Backend Setup (Laravel, Sanctum)
+
+1. **Install Sanctum**  
+   ```bash
+   composer require laravel/sanctum
+   php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+   php artisan migrate
+   ```
+
+2. **Configure CORS** (`config/cors.php`):  
+   ```php
+   'paths' => ['api/*', 'sanctum/csrf-cookie'],
+   'allowed_origins' => ['http://localhost:5173'],
+   'supports_credentials' => true,
+   ```
+
+3. **Kernel middleware** (`app/Http/Kernel.php`):  
+   - In the **web** group:
+     ```php
+     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+     ```
+   - In the **api** group:
+     ```php
+     'auth:sanctum',
+     ```
+
+4. **API routes** (`routes/api.php`):  
+   ```php
+   Route::get('/sanctum/csrf-cookie', fn() => response()->noContent());
+   Route::post('/login',  [AuthController::class, 'login']);
+   Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+   Route::get('/user',    [AuthController::class, 'user'])->middleware('auth:sanctum');
+   // ... other resource routes (users, bookings, documents, service-requests, news, ads)
+   ```
+
+5. **Role middleware** (`app/Http/Middleware/RoleMiddleware.php`):  
+   ```php
+   public function handle($request, Closure $next, ...$roles)
+   {
+       if (!in_array(Auth::user()->role, $roles)) {
+           return response()->json(['error'=>'Access denied'], 403);
+       }
+       return $next($request);
+   }
+   ```
+
+---
+
+## Frontend Setup (React, Vite)
+
+1. **API client** (`src/api.js`):
+   ```js
+   import axios from 'axios';
+
+   const API = axios.create({
+     baseURL: import.meta.env.VITE_API_BASE_URL,
+     withCredentials: true
+   });
+
+   API.interceptors.request.use(config => {
+     // XSRF token handling is automatic with axios & withCredentials
+     return config;
+   });
+
+   export default API;
+   ```
+
+2. **Run development server**  
+   ```bash
+   cd dms-frontend
+   npm run dev   # or yarn dev
+   ```
+
+3. **Build for production**  
+   ```bash
+   npm run build
+   ```
 
 ---
 
@@ -110,28 +217,39 @@ SESSION_DRIVER=database
 
 ### With Docker / Sail
 
-1. Ensure **Docker Desktop** is running.  
-2. From the project root, start all services:
+1. Ensure Docker Desktop is running.  
+2. Start services:
    ```bash
    ./vendor/bin/sail up -d
    ```
-3. Run migrations and seed data:
+3. Migrate & seed:
    ```bash
    ./vendor/bin/sail artisan migrate:fresh --seed
    ```
-4. Open your browser at `http://localhost`.
+4. Start frontend:
+   ```bash
+   cd dms-frontend
+   sail npm install
+   sail npm run dev
+   ```
+5. Visit `http://localhost` (Laravel) and `http://localhost:5173` (React).
 
 ### Without Docker
 
-1. Configure your local PHP server (Valet, Homestead, XAMPP, etc.).  
-2. Ensure **PostgreSQL** and **Redis** are running locally.  
-3. Run:
+1. Set up local PHP, Postgres, Redis.  
+2. Run migrations & seed:
    ```bash
-   php artisan migrate --force
-   php artisan db:seed
+   php artisan migrate --seed
+   ```
+3. Serve backend:
+   ```bash
    php artisan serve
    ```
-4. Browse to `http://127.0.0.1:8000`.
+4. Serve frontend:
+   ```bash
+   cd dms-frontend
+   npm run dev
+   ```
 
 ---
 
@@ -139,231 +257,126 @@ SESSION_DRIVER=database
 
 ### Migrations & Seeders
 
-- **Run migrations**:
-  ```bash
-  ./vendor/bin/sail artisan migrate
-  ```
-- **Reset & seed**:
-  ```bash
-  ./vendor/bin/sail artisan migrate:fresh --seed
-  ```
+- **Run migrations**: `php artisan migrate`
+- **Reset & seed**: `php artisan migrate:fresh --seed`
 
 ### Viewing Data
 
-Use **psql** or a GUI client (DataGrip, DBeaver):
-
 ```bash
-./vendor/bin/sail exec pgsql psql -U sail -d laravel
+psql -h localhost -U laravel -d laravel
 ```
 
-Then, for example:
+---
 
-```sql
-SELECT * FROM students;
-```
+## API Documentation
+
+All endpoints are prefixed with `/api`. Authentication uses Laravel Sanctum (cookie-based).
+
+### Authentication
+- **GET** `/sanctum/csrf-cookie` — fetch CSRF cookie  
+- **POST** `/login` — body: `{email, password}`  
+- **POST** `/logout` (auth)  
+- **GET** `/user` (auth) — current user  
+
+### Users (admin, manager)
+- **GET** `/users`  
+- **POST** `/users` — `{name, email, password, role}`  
+- **DELETE** `/users/{id}`  
+
+### Bookings
+- **POST** `/bookings` — create booking (student)  
+- **GET** `/bookings` — list (student: own, manager: all)  
+- **PUT** `/bookings/{id}` — update status (manager)  
+
+### Documents
+- **POST** `/documents` — upload file (multipart)  
+- **GET** `/documents` — list own documents  
+
+### Service Requests
+- **POST** `/service-requests`  
+- **GET** `/service-requests`  
+- **PUT** `/service-requests/{id}`  
+
+### News
+- **GET** `/news`  
+- **POST** `/news` — (admin/manager)  
+
+### Ads
+- **GET** `/ads`  
+- **POST** `/ads`  
+- **DELETE** `/ads/{id}`  
+
+_For detailed request/response formats, see inline docblocks in controllers._
 
 ---
 
 ## Project Structure
 
 ```
+backend/
 ├── app/
 │   ├── Http/
 │   ├── Models/
-│   ├── Services/         
+│   ├── Middleware/
 │   └── ...
+├── routes/
+│   ├── api.php
+│   └── web.php
 ├── database/
 │   ├── migrations/
-│   ├── seeders/
-│   └── factories/
-├── docker-compose.yml    
-├── .env
-├── README.md
-└── vendor/
+│   └── seeders/
+└── ...
+frontend/
+├── src/
+│   ├── api.js
+│   ├── components/
+│   ├── pages/
+│   └── ...
+├── public/
+└── ...
 ```
 
 ---
 
 ## Artisan Commands
 
-- `php artisan migrate` — run migrations  
-- `php artisan db:seed` — run seeders  
-- `php artisan route:list` — list routes  
-- `php artisan tinker` — interactive shell  
-- `php artisan config:clear` — clear config cache  
+- `php artisan migrate`  
+- `php artisan db:seed`  
+- `php artisan route:list`  
+- `php artisan config:cache`  
 
 ---
 
 ## Testing
 
-If tests are available:
-
 ```bash
-./vendor/bin/sail artisan test
+php artisan test
 ```
 
 ---
 
 ## Tips & Tricks
 
-- **Alias Sail**  
-  ```bash
-  alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
-  ```
-  Then use `sail up -d` instead of the full path.
-
-- **Enable Xdebug**  
-  Set `SAIL_XDEBUG_MODE=debug` in your `.env`.
-
-- **View logs**  
-  ```bash
-  sail logs laravel.test
-  sail logs pgsql
-  ```
-
----
-
-# API Documentation
-
-## Authentication
-- **POST /** - Login to the system
-- **POST /logout** - Logout from the system (requires authentication)
-
-## Admin Panel
-*Requires authentication and admin role*
-
-### User Management
-- **GET /admin/dashboard/users/create** - Display user creation form
-- **POST /admin/dashboard/users** - Create new user
-- **GET /admin/dashboard/users** - List all users
-- **DELETE /admin/dashboard/users/{id}** - Delete user
-- **GET /admin/users/{id}/json** - Get user information in JSON format
-
-## Student Panel
-*Requires authentication and student role*
-
-### Profile and Personal Account
-- **GET /student/dashboard** - Student dashboard
-- **GET /student/personal** - Personal account
-- **POST /student/personal/profile/update** - Update profile
-- **PATCH /student/personal/profile/update** - Update profile details
-
-### Marketplace
-- **GET /student/ads** - View advertisements
-- **POST /student/ads** - Create advertisement
-- **PUT /student/ads/{ad}** - Update advertisement
-- **DELETE /student/ads/{ad}** - Delete advertisement
-
-### Room Booking
-- **GET /student/personal/floors/{building_id}** - Get list of floors in building
-- **GET /student/personal/rooms/{building_id}/{floor}** - Get list of rooms
-- **POST /student/personal/booking/store** - Create booking
-- **POST /student/personal/booking/change-room** - Change room
-
-### Payments
-- **POST /payment/initiate** - Initialize payment
-- **GET /payment/callback** - Payment system callback
-- **GET /payment/status/{id}** - Check payment status
-
-### Maintenance Requests
-- **GET /personal/create-request** - Display request creation form
-- **POST /personal** - Create request
-- **GET /personal/requests** - List requests
-- **GET /personal/requests/{id}** - View request details
-- **PUT /personal/requests/{repairRequest}** - Update request
-- **DELETE /personal/requests/{repairRequest}** - Delete request
-
-## Employee Panel
-*Requires authentication and employee role*
-
-### Request Management
-- **GET /employee/dashboard/requests** - List requests
-- **GET /employee/dashboard/requests/{id}** - View request details
-- **PUT /employee/dashboard/requests/{id}** - Update request status
-
-## Common Endpoints
-- **POST /language-switch** - Switch language
-- **GET /notifications** - Get notifications
-- **POST /notifications/{id}/read** - Mark notification as read
-
-
-
-## Dependencies & Versions
-
-- PHP: `8.1.x`  
-- Laravel: `10.x`  
-- PostgreSQL: `17.x`  
-- Redis: `7.x`  
-- Composer: `2.x`  
-
----
-
-## Configuration & Environment Variables
-
-| Key                | Type      | Default                     | Description                                    |
-|--------------------|-----------|-----------------------------|------------------------------------------------|
-| `DB_CONNECTION`    | string    | `pgsql`                     | Database driver                                |
-| `DB_HOST`          | string    | `pgsql`                     | DB host (service name in Docker)               |
-| `DB_PORT`          | integer   | `5432`                      | DB port                                        |
-| `DB_DATABASE`      | string    | `laravel`                   | Database name                                  |
-| `DB_USERNAME`      | string    | `sail`                      | DB user                                        |
-| `DB_PASSWORD`      | string    | `password`                  | DB password                                    |
-| `REDIS_HOST`       | string    | `redis`                     | Redis host                                     |
-| `CACHE_DRIVER`     | string    | `database`                  | Cache driver                                   |
-| `QUEUE_CONNECTION` | string    | `database`                  | Queue driver                                   |
-| `MAIL_MAILER`      | string    | `log`                       | Mail transport (use `smtp` in production)      |
-
-
----
-
-## Architecture Overview
-
-1. **Web Layer**: Nginx → PHP-FPM (Laravel Sail)  
-2. **Database**: PostgreSQL container  
-3. **Cache & Queue**: Redis container  
-4. **Job Workers**: `php artisan queue:work`  
-5. **Mail**: MailHog in dev, SMTP in prod  
-
----
-
-## Contribution Guide
-
-1. Fork the repo  
-2. Create a feature branch (`git checkout -b feature/XYZ`)  
-3. Commit changes with clear messages  
-4. Push and open a Pull Request  
-5. Someone will review and merge  
-
-Please adhere to PSR‑12 and write unit tests for new features.
-
----
-
-## Troubleshooting & FAQ
-
-- **“Host pgsql not found”** — run `sail up -d` after editing `.env`.  
-- **Permission denied on sockets** — add your user to the `docker` group or prefix with `sudo`.  
-- **Migrations failing** — ensure containers are healthy: `sail ps`, then re-run `sail artisan migrate:fresh`.  
-- **Mail not sending in dev** — check `MAIL_MAILER=log` or use MailHog.  
+- **Alias Sail**: `alias sail='bash vendor/bin/sail'`  
+- **Xdebug**: Set `SAIL_XDEBUG_MODE=debug` in `.env`  
+- **Logs**: `sail logs laravel.test`  
 
 ---
 
 ## Changelog
 
-### v1.0.0 (2025‑04‑23)
-- Initial release: user auth, room booking, marketplace, notifications  
-
-### v1.1.0 (2025‑05‑10)
-- Added Redis queues for email & notifications  
-- Improved test coverage  
+### v1.1.0 (2025-05-11)
+- Migrated to REST API with Laravel Sanctum  
+- Introduced React SPA frontend with Vite  
+- Unified endpoints for all roles  
 
 ---
 
 ## Security Considerations
 
-- Never commit `.env` to version control  
-- Use strong, unique passwords for DB and services  
-- Keep dependencies up to date (`composer audit`)  
-- Rate‑limit sensitive endpoints (login, bookings)  
+- Do not commit `.env`  
+- Use strong DB credentials  
+- Enable HTTPS and secure cookies in production  
+- Rate-limit auth endpoints  
 
 ---
-
