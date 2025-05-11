@@ -10,9 +10,10 @@ A web‑based application to streamline student housing operations: from room bo
 | Student Name           | Student ID  |
 |------------------------|-------------|
 | Suleimenova Zhasmin    | 22B030444   |
-| Temirgali Rustem       | 22B030451   |
+| Taimas Ayazhan         | 22B030447   |
 | Taubayev Azamat        | 22B030450   |
-| Tulepbergen Nurkhan    | 22B030455   |
+| Tokanova Ayazhan       | 22B030455   |
+| Oryngaly Dauir         | 22B030576   |
 
 ## Table of Contents
 
